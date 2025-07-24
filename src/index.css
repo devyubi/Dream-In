@@ -1,14 +1,50 @@
-/* 글꼴 설정 */
-* {
+/* index.css */
+
+:root {
+  --bg-gradient: linear-gradient(
+    180deg,
+    #fcf3fb 0%,
+    #fad4e8 20%,
+    #f5c8e7 40%,
+    #e6b3f7 60%,
+    #d3bce8 80%,
+    #c2c1ee 100%
+  );
+  --text-color: #8672d0;
+}
+
+[data-theme="dark"] {
+  --bg-gradient: linear-gradient(
+    180deg,
+    #1e1b27 0%,
+    #25254d 20%,
+    #33336e 40%,
+    #3a3a74 60%,
+    #493d78 80%,
+    #544783 100%
+  );
+  --text-color: #fcf3fb;
+}
+
+body {
+  height: 200%;
   margin: 0;
   padding: 0;
+  font-size: 12px;
   box-sizing: border-box;
+  color: var(--text-color);
+  background: var(--bg-gradient);
+  transition: background 0.3s ease;
+}
+
+* {
+  box-sizing: inherit;
   outline-style: none;
 }
 
 a {
   text-decoration: none;
-  color: #000;
+  color: inherit;
 }
 
 ul,
@@ -17,12 +53,6 @@ li {
 }
 
 html {
-  overflow-x: hidden;
-}
-
-body {
-  /* font-family: 설정 */
-  overflow-x: hidden;
-  color: #000;
-  font-size: 12px;
+  overflow: hidden;
+  height: 200%;
 }
