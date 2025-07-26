@@ -1,0 +1,58 @@
+.header {
+  z-index: 999;
+  font-family: "tj300", sans-serif;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.3s ease;
+  font-family: "NanumBarunpen", sans-serif;
+  background-color: #fcf3fb;
+  color: #8672d0;
+}
+
+[data-theme="dark"] .header {
+  background-color: #1e1b27;
+  color: #fcf3fb;
+}
+
+.header__logo {
+  width: 40px;
+  object-fit: contain;
+}
+
+.header__rightMenu {
+  display: flex;
+  gap: 12px;
+}
+
+.header__button {
+  font-family: "Tj";
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  gap: 6px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  background-color: #fcf3fb;
+  color: #8672d0;
+  cursor: pointer;
+  font-size: 14px;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+[data-theme="dark"] .header__button {
+  background-color: #1e1b27;
+  color: #fcf3fb;
+}
+
+.header__icon {
+  height: 18px;
+  width: 18px;
+}
