@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useAuthContext } from "../contexts/AuthContext";
 import "../css/homepage.css";
 import QuoteSwiper from "../components/QuoteSwiper";
+import { Link } from "react-router-dom";
 
 const mockDreams = [
   {
@@ -17,13 +18,6 @@ const mockDreams = [
     title: "바다 속 모험",
     description: "깊은 바다 속에서 신비로운 생물들을 만났어요.",
     date: "2025.07.16",
-    isBookmarked: true,
-  },
-  {
-    id: 3,
-    title: "우주 여행",
-    description: "행성과 별 사이를 유영하는 꿈을 꾸었어요.",
-    date: "2025.07.14",
     isBookmarked: true,
   },
 ];
@@ -69,33 +63,81 @@ function HomePage() {
           <p>오늘도 새로운 꿈의 여행을 떠나보세요!</p>
           {isLoggedIn && (
             <div className="user_info">
-              <img src={user?.image ?? "/default_user.svg"} alt="프로필" />
+              <img src={user?.image ?? "/unknown.svg"} alt="프로필" />
               <div>
                 <p>{user.email}</p>
                 <div>
-                  <button>마이페이지</button> | <button>즐겨찾기</button>
+                  <button>
+                    <img src="/mypage_light.svg" alt="마이페이지" />
+                    마이페이지
+                  </button>
+                  |
+                  <button>
+                    <img src="/fullstar.svg" alt="즐겨찾기" />
+                    즐겨찾기
+                  </button>
                 </div>
               </div>
             </div>
           )}
         </section>
 
+        <h2>최근 꿈 기록</h2>
         <section className="dream_list">
-          <h2>최근 꿈 기록</h2>
-          {bookmarkedDreams.map(dream => (
-            <div className="dream_card" key={dream.id}>
-              <div className="dream_card_top">
-                <span>{dream.title}</span>
-                <img
-                  src={dream.isBookmarked ? "/fullstar.svg" : "/star.svg"}
-                  alt="즐겨찾기"
-                  onClick={() => toggleBookmark(dream.id)}
-                />
+          <div>
+            {bookmarkedDreams.map(dream => (
+              <div className="dream_card" key={dream.id}>
+                <div className="dream_card_top">
+                  <span>
+                    {dream.title}
+                    <span className="dream_date">{dream.date}</span>
+                  </span>
+
+                  <img
+                    src={dream.isBookmarked ? "/fullstar.svg" : "/star.svg"}
+                    alt="즐겨찾기"
+                    onClick={() => toggleBookmark(dream.id)}
+                  />
+                </div>
+                <div className="dream_item">
+                  <p>{dream.description}</p>
+                </div>
               </div>
-              <p>{dream.description}</p>
-              <span className="dream_date">{dream.date}</span>
-            </div>
-          ))}
+            ))}
+          </div>
+          <div className="auth_box">
+            {user ? (
+              <div className="user_info">
+                <img
+                  src={user.profile_img || "/default_profile.png"}
+                  alt="유저 프로필"
+                  className="user_profile_img"
+                />
+                <div className="user_text">
+                  <p className="welcome">{user.nickname}님 어서오세요!</p>
+                  <p className="email">{user.email}</p>
+                  <div className="user_links">
+                    <Link to="/profile">마이페이지</Link>
+                    <Link to="/favorites">즐겨찾기</Link>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="login_prompt">
+                <p className="main_msg">Dream-in을 편리하게 관리해보세요!</p>
+                <Link to="/login" className="login_btn">
+                  Dream-in 로그인
+                </Link>
+                <div className="sub_links">
+                  <Link to="/find-id">아이디 찾기</Link>
+                  <span>|</span>
+                  <Link to="/find-password">비밀번호 찾기</Link>
+                  <span>|</span>
+                  <Link to="/signup">회원가입</Link>
+                </div>
+              </div>
+            )}
+          </div>
         </section>
 
         <section className={`main_login ${!isLoggedIn ? "blur" : ""}`}>
@@ -117,7 +159,6 @@ function HomePage() {
               </div>
             ))}
           </div>
-
           <h2>기록하기</h2>
           {!isLoggedIn && (
             <div className="overlay">로그인 시 이용가능합니다</div>

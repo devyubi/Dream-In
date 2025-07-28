@@ -6,26 +6,69 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 30px;
 }
 
 section {
+  font-size: 14px;
   flex: 1;
 }
-
 .dream_list {
-  margin-top: 20px;
+  display: flex;
+  gap: 29%;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+.dream_card {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+  width: 500px;
+  height: 80px;
+  flex-shrink: 0;
+  border-radius: 20px;
+  background: var(--color-primary-p-100, #fcf3fb);
+}
+.auth_box {
+  width: 300px;
+  background: #f7f7f7;
+  padding: 16px;
+  border-radius: 16px;
 }
 
+.dream_card_top {
+  padding: 10px 15px 0px;
+  display: flex;
+  justify-content: space-between;
+}
+.dream_card span {
+  height: 10px;
+  padding-top: 8px;
+}
+
+.dream_card_top img {
+  width: 28px;
+  height: 25px;
+  flex-shrink: 0;
+  aspect-ratio: 28.13/25;
+}
+.dream_card p {
+  /* padding: 0px 15px; */
+}
 .dream_item {
-  border-bottom: 1px solid #ccc;
-  padding: 10px 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0px 15px 15px;
+}
+.dream_date {
+  padding-left: 10px;
+  font-size: 11px;
 }
 
 .dream_title {
   display: flex;
   justify-content: space-between;
   font-weight: bold;
+  /* filter: blur(5px); */
 }
 
 .main_login {
