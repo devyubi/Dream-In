@@ -1,0 +1,64 @@
+.mainpage {
+  font-family: "tj400";
+}
+.mainpage_wrap {
+  padding: 10px 15%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 30px;
+}
+
+section {
+  flex: 1;
+}
+
+.dream_list {
+  margin-top: 20px;
+}
+
+.dream_item {
+  border-bottom: 1px solid #ccc;
+  padding: 10px 0;
+}
+
+.dream_title {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+}
+
+.main_login {
+  position: relative;
+}
+
+.blurred {
+  filter: blur(2px);
+  pointer-events: none;
+  position: relative;
+}
+
+.blurred .overlay_text {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: red;
+  font-weight: bold;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 4px 8px;
+  z-index: 2;
+}
+
+.total,
+.note_list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  text-align: center;
+}
+
+.note_list > div {
+  background: #f9f9f9;
+  padding: 12px;
+  border-radius: 8px;
+}

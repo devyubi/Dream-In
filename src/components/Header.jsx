@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../css/header.css";
+import { Link } from "react-router-dom";
 
 function Header() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -30,11 +31,14 @@ function Header() {
   };
 
   return (
-    <header className="header">
-      <img src={logoSrc} alt="로고" className="header__logo" />
-      <div className="header__rightMenu">
+    <header className="header_top">
+      <Link to="/">
+        <img src={logoSrc} alt="로고" className="header_logo" />
+      </Link>
+
+      <div className="header_rightMenu">
         <button
-          className="header__button"
+          className="header_button"
           onClick={() => setIsDarkMode(!isDarkMode)}
         >
           <img
@@ -45,7 +49,7 @@ function Header() {
           {isDarkMode ? "라이트모드" : "다크모드"}
         </button>
         <button
-          className="header__button"
+          className="header_button"
           onClick={handleAuthClick}
           aria-label={authText}
         >

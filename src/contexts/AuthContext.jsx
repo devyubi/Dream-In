@@ -1,7 +1,35 @@
-import React from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
-function AuthContext() {
-  return <div>AuthContext</div>;
+const AuthContext = createContext();
+
+export function AuthProvider({ children }) {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState({
+    name: "OO님",
+    email: "dream@dream.com",
+    image: null,
+  });
+
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    document.body.setAttribute("data-theme", isDarkMode ? "dark" : "light");
+  }, [isDarkMode]);
+
+  return (
+    <AuthContext.Provider
+      value={{
+        isLoggedIn,
+        setIsLoggedIn,
+        user,
+        setUser,
+        isDarkMode,
+        setIsDarkMode,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
-export default AuthContext;
+export const useAuthContext = () => useContext(AuthContext);
