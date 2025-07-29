@@ -7,7 +7,6 @@ import "./index.css";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
-import WelcomePage from "./pages/WelcomePage";
 
 function App() {
   return (
@@ -18,7 +17,6 @@ function App() {
           <Route path="/" element={<HomePage />}></Route>
           <Route path="/login" element={<LoginPage />}></Route>
           <Route path="/signup" element={<SignupPage />}></Route>
-          <Route path="/welcome" element={<WelcomePage />}></Route>
           <Route path="/profile" element={<h1>프로필</h1>}></Route>
           <Route path="/dreamwrite" element={<DreamWritePage />}></Route>
           <Route path="/emotiondiary" element={<h1>감정일기</h1>}></Route>
