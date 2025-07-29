@@ -1,70 +1,285 @@
-# Getting Started with Create React App
+# 프로젝트
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 1. 개요 (초안)
 
-## Available Scripts
+- Dream-in 은 꿈이라는 비정형 데이터를 기록하고, 무의식의 흐름을 시각화하여 자기 이해와 타인과의 공감을 돕는 개인 맞춤형 인사이트 플랫폼임.
 
-In the project directory, you can run:
+## 2. 설명 (초안)
 
-### `npm start`
+사용자는 지난 밤의 꿈을 일기처럼 기록하고, 감정과 함께 저장하거나 AI에게 해몽을 요청할 수 있습니다. 또한 꿈을 친구들과 공유하고, 서로 공감하거나 댓글을 주고받으며 공감 기반의 소셜 경험을 쌓을 수 있습니다. 꿈은 금세 잊히기 쉬운 이야기지만, 기록하는 순간 나를 이해하는 열쇠가 됩니다. 우리는 이 서비스를 통해 사용자들이 자신의 무의식을 들여다보고, 특별한 밤의 이야기를 시각적으로 기록하고 연결하며 자신과 타인을 이해하는 새로운 방식을 경험하길 기대합니다.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 3. 슬로건 (예시)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- 기록 속에 피어나는 나만의 밤
+- 꿈을 쓰는 사람, 나를 아는 사람
+- 잊혀지기 전에, 꿈을 담다
+- 어젯밤의 이야기, 오늘의 나에게
+- 어젯밤 당신의 꿈, 오늘의 당신에게 말을 겁니다
+- 꿈을 기억하는 가장 섬세한 방식
+- 잠들었던 이야기를 깨우다
+- 나의 꿈을 현실로 만드는 ...
 
-### `npm test`
+## 4. 목표 (초안)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. 감정 기반 꿈 기록 도구 제공
+2. AI 해석 경험 제공
+3. 꿈을 소재로 한 연결 경험
+4. 수면과 무의식 관심 환기
 
-### `npm run build`
+## 5. 주요 기능 (회의 후 결정 예정)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. 꿈에 대한 정보 제공
+2. AI 꿈 해몽
+3. 감정 태깅 (꿈을 기록할 때 감정을 이모지나 키워드로 태깅)
+4. 꿈 일러스트 생성
+5. 꿈 카테고리 분류
+6. 꿈 공유 피드
+7. 꿈 루틴 알림 (매일 아침 알림)
+8. 꿈 키워드 클라우드
+9. 꿈 타임라인
+10. 감정일기
+11. 꿈에 대한 정보 보기
+12. 수면 기록 & 습관
+13. 루시드 드림 팁
+14. 꿈 없는 날 감정 체크
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 6. Team (초안)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- 디자인 협의 필요로 인해 공통 작업 (버튼, 모달, 입력창 등 공통 디자인 통일), 공통 컴포넌트 작업 협의
 
-### `npm run eject`
+| 사람                     | 담당 파트 (주요 담당)                                                             | 세부 기능                                                                                                                      | 협업 / 보조                            |
+| ------------------------ | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------- |
+| 박재현                        | 꿈 작성, AI 해몽                                                                  | 꿈 기록 UI 구성, 감정 선택 기능, AI 해몽 API 연동 및 결과 출력, 프로젝트 기본 폴더 구성                                        | 디자인 QA, 공통 컴포넌트 피드백        |
+| 문유비                        | 꿈 목록/조회, 피드, 공유 기능                                                     | 꿈 리스트 및 날짜별 정렬, 댓글 및 공감 기능, 반응형 피드 UI 구성, 전체 기능 흐름 및 기획 (PRD, 아키텍쳐 설계, 플로우차트 작성) | 작성 화면 UI 보완, 상태 관리 구조 협의 |
+| 송병근                        | 회원 인증, 감정                                                                   |
+| 저장, DB 연결 (Supabase) | 로그인·회원가입 처리, 꿈/감정 데이터 저장 및 불러오기, 꿈 카테고리 분류 로직 구현 | 글 조회 쿼리 협업, 공통 API 정리 및 문서화                                                                                     |
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+# 프로젝트 일정 (초안)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+| 날짜 (기간) | 단계                             | 작업 내용                                                                                           |
+| ----------- | -------------------------------- | --------------------------------------------------------------------------------------------------- |
+| 7/15        | 프로젝트 최초 회의               | 아이디어 공유, 역할 분담                                                                            |
+| 7/16~7/18   | 기획, 디자인, 프로젝트 초기 설정 | GitHub 세팅 및 와이어 프레임 제작(Figma), 기능 정의, 메인 UI 컴포넌트, 톤앤매너 결정, 프로젝트 생성 |
+| 7/19~7/27   | 개발 1차                         | 기능별 브랜치 개발 → 병합, 기본 기능 완성                                                           |
+|             |
+| 7/28~8/3    | 개발 2차                         | 공유/AI 해몽 등 부가 기능 개발                                                                      |
+| 8/4~8/6     | 디버깅 & QA /                    |
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+포트폴리오 문서화
+| 크로스브라우징, 에러 핸들링 테스트/
+각자 프로젝트 설명서 작성 |
+| 8/7 | 발표 리허설 | 각자 개인 발표 자료 준비 & 데모 테스트
+|
+| 8/8 | 발표 ( Canva ) | 미니 프로젝트 최종 회의 (감상, 팀 회고 등)
+|
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### **★ 미니 프로젝트 병렬 진행 후 통합**
 
-## Learn More
+**설명**: 전체 기능을 미리 작은 단위의 미니 프로젝트로 쪼개고, 각자 1개씩 맡아 개발 → 이후 통합
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+역할 분담 예시
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
 
-### Code Splitting
+박재현 : 꿈 작성, AI 해몽
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+---
 
-### Analyzing the Bundle Size
+문유비 : 꿈 목록/조회, 피드, 공유 기능
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+---
 
-### Making a Progressive Web App
+송병근 : 회원 인증, 감정
+저장, DB 연결
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+---
 
-### Advanced Configuration
+**장점**:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+- 각자 독립적인 구조로 개발 가능 → 빠른 작업 가능
+- Git merge 시 충돌이 적음
 
-### Deployment
+**단점**:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+- 초기에 통합 방식(디자인, 라우터, 폴더 구조)을 반드시 잘 정해야 함
+- 통합 시 중복 제거 및 리팩토링 필요
 
-### `npm run build` fails to minify
+### **2주차: 통합 및 공통 컴포넌트 정리**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- 공통 UI 컴포넌트 통일 (버튼, 모달, 카드 등)
+- 라우터 연결 및 페이지 구조 통합
+- 상태 관리 전환 (ex. Context API or Zustand 등)
+- 반응형 레이아웃 적용 시작
+
+### **3주차: 테스트 + 최적화 + 피드백 반영**
+
+- UX 개선
+- 기능 보완 (ex. 수정, 삭제, 필터 등)
+- 디자인 보완 및 애니메이션 추가
+- Lighthouse / Web Vitals 테스트
+- 발표 자료 준비 (시연 영상, 소개 문서 등)
+- ***
+
+## 담당
+
+### 박재현 (꿈 작성, AI 해몽 담당)
+
+> 주요 담당: 꿈 작성, AI 해몽
+>
+> 세부 기능: 꿈 기록 UI 구성, 감정 선택 기능, AI 해몽 API 연동 및 결과 출력
+
+#### 1. `DreamWritePage.jsx`
+
+- 꿈 작성 폼 UI 구성 (제목, 내용, 감정 선택, 카테고리 등 입력)
+- 감정 선택 시 색상 또는 이모티콘 선택 가능한 UI 구성
+- 작성 완료 시 `supabase` 저장 요청
+- 작성 완료 후 AI 해몽 요청 기능 추가 (`openai.js` 호출)
+
+#### 2. `AIDreamResultPage.jsx`
+
+- AI 해몽 결과를 받아 출력하는 전용 페이지
+- 이전 페이지(DreamWritePage)에서 작성한 내용을 함께 보여줌
+- DreamContext나 router의 상태로 이전 작성 내용 전달
+
+#### 3. `DreamCard.jsx`
+
+- 꿈 목록에서 보여줄 카드 UI
+- 제목, 감정, 날짜, 일부 내용 등 간단 정보 노출
+- 클릭 시 전체 꿈 또는 해몽 결과 페이지로 이동
+
+#### 4. `EmotionCard.jsx`
+
+- 감정 선택 UI
+- 선택 시 해당 감정 상태 저장 (Context 또는 Local)
+
+#### 5. `openai.js`
+
+- OpenAI API를 이용해 꿈 내용을 해석 요청
+- `fetch()` 또는 `axios`로 POST 요청
+- 응답 받은 데이터는 DreamContext나 페이지에 저장
+
+#### 6. `DreamContext.jsx`, `useDream.js`
+
+- 꿈 작성 내용과 AI 응답을 Context로 관리
+- 꿈 작성 도중 페이지 이동해도 상태 유지 가능하게 구성
+
+---
+
+### 문유비 (꿈 목록, 피드 담당)
+
+> 주요 담당: 꿈 목록/조회, 피드
+>
+> 세부 기능: 꿈 리스트 및 날짜별 정렬, 댓글 및 공감 기능, 반응형 피드 UI 구성
+
+#### 1. `HomePage.jsx`
+
+- 사용자별 피드 구성 (작성한 꿈 리스트 출력)
+- 최근 작성된 꿈 순서로 정렬
+- DreamCard 컴포넌트 사용
+
+#### 2. 댓글 및 공감 기능 (선택적)
+
+- DreamCard에 공감 버튼, 댓글 수 출력
+- 댓글 모달 또는 하단 표시 (간단한 UI 구성)
+- 공감/댓글은 `supabase` 테이블 따로 구성 필요
+
+#### 3. 반응형 UI 구성
+
+- 모바일 기준 우선 스타일링
+- 768px 이하/이상일 때 카드 너비 조절
+- DreamCard, EmotionCard, SleepHistoryCard 등 공통 반응형 적용
+
+#### 4. 전체 흐름 기획 관리
+
+- 피그마와 연결되는 전체 화면 흐름 관리
+- 페이지 전환 동선 정리 및 필요 API 구조 설계 지원
+- 다른 사람 요청 시 흐름 설명 담당
+
+---
+
+### 송병근 (인증, 데이터 저장 담당)
+
+> 주요 담당: 회원 인증, 감정 저장, DB 연결
+>
+> 세부 기능: 로그인·회원가입 처리, 꿈/감정 데이터 저장 및 불러오기, 꿈 카테고리 분류 로직 구현
+
+#### 1. `LoginPage.jsx`, `SignupPage.jsx`
+
+- 이메일/비밀번호 기반 로그인 및 회원가입 처리
+- supabase 인증 API 사용
+- 로그인 상태 저장 (AuthContext 사용)
+
+#### 2. `AuthContext.jsx`, `useAuth.js`
+
+- 로그인 상태 유지 관리
+- 로컬스토리지 연동 가능 (자동 로그인)
+- 로그인 후 사용자의 UID 기반 데이터 관리
+
+#### 3. `supabaseClient.js`
+
+- Supabase 인스턴스 설정
+- URL, Key 입력
+
+#### 4. `dreams.js`, `emotions.js`
+
+- 꿈, 감정 데이터 supabase에 저장/조회 함수 구성
+- 예: insertDream, getDreamsByUserId, insertEmotion, getEmotionsByDate
+
+#### 5. 카테고리 분류 로직
+
+- 꿈 작성 시 카테고리 (예: 불안, 희망, 일상 등) 선택 가능하게 구성
+- select dropdown 또는 감정 기반 자동 분류 가능
+
+| 이름 | 주요 담당          | 작업 파일                                           | 설명                            |
+| ---- | ------------------ | --------------------------------------------------- | ------------------------------- |
+| 박재현    | 꿈 작성 + 해몽     | DreamWritePage, AIDreamResultPage, DreamContext 등  | 꿈 작성 폼 + AI 연동 처리       |
+| 문유비    | 꿈 목록 + 피드     | HomePage, DreamCard, 피드 구성, 공감 기능 등        | 꿈 리스트 출력, 정렬, 피드 구성 |
+| 송병근    | 인증 + 데이터 저장 | LoginPage, SignupPage, supabaseClient, dreams.js 등 | 로그인 처리, supabase 연결      |
+
+공통 협업 요소 (1주차에 다 같이 정해야 할 것)
+
+## 1. React(JSX) 기준 폴더 구조 (MVP 버전)
+
+📁 src // 앱의 메인 소스 폴더 (전체 React 코드 들어감)
+├── 📁 pages // 라우팅 되는 각 "페이지" 컴포넌트 (URL에 따라 보여지는 화면)
+│ ├── LoginPage.jsx // 로그인 페이지
+│ ├── SignupPage.jsx // 회원가입 페이지
+│ ├── HomePage.jsx // 메인 홈 화면 (탭바, 추천 등)
+│ ├── DreamWritePage.jsx // 꿈 작성하는 화면
+│ ├── EmotionDiaryPage.jsx // 감정일기 작성하는 화면
+│ ├── SleepRecordPage.jsx // 수면기록 입력 화면
+│ ├── AIDreamResultPage.jsx // AI 해몽 결과를 보여주는 화면
+│ └── ProfilePage.jsx // 내 프로필/계정 정보를 보는 화면
+│
+├── 📁 components // 재사용 가능한 컴포넌트 모음 (여러 곳에서 쓰임)
+│ ├── Header.jsx // 상단 헤더 (로고, 유저정보 등)
+│ ├── TabBar.jsx // 하단 탭바 (홈/꿈/감정일기/프로필 등 메뉴)
+│ ├── DreamCard.jsx // 꿈 게시판에 하나의 꿈 카드 UI
+│ ├── EmotionCard.jsx // 감정일기 게시판에서 일기 카드 UI
+│ ├── SleepHistoryCard.jsx // 수면 기록 히스토리 카드 UI
+│ ├── QuoteSwiper.jsx // 하단 자동 슬라이드 명언 swiper
+│ └── ProfileEditor.jsx // 프로필 편집 컴포넌트 (닉네임/비번 수정 등)
+│
+├── 📁 contexts // 전역 상태 관리 (Context API 사용)
+│ ├── AuthContext.jsx // 로그인 상태, 유저 정보 저장
+│ ├── DreamContext.jsx // 꿈 관련 상태 관리 (useReducer로 관리 가능)
+│ ├── EmotionContext.jsx // 감정일기 관련 상태 관리
+│ └── SleepContext.jsx // 수면기록 관련 상태 관리
+│
+├── 📁 hooks // customHook 폴더 (반복되는 로직을 한 곳에 모아 재사용)
+│ ├── useAuth.js // 로그인/회원가입 관련 훅
+│ ├── useDream.js // 꿈 CRUD 및 해몽 호출 관련 훅
+│ ├── useEmotionDiary.js // 감정일기 저장/불러오기 훅
+│ ├── useSleepRecord.js // 수면기록 입력 및 불러오기 훅
+│ └── usePieChartData.js // 수면 기록 → 주간 분석용 pie chart 데이터 변환
+│
+├── 📁 api // 외부 API 호출 함수들 (Supabase, OpenAI 등)
+│ ├── supabaseClient.js // Supabase 초기 설정 (client 생성)
+│ ├── auth.js // 로그인/회원가입 API 함수들
+│ ├── dreams.js // 꿈 저장/조회 API 함수들
+│ ├── emotions.js // 감정일기 저장/조회 API 함수들
+│ ├── sleeps.js // 수면기록 저장/조회 API 함수들
+│ └── openai.js // OpenAI API (해몽 요청 등)
+│
+├── App.jsx // 전체 앱 라우터 구조 설정 (페이지 연결)
+└── main.jsx // 앱 시작점. <App />을 root에 렌더링
