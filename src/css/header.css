@@ -2,17 +2,18 @@
   z-index: 9999;
   height: 100%;
   width: 100%;
-  padding: 10px 15%;
+  padding: 10px 20%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #e0e0e0;
   transition: background-color 0.3s ease;
   background-color: #fcf3fb;
   color: #8672d0;
 }
 
-[data-theme="dark"] .header {
+[data-theme="dark"] .header_top {
+  border-bottom: 1px solid #8a8a8a;
   background-color: #1e1b27;
   color: #fcf3fb;
 }
