@@ -31,7 +31,7 @@ section {
 .auth_box {
   width: 300px;
   background: #f7f7f7;
-  padding: 35px;
+  padding: 27px;
   border-radius: 16px;
 }
 
@@ -46,8 +46,8 @@ section {
 }
 
 .dream_card_top img {
-  width: 28px;
-  height: 25px;
+  width: 20px;
+  height: 17px;
   flex-shrink: 0;
   aspect-ratio: 28.13/25;
 }

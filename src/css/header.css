@@ -12,7 +12,7 @@
   color: #8672d0;
 }
 
-[data-theme="dark"] .header {
+[data-theme="dark"] .header_top {
   background-color: #1e1b27;
   color: #fcf3fb;
 }

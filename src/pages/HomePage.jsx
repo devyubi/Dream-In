@@ -42,7 +42,7 @@ function HomePage() {
         )
         .filter(dream => dream.isBookmarked);
 
-      // 모킹데이터라서 강제로 3번째 보여줌
+      // 모킹데이터라서 강제로 2번째 보여줌
       if (updated.length < 1) {
         const extra = mockDreams.find(
           d => d.id === 2 && !updated.some(u => u.id === 3),
