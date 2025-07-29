@@ -1,18 +1,15 @@
 import React, { useState, useEffect } from "react";
 import "../css/header.css";
 import { Link } from "react-router-dom";
+import { useAuthContext } from "../contexts/AuthContext";
+import { supabase } from "../api/supabaseClient";
+import { useNavigate } from "react-router-dom";
 
 function Header() {
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { isDarkMode, setIsDarkMode, isLoggedIn, setIsLoggedIn, setUser } =
+    useAuthContext();
 
-  useEffect(() => {
-    if (isDarkMode) {
-      document.body.setAttribute("data-theme", "dark");
-    } else {
-      document.body.removeAttribute("data-theme");
-    }
-  }, [isDarkMode]);
+  const navigate = useNavigate();
 
   // 다크모드 & 로그인 상태에 따라 이미지 경로 변경
   const logoSrc = "/logo.png";
@@ -26,9 +23,27 @@ function Header() {
 
   const authText = isLoggedIn ? "로그아웃" : "로그인";
 
-  const handleAuthClick = () => {
-    setIsLoggedIn(!isLoggedIn);
+  // 로그인, 로그아웃 버튼
+  const handleAuthClick = async () => {
+    if (isLoggedIn) {
+      // 로그아웃
+      await supabase.auth.signOut(); // 세션 종료
+      setIsLoggedIn(false); // 전역 로그인 상태는 false로 처리했습니다
+      setUser(null); // 유저 정보 초기화함
+    } else {
+      // 이건 새로고침 없이 로그인 페이지로 이동함다
+      navigate("/login");
+    }
   };
+
+  // 다크모드 테마 변경 전역변수
+  useEffect(() => {
+    if (isDarkMode) {
+      document.body.setAttribute("data-theme", "dark");
+    } else {
+      document.body.removeAttribute("data-theme");
+    }
+  }, [isDarkMode]);
 
   return (
     <header className="header_top">

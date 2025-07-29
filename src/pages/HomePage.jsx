@@ -1,4 +1,3 @@
-// src/pages/HomePage.jsx
 import React, { useState, useEffect } from "react";
 import { useAuth, useAuthContext } from "../contexts/AuthContext";
 import "../css/homepage.css";
@@ -62,25 +61,6 @@ function HomePage() {
               안녕하세요{isLoggedIn && user?.name ? `, ${user.name}님` : "!"}
             </h1>
             <p>오늘도 새로운 꿈의 여행을 떠나보세요!</p>
-            {isLoggedIn && (
-              <div className="user_info">
-                <img src={user?.image ?? "/unknown.svg"} alt="프로필" />
-                <div>
-                  <p>{user.email}</p>
-                  <div>
-                    <button>
-                      <img src="/mypage_light.svg" alt="마이페이지" />
-                      마이페이지
-                    </button>
-                    |
-                    <button>
-                      <img src="/fullstar.svg" alt="즐겨찾기" />
-                      즐겨찾기
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
           </section>
           {/* 즐겨찾기 */}
           <h2>즐겨찾기</h2>
