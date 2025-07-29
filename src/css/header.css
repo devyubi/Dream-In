@@ -1,0 +1,56 @@
+.header_top {
+  z-index: 9999;
+  height: 100%;
+  width: 100%;
+  padding: 10px 15%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.3s ease;
+  background-color: #fcf3fb;
+  color: #8672d0;
+}
+
+[data-theme="dark"] .header {
+  background-color: #1e1b27;
+  color: #fcf3fb;
+}
+
+.header_logo {
+  width: 40px;
+  object-fit: contain;
+}
+
+.header_rightMenu {
+  display: flex;
+  gap: 12px;
+}
+
+.header_button {
+  font-family: "tj400";
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  gap: 6px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  background-color: #fcf3fb;
+  color: #8672d0;
+  cursor: pointer;
+  font-size: 14px;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+[data-theme="dark"] .header_button {
+  background-color: #1e1b27;
+  color: #fcf3fb;
+}
+
+.header_icon {
+  height: 18px;
+  width: 18px;
+}
