@@ -14,7 +14,7 @@ function LoginPage() {
     if (error) {
       setErrorMsg(error.message);
     } else {
-      alert("로그인 성공!");
+      alert(`${email}님 환영합니다!`);
       console.log("로그인된 유저:", data);
       navigate("/welcome"); // ✅ 로그인 성공 시 환영 페이지로 이동
     }
