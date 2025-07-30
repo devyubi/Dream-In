@@ -1,71 +1,55 @@
-// src/contexts/AuthContext.jsx
-import { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect, // 추가
+} from "react";
 import { supabase } from "../api/supabaseClient";
-import PropTypes from "prop-types";
 
-const AuthContext = createContext(null);
+const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
+export function AuthProvider({ children }) {
+  // 로그인
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // 유저
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  // 다크모드
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
+  // 로그인
   useEffect(() => {
-    // 초기 세션 가져오기
-    const getSession = async () => {
-      try {
-        const {
-          data: { session },
-          error,
-        } = await supabase.auth.getSession();
+    const checkSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-        if (error) {
-          console.error("❌ getSession 에러:", error);
-        } else {
-          console.log("📡 getSession 결과:", session);
-          setUser(session?.user || null);
-        }
-      } catch (error) {
-        console.error("❌ getSession 예외:", error);
-      } finally {
-        setLoading(false); // ✅ 성공/실패 상관없이 로딩 해제
+      if (session) {
+        setIsLoggedIn(true);
+        // session.user는 name이 아니라 email, id 같은 걸 포함함다
+        setUser(session.user);
+      } else {
+        setIsLoggedIn(false);
+        setUser(null);
       }
     };
 
-    getSession();
-
-    // 인증 상태 변경 리스너 설정
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log("🔥 상태 변경 감지됨:", event, session);
-      setUser(session?.user || null);
-      setLoading(false); // ✅ 상태 변경 시마다 로딩 해제
-    });
-
-    // 클린업 함수
-    return () => {
-      subscription?.unsubscribe();
-      console.log("🧼 cleanup: 구독 해제됨");
-    };
+    checkSession();
   }, []);
 
-  console.log("📍 현재 상태: ", { user: user?.email, loading });
-
   return (
-    <AuthContext.Provider value={{ user, setUser, loading }}>
+    <AuthContext.Provider
+      value={{
+        isLoggedIn,
+        setIsLoggedIn,
+        user,
+        setUser,
+        isDarkMode,
+        setIsDarkMode,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
-AuthProvider.propTypes = {
-  children: PropTypes.node.isRequired,
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth는 AuthProvider 안에서만 사용해야 합니다.");
-  }
-  return context;
-};
+export const useAuthContext = () => useContext(AuthContext);

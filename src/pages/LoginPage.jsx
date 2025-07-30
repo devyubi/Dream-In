@@ -1,56 +1,49 @@
-// src/pages/LoginPage.jsx
-import { useState } from "react";
-import { login } from "../api/auth";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "../api/supabaseClient";
+import { useAuthContext } from "../contexts/AuthContext";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
-  const [pw, setPw] = useState("");
-  const [errorMsg, setErrorMsg] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const { setIsLoggedIn, setUser } = useAuthContext();
 
-  const handleLogin = async () => {
-    const { data, error } = await login(email, pw);
+  const handleLogin = async e => {
+    e.preventDefault();
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
     if (error) {
-      setErrorMsg(error.message);
-    } else {
-      alert(`${email}님 환영합니다!`);
-      console.log("로그인된 유저:", data);
-      navigate("/welcome"); // ✅ 로그인 성공 시 환영 페이지로 이동
+      alert("로그인 실패: " + error.message);
+      return;
     }
+
+    // 로그인 성공!
+    setIsLoggedIn(true);
+    setUser(data.user); // 또는 data.session.user
+    navigate("/"); // ✅ 로그인 성공 후 홈으로 이동!
   };
 
   return (
-    <div>
-      <h2>로그인</h2>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "8px",
-          maxWidth: "300px",
-        }}
-      >
-        <input
-          type="email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          placeholder="이메일"
-          required
-        />
-        <input
-          type="password"
-          value={pw}
-          onChange={e => setPw(e.target.value)}
-          placeholder="비밀번호"
-          required
-        />
-      </div>
-
-      <button onClick={handleLogin}>로그인</button>
-      <button onClick={() => navigate("/signup")}>회원가입</button>
-      {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
-    </div>
+    <form onSubmit={handleLogin}>
+      <input
+        type="email"
+        placeholder="이메일"
+        value={email}
+        onChange={e => setEmail(e.target.value)}
+      />
+      <input
+        type="password"
+        placeholder="비밀번호"
+        value={password}
+        onChange={e => setPassword(e.target.value)}
+      />
+      <button type="submit">로그인</button>
+    </form>
   );
 }
 

@@ -1,20 +1,66 @@
+/* 메인 페이지 */
 .mainpage {
   font-family: "tj400";
+  max-width: 300%;
+  max-height: 300%;
 }
 .mainpage_wrap {
-  padding: 10px 15%;
+  padding: 10px 20%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
-
+.mainpage_inner {
+  padding: 20px 5%;
+  background: rgba(252, 243, 251, 0.44);
+  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+}
 section {
   font-size: 14px;
   flex: 1;
 }
+.greeting h1 {
+  margin-bottom: 0px;
+}
+.greeting p {
+  margin-top: 5px;
+  margin-bottom: 20px;
+}
+/* 즐겨찾기 */
+.login_content {
+  position: relative;
+}
+/* 로그인 안 했을 때만 블러 처리 */
+.blurred {
+  pointer-events: none; /* 클릭 막기 */
+  user-select: none;
+  filter: blur(5px);
+  position: relative;
+  z-index: 1;
+  border-radius: 12px;
+}
+
+/* 흐림 위에 올라갈 오버레이 문구 */
+.blur_overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  color: #222;
+  font-size: 18px;
+  z-index: 999;
+  pointer-events: none;
+  border-radius: 20px;
+}
 .dream_list {
   display: flex;
-  gap: 29%;
+  gap: 8%;
   justify-content: flex-start;
   align-items: flex-start;
 }
@@ -23,16 +69,35 @@ section {
   flex-direction: column;
   margin-bottom: 10px;
   width: 500px;
-  height: 80px;
   flex-shrink: 0;
   border-radius: 20px;
   background: var(--color-primary-p-100, #fcf3fb);
 }
+
+.dream_item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0px 15px;
+}
+.dream_date {
+  padding-left: 10px;
+  font-size: 11px;
+}
+
+/* 유저 프로필 및 로그인창 - 로그인 완료한 화면 */
+.login_box {
+  padding-top: 30px;
+}
 .auth_box {
-  width: 300px;
+  display: flex;
   background: #f7f7f7;
-  padding: 35px;
-  border-radius: 16px;
+  padding: 30px;
+  border-radius: 20px;
+}
+.user_profile_img {
+  width: 80px;
+  height: 80px;
+  white-space: nowrap;
 }
 
 .dream_card_top {
@@ -46,62 +111,47 @@ section {
 }
 
 .dream_card_top img {
-  width: 28px;
-  height: 25px;
+  width: 20px;
+  height: 17px;
   flex-shrink: 0;
   aspect-ratio: 28.13/25;
 }
-.dream_card p {
-  /* padding: 0px 15px; */
-}
-.dream_item {
-  display: flex;
-  justify-content: space-between;
-  padding: 0px 15px 15px;
-}
-.dream_date {
-  padding-left: 10px;
-  font-size: 11px;
-}
 
-.dream_title {
-  display: flex;
-  justify-content: space-between;
-  font-weight: bold;
-  /* filter: blur(5px); */
-}
-
-.main_login {
-  position: relative;
-}
-
-.blurred {
-  filter: blur(2px);
-  pointer-events: none;
-  position: relative;
-}
-
-.blurred .overlay_text {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  color: red;
-  font-weight: bold;
-  background: rgba(255, 255, 255, 0.8);
-  padding: 4px 8px;
-  z-index: 2;
-}
-
-.total,
-.note_list {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+/* 유저 프로필 및 로그인창 - 로그인 안한 화면 */
+.main_msg {
   text-align: center;
+  font-size: 13px;
+}
+.login_btn {
+  border-radius: 15px;
+  background: var(
+    --background-dark-space,
+    linear-gradient(
+      180deg,
+      #1e1b27 0%,
+      #25254d 19.71%,
+      #33336e 40.87%,
+      #3a3a74 60.98%,
+      #493d78 80.96%,
+      #544783 100%
+    )
+  );
+  color: rgba(252, 243, 251, 1);
+  display: flex;
+  width: 100%;
+  padding: 10px;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
 }
 
-.note_list > div {
-  background: #f9f9f9;
-  padding: 12px;
-  border-radius: 8px;
+.sub_links {
+  padding-top: 20px;
+  white-space: nowrap;
 }
+
+.login_prompt span {
+  padding: 0px 5px;
+}
+
+/* 나의 통계 */
