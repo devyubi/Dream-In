@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { supabase } from "../api/supabaseClient";
-import { getCurrentUserProfile } from "../api/auth";
+import { getCurrentUserProfile, uploadProfileImage } from "../api/auth";
 
 const AuthContext = createContext({});
 
@@ -20,6 +20,31 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [authLoading, setAuthLoading] = useState(false);
 
+  // 프로필 로드 함수
+  const loadUserProfile = async authUser => {
+    try {
+      console.log("👤 사용자 프로필 로드 시작:", authUser?.email);
+
+      if (!authUser) {
+        setProfile(null);
+        return;
+      }
+
+      const profileData = await getCurrentUserProfile();
+
+      if (profileData) {
+        console.log("✅ 프로필 데이터 로드 성공:", profileData.nickname);
+        setProfile(profileData);
+      } else {
+        console.warn("⚠️ 프로필 데이터가 없습니다");
+        setProfile(null);
+      }
+    } catch (error) {
+      console.error("❌ 프로필 로드 실패:", error);
+      setProfile(null);
+    }
+  };
+
   // 초기 로드 시 사용자 세션 확인
   useEffect(() => {
     const getInitialSession = async () => {
@@ -33,7 +58,6 @@ export const AuthProvider = ({ children }) => {
 
         if (error) {
           console.error("❌ 세션 확인 오류:", error);
-          // 세션 오류 시 상태 초기화
           setUser(null);
           setProfile(null);
           return;
@@ -43,7 +67,7 @@ export const AuthProvider = ({ children }) => {
           hasSession: !!session,
           hasUser: !!session?.user,
           hasAccessToken: !!session?.access_token,
-          hasRefreshToken: !!session?.refresh_token,
+          userEmail: session?.user?.email,
           expiresAt: session?.expires_at
             ? new Date(session.expires_at * 1000).toLocaleString()
             : "N/A",
@@ -52,10 +76,7 @@ export const AuthProvider = ({ children }) => {
         if (session?.user && session?.access_token) {
           console.log("✅ 유효한 세션 발견:", session.user.email);
           setUser(session.user);
-
-          // 프로필 정보 로드
-          const profileData = await getCurrentUserProfile();
-          setProfile(profileData);
+          await loadUserProfile(session.user);
         } else {
           console.warn("⚠️ 유효하지 않은 세션 - 상태 초기화");
           setUser(null);
@@ -79,12 +100,6 @@ export const AuthProvider = ({ children }) => {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log("🔄 Auth 상태 변경:", event, session?.user?.email);
-      console.log("📊 세션 상세:", {
-        event,
-        hasUser: !!session?.user,
-        hasAccessToken: !!session?.access_token,
-        userId: session?.user?.id?.slice(0, 8) + "...",
-      });
 
       if (event === "SIGNED_OUT" || !session?.user || !session?.access_token) {
         console.log("🚪 로그아웃 또는 무효한 세션 - 상태 초기화");
@@ -93,21 +108,23 @@ export const AuthProvider = ({ children }) => {
       } else if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
         console.log("🔑 로그인 또는 토큰 갱신 - 프로필 로드");
         setUser(session.user);
-        // 프로필 정보 로드
-        const profileData = await getCurrentUserProfile();
-        setProfile(profileData);
+        await loadUserProfile(session.user);
       }
 
-      setLoading(false);
+      if (loading) {
+        setLoading(false);
+      }
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [loading]);
 
   // 로그인
   const signIn = async (email, password) => {
     setAuthLoading(true);
     try {
+      console.log("🔑 로그인 시도:", email);
+
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -115,15 +132,12 @@ export const AuthProvider = ({ children }) => {
 
       if (error) throw error;
 
-      console.log("로그인 성공:", data.user?.email);
+      console.log("✅ 로그인 성공:", data.user?.email);
 
-      // 프로필 정보 로드
-      const profileData = await getCurrentUserProfile();
-      setProfile(profileData);
-
+      // 상테는 onAuthStateChange에서 자동으로 설정됨
       return { success: true, data };
     } catch (error) {
-      console.error("로그인 실패:", error);
+      console.error("❌ 로그인 실패:", error);
       return { success: false, error: error.message };
     } finally {
       setAuthLoading(false);
@@ -147,22 +161,16 @@ export const AuthProvider = ({ children }) => {
         throw authError;
       }
 
+      if (!authData.user) {
+        throw new Error("회원가입 후 사용자 정보가 없습니다.");
+      }
+
       console.log("✅ Auth 회원가입 성공:", authData.user.id);
 
-      // 2. 잠시 대기 (세션 안정화)
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // 3. 현재 세션 확인
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      console.log("현재 세션 상태:", session?.user?.id || "no session");
-
-      // 4. 프로필 이미지 업로드 (있다면)
+      // 2. 프로필 이미지 업로드 (있다면)
       let profileImageUrl = null;
       if (userData.profileImage) {
         console.log("📸 프로필 이미지 업로드 시작...");
-        const { uploadProfileImage } = await import("../api/auth");
         const uploadResult = await uploadProfileImage(
           userData.profileImage,
           authData.user.id,
@@ -177,10 +185,10 @@ export const AuthProvider = ({ children }) => {
         }
       }
 
-      // 5. 프로필 정보 저장
+      // 3. 프로필 정보 저장
       console.log("👤 프로필 저장 시도...");
       const { data: profileData, error: profileError } = await supabase
-        .from("users")
+        .from("profiles")
         .insert({
           auth_user_id: authData.user.id,
           email: userData.email,
@@ -196,6 +204,17 @@ export const AuthProvider = ({ children }) => {
         console.error("❌ 프로필 저장 실패:", profileError);
         console.error("에러 코드:", profileError.code);
         console.error("에러 메시지:", profileError.message);
+
+        // RLS 정책 관련 에러 메시지 개선
+        if (
+          profileError.code === "42501" ||
+          profileError.message?.includes("row-level security")
+        ) {
+          throw new Error(
+            "프로필 생성 권한이 없습니다. RLS 정책을 확인해주세요.",
+          );
+        }
+
         throw profileError;
       }
 
@@ -205,19 +224,10 @@ export const AuthProvider = ({ children }) => {
         success: true,
         data: authData,
         profile: profileData,
-        message: "회원가입이 완료되었습니다.",
+        message: "회원가입이 완료되었습니다. 이메일을 확인해주세요.",
       };
     } catch (error) {
       console.error("❌ 회원가입 실패:", error);
-
-      // RLS 에러인지 확인
-      if (error.message?.includes("row-level security")) {
-        return {
-          success: false,
-          error: "RLS 정책 오류입니다. SQL 정책을 확인해주세요.",
-        };
-      }
-
       return { success: false, error: error.message };
     } finally {
       setAuthLoading(false);
@@ -240,12 +250,7 @@ export const AuthProvider = ({ children }) => {
 
       console.log("✅ Supabase 로그아웃 성공");
 
-      // 상태 강제 초기화
-      setUser(null);
-      setProfile(null);
-
-      console.log("✅ 로컬 상태 초기화 완료");
-
+      // 상태는 onAuthStateChange에서 자동으로 초기화됨
       return { success: true };
     } catch (error) {
       console.error("❌ 로그아웃 실패:", error);
@@ -289,8 +294,12 @@ export const AuthProvider = ({ children }) => {
   const updateProfile = async profileData => {
     setAuthLoading(true);
     try {
+      if (!user?.id) {
+        throw new Error("로그인된 사용자가 없습니다.");
+      }
+
       const { data, error } = await supabase
-        .from("users")
+        .from("profiles")
         .update({
           nickname: profileData.nickname,
           birthdate: profileData.birthdate,
@@ -304,11 +313,14 @@ export const AuthProvider = ({ children }) => {
 
       if (error) throw error;
 
-      console.log("프로필 업데이트 성공:", data);
-      setProfile(data);
+      console.log("✅ 프로필 업데이트 성공:", data);
+
+      // 프로필 다시 로드
+      await loadUserProfile(user);
+
       return { success: true, data };
     } catch (error) {
-      console.error("프로필 업데이트 실패:", error);
+      console.error("❌ 프로필 업데이트 실패:", error);
       return { success: false, error: error.message };
     } finally {
       setAuthLoading(false);
@@ -327,10 +339,17 @@ export const AuthProvider = ({ children }) => {
         message: "비밀번호 재설정 이메일을 발송했습니다.",
       };
     } catch (error) {
-      console.error("비밀번호 재설정 실패:", error);
+      console.error("❌ 비밀번호 재설정 실패:", error);
       return { success: false, error: error.message };
     } finally {
       setAuthLoading(false);
+    }
+  };
+
+  // 프로필 강제 새로고침 (디버깅용)
+  const refreshProfile = async () => {
+    if (user) {
+      await loadUserProfile(user);
     }
   };
 
@@ -352,6 +371,7 @@ export const AuthProvider = ({ children }) => {
     forceSignOut,
     updateProfile,
     resetPassword,
+    refreshProfile,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

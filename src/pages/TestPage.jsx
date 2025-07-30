@@ -10,9 +10,10 @@ const TestPage = () => {
     profile,
     signOut,
     forceSignOut,
-    loading, // ✅ 추가된 loading 변수
+    loading,
     authLoading,
     isAuthenticated,
+    refreshProfile, // 추가된 메서드
   } = useAuth();
 
   const navigate = useNavigate();
@@ -252,12 +253,14 @@ const TestPage = () => {
 
               {/* 프로필 정보 */}
               <div style={styles.infoSection}>
-                <h3>📝 프로필 정보 (public.users)</h3>
+                <h3>📝 프로필 정보 (profiles 테이블)</h3>
                 {profile ? (
                   <div style={styles.infoGrid}>
                     <div style={styles.infoItem}>
                       <strong>프로필 ID:</strong>
-                      <span>{profile.id?.slice(0, 8)}...</span>
+                      <span>
+                        {profile.profile_id?.toString().slice(0, 8)}...
+                      </span>
                     </div>
                     <div style={styles.infoItem}>
                       <strong>닉네임:</strong>
@@ -288,22 +291,29 @@ const TestPage = () => {
                     <div style={styles.infoItem}>
                       <strong>프로필 생성일:</strong>
                       <span>
-                        {profile.created_at
-                          ? new Date(profile.created_at).toLocaleString("ko-KR")
+                        {profile.profile_created_at
+                          ? new Date(profile.profile_created_at).toLocaleString(
+                              "ko-KR",
+                            )
                           : "N/A"}
                       </span>
                     </div>
                     <div style={styles.infoItem}>
                       <strong>마지막 수정일:</strong>
                       <span>
-                        {profile.updated_at
-                          ? new Date(profile.updated_at).toLocaleString("ko-KR")
+                        {profile.profile_updated_at
+                          ? new Date(profile.profile_updated_at).toLocaleString(
+                              "ko-KR",
+                            )
                           : "N/A"}
                       </span>
                     </div>
                   </div>
                 ) : (
-                  <p style={styles.noData}>프로필 정보가 없습니다.</p>
+                  <div style={styles.noData}>
+                    <p>프로필 정보가 없습니다.</p>
+                    <p>회원가입 시 프로필이 생성되지 않았을 수 있습니다.</p>
+                  </div>
                 )}
               </div>
 
@@ -351,7 +361,7 @@ const TestPage = () => {
                       <strong>가입 경과일:</strong>
                       <span>
                         {Math.floor(
-                          (new Date() - new Date(profile.created_at)) /
+                          (new Date() - new Date(profile.profile_created_at)) /
                             (1000 * 60 * 60 * 24),
                         )}
                         일
@@ -439,7 +449,7 @@ const TestPage = () => {
 
               <button
                 onClick={() =>
-                  console.log("=== PROFILE (public.users) ===", profile)
+                  console.log("=== PROFILE (profiles) ===", profile)
                 }
                 style={{ ...styles.button, ...styles.debugButton }}
               >
@@ -474,7 +484,7 @@ const TestPage = () => {
                     console.log("🔍 조회할 auth_user_id:", user.id);
 
                     const { data, error } = await supabase
-                      .from("users")
+                      .from("profiles")
                       .select("*")
                       .eq("auth_user_id", user.id);
 
@@ -483,7 +493,7 @@ const TestPage = () => {
 
                     if (data && data.length === 0) {
                       console.warn(
-                        "⚠️ users 테이블에 해당 사용자 데이터가 없습니다!",
+                        "⚠️ profiles 테이블에 해당 사용자 데이터가 없습니다!",
                       );
                     }
                   } catch (err) {
@@ -505,19 +515,20 @@ const TestPage = () => {
                     } = await supabase.auth.getUser();
                     console.log("현재 인증된 사용자:", currentUser?.id);
 
-                    // 2. auth.uid() 확인
+                    // 2. auth.uid() 확인을 위한 SQL 함수 호출
                     const { data: uidData, error: uidError } =
-                      await supabase.rpc("auth_uid");
-                    console.log("auth.uid() 결과:", uidData);
-                    console.log("auth.uid() 에러:", uidError);
+                      await supabase.rpc("get_current_user_id");
+                    console.log("현재 사용자 ID (RPC):", uidData);
+                    console.log("RPC 에러:", uidError);
 
-                    // 3. RLS 없이 조회 시도 (에러 확인용)
-                    const { data: allUsers, error: allError } = await supabase
-                      .from("users")
-                      .select("auth_user_id, nickname")
-                      .limit(5);
-                    console.log("전체 users 조회 (RLS 적용):", allUsers);
-                    console.log("전체 users 에러:", allError);
+                    // 3. 전체 profiles 조회 시도 (RLS 적용)
+                    const { data: allProfiles, error: allError } =
+                      await supabase
+                        .from("profiles")
+                        .select("auth_user_id, nickname")
+                        .limit(5);
+                    console.log("전체 profiles 조회 (RLS 적용):", allProfiles);
+                    console.log("전체 profiles 에러:", allError);
                   } catch (err) {
                     console.error("❌ RLS 테스트 실패:", err);
                   }
@@ -531,17 +542,8 @@ const TestPage = () => {
                 onClick={async () => {
                   console.log("=== 프로필 강제 재로드 ===");
                   try {
-                    const { getCurrentUserProfile } = await import(
-                      "../api/auth"
-                    );
-                    const profileData = await getCurrentUserProfile();
-                    console.log("강제 재로드 결과:", profileData);
-
-                    if (!profileData) {
-                      console.warn(
-                        "⚠️ getCurrentUserProfile이 null을 반환했습니다",
-                      );
-                    }
+                    await refreshProfile();
+                    console.log("✅ 프로필 재로드 완료");
                   } catch (err) {
                     console.error("❌ 프로필 재로드 실패:", err);
                   }
@@ -608,7 +610,7 @@ const TestPage = () => {
                     }
 
                     const { data, error } = await supabase
-                      .from("users")
+                      .from("profiles")
                       .insert({
                         auth_user_id: user.id,
                         email: user.email,
@@ -624,9 +626,8 @@ const TestPage = () => {
                       console.error("❌ 프로필 생성 실패:", error);
                     } else {
                       console.log("✅ 프로필 생성 성공:", data);
-                      alert(
-                        "프로필이 생성되었습니다! 페이지를 새로고침하세요.",
-                      );
+                      await refreshProfile(); // 프로필 새로고침
+                      alert("프로필이 생성되었습니다!");
                     }
                   } catch (err) {
                     console.error("❌ 프로필 생성 오류:", err);
@@ -641,8 +642,6 @@ const TestPage = () => {
 
           {/* 네비게이션 */}
           <div style={{ ...styles.section, marginBottom: "60px" }}>
-            {" "}
-            {/* 마지막 섹션에 더 큰 마진 */}
             <h2>🧭 페이지 이동</h2>
             <div style={styles.buttonGroup}>
               <button
@@ -684,18 +683,18 @@ const TestPage = () => {
 const styles = {
   container: {
     minHeight: "100vh",
-    height: "auto", // 콘텐츠에 맞춰 높이 자동 조정
+    height: "auto",
     backgroundColor: "#f5f5f5",
     fontFamily: "Arial, sans-serif",
-    position: "relative", // 위치 기준점 설정
+    position: "relative",
   },
   scrollWrapper: {
     padding: "20px",
-    paddingBottom: "120px", // 하단 여백 더욱 증가
+    paddingBottom: "120px",
     minHeight: "calc(100vh - 40px)",
     display: "flex",
     flexDirection: "column",
-    boxSizing: "border-box", // 박스 모델 명확화
+    boxSizing: "border-box",
   },
   card: {
     maxWidth: "1200px",
@@ -708,7 +707,7 @@ const styles = {
     flex: "1",
     display: "flex",
     flexDirection: "column",
-    position: "relative", // 위치 지정
+    position: "relative",
   },
   title: {
     textAlign: "center",
@@ -718,11 +717,11 @@ const styles = {
   },
   section: {
     marginBottom: "32px",
-    padding: "24px", // 패딩 증가
+    padding: "24px",
     backgroundColor: "#f9f9f9",
     borderRadius: "8px",
     border: "1px solid #e0e0e0",
-    minHeight: "auto", // 최소 높이 자동 조정
+    minHeight: "auto",
   },
   statusGrid: {
     display: "grid",
