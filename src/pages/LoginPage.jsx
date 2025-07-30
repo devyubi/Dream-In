@@ -9,7 +9,7 @@ function LoginPage() {
   const navigate = useNavigate();
   const { setIsLoggedIn, setUser } = useAuthContext();
 
-  const handleLogin = async (e) => {
+  const handleLogin = async e => {
     e.preventDefault();
 
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -34,13 +34,13 @@ function LoginPage() {
         type="email"
         placeholder="이메일"
         value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        onChange={e => setEmail(e.target.value)}
       />
       <input
         type="password"
         placeholder="비밀번호"
         value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        onChange={e => setPassword(e.target.value)}
       />
       <button type="submit">로그인</button>
     </form>
