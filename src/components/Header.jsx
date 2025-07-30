@@ -4,10 +4,11 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { supabase } from "../api/supabaseClient";
 import { useNavigate } from "react-router-dom";
+import { useThemeContext } from "../contexts/ThemeContext";
 
 function Header() {
-  const { isDarkMode, setIsDarkMode, isLoggedIn, setIsLoggedIn, setUser } =
-    useAuth();
+  const { isDarkMode, setIsDarkMode } = useThemeContext();
+  const { isLoggedIn, setUser } = useAuth();
 
   const navigate = useNavigate();
 
@@ -28,7 +29,6 @@ function Header() {
     if (isLoggedIn) {
       // 로그아웃
       await supabase.auth.signOut(); // 세션 종료
-      setIsLoggedIn(false); // 전역 로그인 상태는 false로 처리했습니다
       setUser(null); // 유저 정보 초기화함
     } else {
       // 이건 새로고침 없이 로그인 페이지로 이동함다
