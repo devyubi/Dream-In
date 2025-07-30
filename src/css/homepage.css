@@ -1,3 +1,4 @@
+/* 메인 페이지 */
 .mainpage {
   font-family: "tj400";
   max-width: 300%;
@@ -25,6 +26,7 @@ section {
   margin-top: 5px;
   margin-bottom: 30px;
 }
+/* 즐겨찾기 */
 .dream_list {
   display: flex;
   gap: 8%;
@@ -41,11 +43,28 @@ section {
   border-radius: 20px;
   background: var(--color-primary-p-100, #fcf3fb);
 }
+
+.dream_item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0px 15px 15px;
+}
+.dream_date {
+  padding-left: 10px;
+  font-size: 11px;
+}
+
+/* 유저 프로필 및 로그인창 - 로그인 완료한 화면 */
 .auth_box {
   width: 300px;
   background: #f7f7f7;
   padding: 27px;
   border-radius: 16px;
+}
+.user_profile_img {
+  width: 80px;
+  height: 80px;
+  white-space: nowrap;
 }
 
 .dream_card_top {
@@ -64,38 +83,24 @@ section {
   flex-shrink: 0;
   aspect-ratio: 28.13/25;
 }
+/* 유저 프로필 및 로그인창 - 로그인 안한 화면 */
 
-.dream_item {
-  display: flex;
-  justify-content: space-between;
-  padding: 0px 15px 15px;
-}
-.dream_date {
-  padding-left: 10px;
-  font-size: 11px;
+.login_prompt {
+  
 }
 
-/* .dream_title {
-  display: flex;
-  justify-content: space-between;
-  font-weight: bold;
-} */
-.user_profile_img {
-  width: 80px;
-  height: 80px;
-  white-space: nowrap;
-}
+/* 나의 통계 */
 .main_login {
   position: relative;
 }
 
-.blurred {
+/* .blurred {
   filter: blur(2px);
   pointer-events: none;
   position: relative;
-}
+} */
 
-.blurred .overlay_text {
+/* .blurred .overlay_text {
   position: absolute;
   top: 10px;
   left: 10px;
@@ -104,18 +109,17 @@ section {
   background: rgba(255, 255, 255, 0.8);
   padding: 4px 8px;
   z-index: 2;
-}
+} */
 
-.total,
-.note_list {
+/* .total {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
   text-align: center;
-}
+} */
 
-.note_list > div {
+/* .note_list > div {
   background: #f9f9f9;
   padding: 12px;
   border-radius: 8px;
-}
+} */

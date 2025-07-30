@@ -86,7 +86,7 @@ function HomePage() {
                 </div>
               ))}
             </div>
-            {/* 유저 프로필 및 로그인창 */}
+            {/* 유저 프로필 및 로그인창 - 로그인 완료한 화면*/}
             <div className="auth_box">
               {user ? (
                 <div className="user_info">
@@ -123,17 +123,24 @@ function HomePage() {
                   </div>
                 </div>
               ) : (
+                // 유저 프로필 및 로그인창 - 로그인 안한 화면
                 <div className="login_prompt">
                   <p className="main_msg">Dream-in을 편리하게 관리해보세요!</p>
                   <Link to="/login" className="login_btn">
                     Dream-in 로그인
                   </Link>
                   <div className="sub_links">
-                    <Link to="/find-id">아이디 찾기</Link>
+                    <Link to="/find-id" className="sub_link">
+                      아이디 찾기
+                    </Link>
                     <span>|</span>
-                    <Link to="/find-password">비밀번호 찾기</Link>
+                    <Link to="/find-password" className="sub_link">
+                      비밀번호 찾기
+                    </Link>
                     <span>|</span>
-                    <Link to="/signup">회원가입</Link>
+                    <Link to="/signup" className="sub_link">
+                      회원가입
+                    </Link>
                   </div>
                 </div>
               )}
