@@ -14,11 +14,10 @@ const Container = styled.div`
 `;
 
 function DreamDetailRecordPage() {
-  const handleBackClick = () => {};
   return (
     <Container>
       <Link to="/">
-        <BackButton onClick={handleBackClick}></BackButton>
+        <BackButton></BackButton>
       </Link>
       꿈 상세보기
     </Container>
