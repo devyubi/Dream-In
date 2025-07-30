@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useAuth, useAuthContext } from "../contexts/AuthContext";
+import { useAuth } from "../contexts/AuthContext";
 import "../css/homepage.css";
 import QuoteSwiper from "../components/QuoteSwiper";
 import { Link } from "react-router-dom";
@@ -22,7 +22,7 @@ const mockDreams = [
 ];
 
 function HomePage() {
-  const { isLoggedIn, user } = useAuthContext();
+  const { isLoggedIn, user } = useAuth();
   const [bookmarkedDreams, setBookmarkedDreams] = useState([]);
 
   useEffect(() => {

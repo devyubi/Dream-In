@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import "../css/header.css";
 import { Link } from "react-router-dom";
-import { useAuthContext } from "../contexts/AuthContext";
+import { useAuth } from "../contexts/AuthContext";
 import { supabase } from "../api/supabaseClient";
 import { useNavigate } from "react-router-dom";
 
 function Header() {
   const { isDarkMode, setIsDarkMode, isLoggedIn, setIsLoggedIn, setUser } =
-    useAuthContext();
+    useAuth();
 
   const navigate = useNavigate();
 
