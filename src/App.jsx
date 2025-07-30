@@ -7,6 +7,8 @@ import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import TestPage from "./pages/TestPage";
+import DreamDetailRecordPage from "./pages/DreamDetailRecordPage";
+
 function App() {
   return (
     <Router>
@@ -18,6 +20,10 @@ function App() {
           <Route path="/signup" element={<SignupPage />}></Route>
           <Route path="/profile" element={<h1>프로필</h1>}></Route>
           <Route path="/dreamwrite" element={<DreamWritePage />}></Route>
+          <Route
+            path="/dreamdetailrecord"
+            element={<DreamDetailRecordPage />}
+          ></Route>
           <Route path="/emotiondiary" element={<h1>감정일기</h1>}></Route>
           <Route path="/sleeprecord" element={<h1>수면기록</h1>}></Route>
           <Route path="/aidreamsresult" element={<h1>꿈 해몽</h1>}></Route>
