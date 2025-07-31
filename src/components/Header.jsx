@@ -13,14 +13,14 @@ function Header() {
   const navigate = useNavigate();
 
   // 다크모드 & 로그인 상태에 따라 이미지 경로 변경
-  const logoSrc = "/logo.png";
+  const logoSrc = "/images/logo.png";
   const authIconSrc = isDarkMode
     ? isLoggedIn
-      ? "/logout_dark.svg"
-      : "/login_dark.svg"
+      ? "/images/logout_dark.svg"
+      : "/images/login_dark.svg"
     : isLoggedIn
-      ? "/logout_light.svg"
-      : "/login_light.svg";
+      ? "/images/logout_light.svg"
+      : "/images/login_light.svg";
 
   const authText = isLoggedIn ? "로그아웃" : "로그인";
 
@@ -57,9 +57,9 @@ function Header() {
           onClick={() => setIsDarkMode(!isDarkMode)}
         >
           <img
-            src={isDarkMode ? "/lightmode.svg" : "/darkmode.svg"}
+            src={isDarkMode ? "/images/lightmode.svg" : "/images/darkmode.svg"}
             alt={isDarkMode ? "라이트모드" : "다크모드"}
-            className="header__icon"
+            className="header_icon"
           />
           {isDarkMode ? "라이트모드" : "다크모드"}
         </button>
@@ -68,7 +68,7 @@ function Header() {
           onClick={handleAuthClick}
           aria-label={authText}
         >
-          <img src={authIconSrc} alt={authText} className="header__icon" />
+          <img src={authIconSrc} alt={authText} className="header_icon" />
           {authText}
         </button>
       </div>

@@ -93,7 +93,11 @@ function HomePage() {
                       </span>
 
                       <img
-                        src={dream.isBookmarked ? "/fullstar.svg" : "/star.svg"}
+                        src={
+                          dream.isBookmarked
+                            ? "../../public/images/fullstar.svg"
+                            : "../../public/images/star.svg"
+                        }
                         alt="즐겨찾기"
                         onClick={() => toggleBookmark(dream.id)}
                       />
@@ -113,7 +117,9 @@ function HomePage() {
                     <Link to="/profile">
                       <img
                         className="user_profile_img"
-                        src={user.profile_img || "/unknown.svg"}
+                        src={
+                          user.profile_img || "../../public/images/unknown.svg"
+                        }
                         alt="유저 프로필"
                       />
                     </Link>
@@ -134,7 +140,7 @@ function HomePage() {
                         <Link to="/favorites">
                           <img
                             className="main_favorite"
-                            src="fullstar.svg"
+                            src="../../public/images/fullstar.svg"
                             alt="즐겨찾기"
                           />
                           즐겨찾기
@@ -169,7 +175,6 @@ function HomePage() {
               </div>
             </div>
           </section>
-
           {/* 나의 통계 */}
           <section className="main_section">
             <div className="my_state">
@@ -179,10 +184,18 @@ function HomePage() {
               ) : (
                 <div className="total">
                   {[
-                    ["/total_light.svg", 24, "총 꿈 기록"],
-                    ["/calendar_light.svg", 13, "이번 달 기록"],
-                    ["/clock_light.svg", 8, "평균 수면 시간"],
-                    ["/ai_light.svg", 4, "주간 꿈 해몽"],
+                    ["../../public/images/total_light.svg", 24, "총 꿈 기록"],
+                    [
+                      "../../public/images/calendar_light.svg",
+                      13,
+                      "이번 달 기록",
+                    ],
+                    [
+                      "../../public/images/clock_light.svg",
+                      8,
+                      "평균 수면 시간",
+                    ],
+                    ["../../public/images/ai_light.svg", 4, "주간 꿈 해몽"],
                   ].map(([icon, num, text], i) => (
                     <div key={i}>
                       <img src={icon} alt={text} />
@@ -204,19 +217,19 @@ function HomePage() {
                 <div className="record">
                   {[
                     [
-                      "/note_light.svg",
+                      "../../public/images/note_light.svg",
                       "꿈 기록하기",
                       "오늘 밤 꾼 꿈을 기록해보세요.",
                       "/write",
                     ],
                     [
-                      "/moon_light.svg",
+                      "../../public/images/moon_light.svg",
                       "감정 일기",
                       "오늘의 감정을 기록해 보세요.",
                       "/emotion",
                     ],
                     [
-                      "/smile_light.svg",
+                      "../../public/images/smile_light.svg",
                       "수면 기록",
                       "수면 패턴을 기록하고 관리해 보세요.",
                       "/sleep",
