@@ -258,6 +258,7 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setAuthLoading(false);
     }
+    window.location.href = "/";
   };
 
   // 강제 로그아웃 (디버깅용)
