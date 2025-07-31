@@ -1,9 +1,6 @@
 /* eslint-disable react/prop-types */
 /** @jsxImportSource @emotion/react */
 import styled from "@emotion/styled";
-// 1. 아이콘 import하기
-import backlighticon from "../../public/images/backlighticon.png";
-import backdarkicon from "../../public/images/backdarkicon.png";
 import { useThemeContext } from "../contexts/ThemeContext";
 
 // 2. styled.button으로 스타일링된 버튼 만들기
@@ -66,18 +63,18 @@ function BackButton({ onClick }) {
 
   // 기본 버튼
   let BackButton = BackLight;
-  let backIcon = backlighticon;
+  let iconSrc = "/images/backlighticon.png";
 
   // 다크모드 시 버튼 변경
   if (isDarkMode) {
     BackButton = BackDark;
-    backIcon = backdarkicon;
+    iconSrc = "/images/backdarkicon.png";
   }
 
   // 실제 반영
   return (
     <BackButton onClick={onClick}>
-      <img src={backIcon} alt="뒤로가기" />
+      <img src={iconSrc} alt="뒤로가기" />
     </BackButton>
   );
 }

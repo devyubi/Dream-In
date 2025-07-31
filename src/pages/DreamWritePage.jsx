@@ -1,14 +1,6 @@
 import styled from "@emotion/styled";
 import { Link } from "react-router-dom";
 import BackButton from "../components/BackButton";
-import shine from "../../public/images/shine_icon.png";
-import shy from "../../public/images/shy_icon.png";
-import happy from "../../public/images/happy_icon.png";
-import dreamy from "../../public/images/dreamy_icon.png";
-import weird from "../../public/images/weird_icon.png";
-import prenatal from "../../public/images/prenatal_dream_icon.png";
-import scared from "../../public/images/scared_icon.png";
-import etc from "../../public/images/etc_icon.png";
 import { useState } from "react";
 import Container from "../components/Container";
 
@@ -199,67 +191,59 @@ function DreamWritePage() {
         <DreamEmojiTitle>Dream-Emoji</DreamEmojiTitle>
         <DreamEmojiBox>
           <DreamEmojiList
-            key={shine}
             onClick={() => setSelectEmoji("shine")}
             isSelected={selectEmoji === "shine"}
           >
-            <img src={shine} alt="shine" />
+            <img src="/images/shine_icon.png" alt="shine" />
             빛나는
           </DreamEmojiList>
           <DreamEmojiList
-            key={happy}
             onClick={() => setSelectEmoji("happy")}
             isSelected={selectEmoji === "happy"}
           >
-            <img src={happy} alt="happy" />
+            <img src="/images/happy_icon.png" alt="happy" />
             행복한
           </DreamEmojiList>
           <DreamEmojiList
-            key={dreamy}
             onClick={() => setSelectEmoji("dreamy")}
             isSelected={selectEmoji === "dreamy"}
           >
-            <img src={dreamy} alt="dreamy" />
+            <img src="/images/dreamy_icon.png" alt="dreamy" />
             몽환적
           </DreamEmojiList>
           <DreamEmojiList
-            key={shy}
             onClick={() => setSelectEmoji("shy")}
             isSelected={selectEmoji === "shy"}
           >
-            <img src={shy} alt="shy" />
+            <img src="/images/shy_icon.png" alt="shy" />
             부끄러움
           </DreamEmojiList>
           <DreamEmojiList
-            key={weird}
             onClick={() => setSelectEmoji("weird")}
             isSelected={selectEmoji === "weird"}
           >
-            <img src={weird} alt="weird" />
+            <img src="/images/weird_icon.png" alt="weird" />
             신기한
           </DreamEmojiList>
           <DreamEmojiList
-            key={prenatal}
             onClick={() => setSelectEmoji("prenatal")}
             isSelected={selectEmoji === "prenatal"}
           >
-            <img src={prenatal} alt="prenatal" />
+            <img src="/images/prenatal_icon.png" alt="prenatal" />
             태몽
           </DreamEmojiList>
           <DreamEmojiList
-            key={scared}
             onClick={() => setSelectEmoji("scared")}
             isSelected={selectEmoji === "scared"}
           >
-            <img src={scared} alt="scared" />
+            <img src="/images/scared_icon.png" alt="scared" />
             무서운
           </DreamEmojiList>
           <DreamEmojiList
-            key={etc}
             onClick={() => setSelectEmoji("etc")}
             isSelected={selectEmoji === "etc"}
           >
-            <img src={etc} alt="etc" />
+            <img src="/images/etc_icon.png" alt="etc" />
             기타
           </DreamEmojiList>
         </DreamEmojiBox>
