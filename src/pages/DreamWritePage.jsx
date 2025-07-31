@@ -191,8 +191,9 @@ function DreamWritePage() {
           placeholder="어젯 밤 꿈의 제목을 작성해주세요."
           value={titleTextCount}
           onChange={e => setTitleTextCount(e.target.value)}
+          maxLength={50}
         ></DreamTitleText>
-        <DreamTitleTextNum>{titleTextCount.length}/100</DreamTitleTextNum>
+        <DreamTitleTextNum>{titleTextCount.length}/50</DreamTitleTextNum>
       </DreamTitleWrap>
       <DreamEmojiWrap>
         <DreamEmojiTitle>Dream-Emoji</DreamEmojiTitle>
@@ -269,8 +270,9 @@ function DreamWritePage() {
           placeholder="어젯 밤 꿈에서 무슨 일이 일어났나요? 생생하게 기록해 보세요! 장소, 감정, 감각, 색상 등 기억나는 모든 것을 기록 해보세요!"
           value={storyTextCount}
           onChange={e => setStoryTextCount(e.target.value)}
+          maxLength={1500}
         ></DreamStroyText>
-        <DreamStoryTextNum>{storyTextCount.length}/3000</DreamStoryTextNum>
+        <DreamStoryTextNum>{storyTextCount.length}/1500</DreamStoryTextNum>
       </DreamStoryWrap>
       <DreamPostWrap>
         <Link to="/dreamdetailrecord">

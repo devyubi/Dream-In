@@ -15,6 +15,10 @@ const BackLight = styled.button`
   margin-bottom: 15px;
   background-color: #fcf3fb;
   cursor: pointer;
+  img {
+    width: 20px;
+    height: 20px;
+  }
   &:hover {
     background-color: #fad4e8;
     box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.15);
@@ -23,7 +27,7 @@ const BackLight = styled.button`
 
 // 다크모드용 버튼
 const BackDark = styled.button`
-  padding: 5px 20px;
+  padding: 2px 17px;
   border: 1px solid #dbdbdb;
   border-radius: 24px;
   margin-bottom: 15px;
@@ -33,6 +37,10 @@ const BackDark = styled.button`
     rgba(211, 188, 232, 0.3),
     rgba(194, 193, 238, 0.3)
   );
+  img {
+    width: 27px;
+    height: 27px;
+  }
   cursor: pointer;
   &:hover {
     background: linear-gradient(
