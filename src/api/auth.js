@@ -84,6 +84,7 @@ export const uploadProfileImage = async (file, userId) => {
     const filePath = `profiles/${fileName}`;
 
     // Storage에 업로드
+    // eslint-disable-next-line no-unused-vars
     const { data, error } = await supabase.storage
       .from("profile-images")
       .upload(filePath, file, {
@@ -126,17 +127,8 @@ export const validateEmail = email => {
 // 비밀번호 유효성 검사
 export const validatePassword = password => {
   const errors = [];
-  if (password.length < 8) {
-    errors.push("비밀번호는 8자 이상이어야 합니다.");
-  }
-  if (!/[A-Z]/.test(password)) {
-    errors.push("대문자를 포함해야 합니다.");
-  }
-  if (!/[a-z]/.test(password)) {
-    errors.push("소문자를 포함해야 합니다.");
-  }
-  if (!/[0-9]/.test(password)) {
-    errors.push("숫자를 포함해야 합니다.");
+  if (password.length < 6) {
+    errors.push("비밀번호는 6자 이상이어야 합니다.");
   }
 
   return {

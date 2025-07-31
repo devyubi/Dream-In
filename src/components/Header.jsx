@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
-import "../css/header.css";
-import { Link } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../api/supabaseClient";
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 import { useThemeContext } from "../contexts/ThemeContext";
+import "../css/header.css";
 
 function Header() {
   const { isDarkMode, setIsDarkMode } = useThemeContext();
