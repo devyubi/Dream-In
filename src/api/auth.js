@@ -5,7 +5,7 @@ import { supabase } from "./supabaseClient";
 // ✅ 현재 로그인된 사용자의 프로필 정보 불러오기
 export const getCurrentUserProfile = async () => {
   try {
-    console.log("🔍 getCurrentUserProfile 시작...");
+    // console.log("getCurrentUserProfile 시작...");
 
     // 1. 현재 사용자 세션 확인
     const {
@@ -14,16 +14,16 @@ export const getCurrentUserProfile = async () => {
     } = await supabase.auth.getSession();
 
     if (sessionError) {
-      console.error("❌ 세션 조회 실패:", sessionError);
+      // console.log("세션 조회 실패:", sessionError);
       return null;
     }
 
     if (!session?.user) {
-      console.warn("⚠️ 세션 또는 사용자 정보 없음");
+      // console.log("세션 또는 사용자 정보 없음");
       return null;
     }
 
-    console.log("✅ 사용자 세션 확인:", session.user.email);
+    // console.log("사용자 세션 확인:", session.user.email);
 
     // 2. 프로필 정보 조회 (테이블명을 profiles로 통일)
     const { data: profile, error: profileError } = await supabase
@@ -33,18 +33,18 @@ export const getCurrentUserProfile = async () => {
       .maybeSingle(); // single() 대신 maybeSingle() 사용
 
     if (profileError) {
-      console.error("❌ 프로필 조회 실패:", profileError);
-      console.error("에러 코드:", profileError.code);
-      console.error("에러 메시지:", profileError.message);
+      // console.log("프로필 조회 실패:", profileError);
+      // console.log("에러 코드:", profileError.code);
+      // console.log("에러 메시지:", profileError.message);
       return null;
     }
 
     if (!profile) {
-      console.warn("⚠️ 프로필 데이터가 없습니다. 사용자 ID:", session.user.id);
+      // console.log("프로필 데이터가 없습니다. 사용자 ID:", session.user.id);
       return null;
     }
 
-    console.log("✅ 프로필 조회 성공:", profile.nickname);
+    // console.log("프로필 조회 성공:", profile.nickname);
 
     // 3. auth.users 정보와 profiles 정보 결합
     return {
@@ -68,7 +68,7 @@ export const getCurrentUserProfile = async () => {
       profile_updated_at: profile.updated_at,
     };
   } catch (error) {
-    console.error("❌ getCurrentUserProfile 예외 발생:", error);
+    // console.log("getCurrentUserProfile 예외 발생:", error);
     return null;
   }
 };
@@ -76,7 +76,7 @@ export const getCurrentUserProfile = async () => {
 // 프로필 이미지 업로드 함수
 export const uploadProfileImage = async (file, userId) => {
   try {
-    console.log("📸 프로필 이미지 업로드 시작...");
+    // console.log("프로필 이미지 업로드 시작...");
 
     // 파일 확장자 추출
     const fileExt = file.name.split(".").pop();
@@ -93,7 +93,7 @@ export const uploadProfileImage = async (file, userId) => {
       });
 
     if (error) {
-      console.error("❌ 이미지 업로드 실패:", error);
+      console.log("이미지 업로드 실패:", error);
       throw error;
     }
 
@@ -102,7 +102,7 @@ export const uploadProfileImage = async (file, userId) => {
       data: { publicUrl },
     } = supabase.storage.from("profile-images").getPublicUrl(filePath);
 
-    console.log("✅ 이미지 업로드 성공:", publicUrl);
+    // console.log("이미지 업로드 성공:", publicUrl);
 
     return {
       success: true,
@@ -110,7 +110,7 @@ export const uploadProfileImage = async (file, userId) => {
       path: filePath,
     };
   } catch (error) {
-    console.error("❌ uploadProfileImage 실패:", error);
+    console.log("uploadProfileImage 실패:", error);
     return {
       success: false,
       error: error.message,
@@ -165,7 +165,7 @@ export const checkNicknameDuplicate = async nickname => {
       .eq("nickname", nickname);
 
     if (error) {
-      console.error("❌ 닉네임 중복 확인 실패:", error);
+      // console.log("닉네임 중복 확인 실패:", error);
       return { isDuplicate: false, error: error.message };
     }
 
@@ -174,7 +174,7 @@ export const checkNicknameDuplicate = async nickname => {
       error: null,
     };
   } catch (error) {
-    console.error("❌ checkNicknameDuplicate 예외:", error);
+    // console.log("checkNicknameDuplicate 예외:", error);
     return { isDuplicate: false, error: error.message };
   }
 };
