@@ -2,8 +2,8 @@
 /** @jsxImportSource @emotion/react */
 import styled from "@emotion/styled";
 // 1. 아이콘 import하기
-import backlighticon from "../assets/images/backlighticon.png";
-import backdarkicon from "../assets/images/backdarkicon.png";
+import backlighticon from "../../public/images/backlighticon.png";
+import backdarkicon from "../../public/images/backdarkicon.png";
 import { useThemeContext } from "../contexts/ThemeContext";
 
 // 2. styled.button으로 스타일링된 버튼 만들기

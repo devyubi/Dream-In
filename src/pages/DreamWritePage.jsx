@@ -1,14 +1,14 @@
 import styled from "@emotion/styled";
 import { Link } from "react-router-dom";
 import BackButton from "../components/BackButton";
-import shine from "../assets/images/shine_icon.png";
-import shy from "../assets/images/shy_icon.png";
-import happy from "../assets/images/happy_icon.png";
-import dreamy from "../assets/images/dreamy_icon.png";
-import weird from "../assets/images/weird_icon.png";
-import prenatal from "../assets/images/prenatal_dream_icon.png";
-import scared from "../assets/images/scared_icon.png";
-import etc from "../assets/images/etc_icon.png";
+import shine from "../../public/images/shine_icon.png";
+import shy from "../../public/images/shy_icon.png";
+import happy from "../../public/images/happy_icon.png";
+import dreamy from "../../public/images/dreamy_icon.png";
+import weird from "../../public/images/weird_icon.png";
+import prenatal from "../../public/images/prenatal_dream_icon.png";
+import scared from "../../public/images/scared_icon.png";
+import etc from "../../public/images/etc_icon.png";
 import { useState } from "react";
 import Container from "../components/Container";
 
