@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
-import { AuthProvider } from "./contexts/AuthContext"; // ✅ AuthProvider 추가
+import { AuthProvider } from "./contexts/AuthContext";
 import "./index.css";
 import { ThemeProvider } from "./contexts/ThemeContext";
 
