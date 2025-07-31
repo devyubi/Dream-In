@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 
-
 const ThemeContext = createContext();
 
+// eslint-disable-next-line react/prop-types
 export function ThemeProvider({ children }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
