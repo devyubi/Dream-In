@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import Container from "../components/Container";
+import QuoteSwiper from "../components/QuoteSwiper";
 import { useAuth } from "../contexts/AuthContext";
 import "../css/homepage.css";
-import QuoteSwiper from "../components/QuoteSwiper";
-import { Link } from "react-router-dom";
 
 const mockDreams = [
   {
@@ -20,6 +21,19 @@ const mockDreams = [
     isBookmarked: true,
   },
 ];
+
+// [
+//   ["total", 24, "총 꿈 기록"],
+//   ["calendar", 13, "이번 달 기록"],
+//   ["clock", 8, "평균 수면 시간"],
+//   ["ai", 4, "주간 꿈 해몽"],
+// ].map(([name, value, label]) => (
+//   <div key={label}>
+//     <img src={`/${name}_${isDarkMode ? "dark" : "light"}.svg`} alt={label} />
+//     <span>{value}</span>
+//     <span>{label}</span>
+//   </div>
+// ));
 
 function HomePage() {
   const { isLoggedIn, user } = useAuth();
@@ -53,7 +67,7 @@ function HomePage() {
   };
 
   return (
-    <div className="mainpage">
+    <Container className="mainpage">
       <div className="mainpage_wrap">
         <div className="mainpage_inner">
           <section className="greeting">
@@ -66,7 +80,7 @@ function HomePage() {
           <section className="dream_list">
             <div className="main_login">
               <h2>즐겨찾기</h2>
-              <div className={`login_content ${!isLoggedIn ? "blurred" : ""}`}>
+              <div className={`login_content ${isLoggedIn ? "blurred" : ""}`}>
                 {!isLoggedIn && (
                   <div className="blur_overlay">로그인 시 이용 가능합니다</div>
                 )}
@@ -99,7 +113,7 @@ function HomePage() {
                     <Link to="/profile">
                       <img
                         className="user_profile_img"
-                        src={user.profile_img || "/unknown.png"}
+                        src={user.profile_img || "/unknown.svg"}
                         alt="유저 프로필"
                       />
                     </Link>
@@ -179,9 +193,10 @@ function HomePage() {
                 </div>
               )}
             </div>
-
+          </section>
+          <section className="main_record">
             {/* 기록하기 */}
-            <div className="main_record">
+            <div className="main_record_wrap">
               <h2>기록하기</h2>
               {!isLoggedIn ? (
                 <div className="overlay">로그인 시 이용 가능합니다</div>
@@ -224,7 +239,7 @@ function HomePage() {
           </section>
         </div>
       </div>
-    </div>
+    </Container>
   );
 }
 
