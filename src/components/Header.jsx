@@ -27,6 +27,7 @@ function Header() {
   const handleAuthClick = async () => {
     if (isLoggedIn) {
       // 로그아웃
+
       await supabase.auth.signOut(); // 세션 종료
       setUser(null); // 유저 정보 초기화함
     } else {
