@@ -1,8 +1,9 @@
 // src/contexts/AuthContext.jsx
-import React, { createContext, useContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { supabase } from "../api/supabaseClient";
+import { createContext, useContext, useEffect, useState } from "react";
+import { navigate } from "react-router-dom";
 import { getCurrentUserProfile, uploadProfileImage } from "../api/auth";
+import { supabase } from "../api/supabaseClient";
 
 const AuthContext = createContext({});
 
@@ -23,7 +24,7 @@ export const AuthProvider = ({ children }) => {
   // 프로필 로드 함수
   const loadUserProfile = async authUser => {
     try {
-      console.log("👤 사용자 프로필 로드 시작:", authUser?.email);
+      // console.log("사용자 프로필 로드 시작:", authUser?.email);
 
       if (!authUser) {
         setProfile(null);
@@ -33,14 +34,14 @@ export const AuthProvider = ({ children }) => {
       const profileData = await getCurrentUserProfile();
 
       if (profileData) {
-        console.log("✅ 프로필 데이터 로드 성공:", profileData.nickname);
+        // console.log("프로필 데이터 로드 성공:", profileData.nickname);
         setProfile(profileData);
       } else {
-        console.warn("⚠️ 프로필 데이터가 없습니다");
+        // console.log("프로필 데이터가 없습니다");
         setProfile(null);
       }
     } catch (error) {
-      console.error("❌ 프로필 로드 실패:", error);
+      // console.log("프로필 로드 실패:", error);
       setProfile(null);
     }
   };
@@ -49,7 +50,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const getInitialSession = async () => {
       try {
-        console.log("🔍 초기 세션 확인 시작...");
+        // console.log("초기 세션 확인 시작...");
 
         const {
           data: { session },
@@ -57,33 +58,33 @@ export const AuthProvider = ({ children }) => {
         } = await supabase.auth.getSession();
 
         if (error) {
-          console.error("❌ 세션 확인 오류:", error);
+          // console.log("세션 확인 오류:", error);
           setUser(null);
           setProfile(null);
           return;
         }
 
-        console.log("📊 세션 상태:", {
-          hasSession: !!session,
-          hasUser: !!session?.user,
-          hasAccessToken: !!session?.access_token,
-          userEmail: session?.user?.email,
-          expiresAt: session?.expires_at
-            ? new Date(session.expires_at * 1000).toLocaleString()
-            : "N/A",
-        });
+        // console.log("세션 상태:", {
+        //   hasSession: !!session,
+        //   hasUser: !!session?.user,
+        //   hasAccessToken: !!session?.access_token,
+        //   userEmail: session?.user?.email,
+        //   expiresAt: session?.expires_at
+        //     ? new Date(session.expires_at * 1000).toLocaleString()
+        //     : "N/A",
+        // });
 
         if (session?.user && session?.access_token) {
-          console.log("✅ 유효한 세션 발견:", session.user.email);
+          // console.log("유효한 세션 발견:", session.user.email);
           setUser(session.user);
           await loadUserProfile(session.user);
         } else {
-          console.warn("⚠️ 유효하지 않은 세션 - 상태 초기화");
+          // console.warn("⚠️ 유효하지 않은 세션 - 상태 초기화");
           setUser(null);
           setProfile(null);
         }
       } catch (error) {
-        console.error("❌ 초기 세션 로드 실패:", error);
+        // console.log("초기 세션 로드 실패:", error);
         setUser(null);
         setProfile(null);
       } finally {
@@ -99,14 +100,14 @@ export const AuthProvider = ({ children }) => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log("🔄 Auth 상태 변경:", event, session?.user?.email);
+      // console.log("Auth 상태 변경:", event, session?.user?.email);
 
       if (event === "SIGNED_OUT" || !session?.user || !session?.access_token) {
-        console.log("🚪 로그아웃 또는 무효한 세션 - 상태 초기화");
+        // console.log("로그아웃 또는 무효한 세션 - 상태 초기화");
         setUser(null);
         setProfile(null);
       } else if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
-        console.log("🔑 로그인 또는 토큰 갱신 - 프로필 로드");
+        // console.log("로그인 또는 토큰 갱신 - 프로필 로드");
         setUser(session.user);
         await loadUserProfile(session.user);
       }
@@ -123,7 +124,7 @@ export const AuthProvider = ({ children }) => {
   const signIn = async (email, password) => {
     setAuthLoading(true);
     try {
-      console.log("🔑 로그인 시도:", email);
+      // console.log("로그인 시도:", email);
 
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -132,12 +133,12 @@ export const AuthProvider = ({ children }) => {
 
       if (error) throw error;
 
-      console.log("✅ 로그인 성공:", data.user?.email);
+      // console.log("로그인 성공:", data.user?.email);
 
       // 상테는 onAuthStateChange에서 자동으로 설정됨
       return { success: true, data };
     } catch (error) {
-      console.error("❌ 로그인 실패:", error);
+      // console.log("로그인 실패:", error);
       return { success: false, error: error.message };
     } finally {
       setAuthLoading(false);
@@ -148,7 +149,7 @@ export const AuthProvider = ({ children }) => {
   const signUp = async userData => {
     setAuthLoading(true);
     try {
-      console.log("🎯 회원가입 시작:", userData.email);
+      // console.log("회원가입 시작:", userData.email);
 
       // 1. Supabase Auth 회원가입
       const { data: authData, error: authError } = await supabase.auth.signUp({
@@ -157,7 +158,7 @@ export const AuthProvider = ({ children }) => {
       });
 
       if (authError) {
-        console.error("❌ Auth 회원가입 실패:", authError);
+        // console.error("Auth 회원가입 실패:", authError);
         throw authError;
       }
 
@@ -165,12 +166,12 @@ export const AuthProvider = ({ children }) => {
         throw new Error("회원가입 후 사용자 정보가 없습니다.");
       }
 
-      console.log("✅ Auth 회원가입 성공:", authData.user.id);
+      // console.log("Auth 회원가입 성공:", authData.user.id);
 
       // 2. 프로필 이미지 업로드 (있다면)
       let profileImageUrl = null;
       if (userData.profileImage) {
-        console.log("📸 프로필 이미지 업로드 시작...");
+        // console.log("프로필 이미지 업로드 시작...");
         const uploadResult = await uploadProfileImage(
           userData.profileImage,
           authData.user.id,
@@ -178,15 +179,15 @@ export const AuthProvider = ({ children }) => {
 
         if (uploadResult.success) {
           profileImageUrl = uploadResult.url;
-          console.log("✅ 프로필 이미지 업로드 성공");
+          // console.log("프로필 이미지 업로드 성공");
         } else {
-          console.warn("⚠️ 프로필 이미지 업로드 실패:", uploadResult.error);
+          // console.log("프로필 이미지 업로드 실패:", uploadResult.error);
           // 이미지 업로드 실패해도 회원가입은 계속 진행
         }
       }
 
       // 3. 프로필 정보 저장
-      console.log("👤 프로필 저장 시도...");
+      // console.log("프로필 저장 시도...");
       const { data: profileData, error: profileError } = await supabase
         .from("profiles")
         .insert({
@@ -201,9 +202,9 @@ export const AuthProvider = ({ children }) => {
         .single();
 
       if (profileError) {
-        console.error("❌ 프로필 저장 실패:", profileError);
-        console.error("에러 코드:", profileError.code);
-        console.error("에러 메시지:", profileError.message);
+        // console.log("❌ 프로필 저장 실패:", profileError);
+        // console.log("에러 코드:", profileError.code);
+        // console.log("에러 메시지:", profileError.message);
 
         // RLS 정책 관련 에러 메시지 개선
         if (
@@ -218,7 +219,7 @@ export const AuthProvider = ({ children }) => {
         throw profileError;
       }
 
-      console.log("✅ 프로필 저장 성공:", profileData);
+      // console.log("✅ 프로필 저장 성공:", profileData);
 
       return {
         success: true,
@@ -227,7 +228,7 @@ export const AuthProvider = ({ children }) => {
         message: "회원가입이 완료되었습니다. 이메일을 확인해주세요.",
       };
     } catch (error) {
-      console.error("❌ 회원가입 실패:", error);
+      // console.error("❌ 회원가입 실패:", error);
       return { success: false, error: error.message };
     } finally {
       setAuthLoading(false);
@@ -238,32 +239,32 @@ export const AuthProvider = ({ children }) => {
   const signOut = async () => {
     setAuthLoading(true);
     try {
-      console.log("🚪 로그아웃 시작...");
-      console.log("현재 사용자:", user?.email);
+      // console.log("로그아웃 시작...");
+      // console.log("현재 사용자:", user?.email);
 
       const { error } = await supabase.auth.signOut();
 
       if (error) {
-        console.error("❌ Supabase 로그아웃 오류:", error);
+        // console.error("Supabase 로그아웃 오류:", error);
         throw error;
       }
 
-      console.log("✅ Supabase 로그아웃 성공");
+      // console.log("Supabase 로그아웃 성공");
 
       // 상태는 onAuthStateChange에서 자동으로 초기화됨
       return { success: true };
     } catch (error) {
-      console.error("❌ 로그아웃 실패:", error);
+      // console.log("로그아웃 실패:", error);
       return { success: false, error: error.message };
     } finally {
       setAuthLoading(false);
     }
-    window.location.href = "/";
+    navigate("/login");
   };
 
   // 강제 로그아웃 (디버깅용)
   const forceSignOut = async () => {
-    console.log("🔥 강제 로그아웃 시작...");
+    // console.log("강제 로그아웃 시작...");
 
     try {
       // 1. 로컬 스토리지 클리어
@@ -279,14 +280,14 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
       setAuthLoading(false);
 
-      console.log("✅ 강제 로그아웃 완료");
+      // console.log("강제 로그아웃 완료");
 
       // 4. 페이지 새로고침
-      window.location.href = "/login";
+      navigate("/login");
 
       return { success: true };
     } catch (error) {
-      console.error("❌ 강제 로그아웃 실패:", error);
+      // console.log("강제 로그아웃 실패:", error);
       return { success: false, error: error.message };
     }
   };
@@ -314,14 +315,14 @@ export const AuthProvider = ({ children }) => {
 
       if (error) throw error;
 
-      console.log("✅ 프로필 업데이트 성공:", data);
+      // console.log("프로필 업데이트 성공:", data);
 
       // 프로필 다시 로드
       await loadUserProfile(user);
 
       return { success: true, data };
     } catch (error) {
-      console.error("❌ 프로필 업데이트 실패:", error);
+      // console.log("프로필 업데이트 실패:", error);
       return { success: false, error: error.message };
     } finally {
       setAuthLoading(false);
@@ -340,7 +341,7 @@ export const AuthProvider = ({ children }) => {
         message: "비밀번호 재설정 이메일을 발송했습니다.",
       };
     } catch (error) {
-      console.error("❌ 비밀번호 재설정 실패:", error);
+      // console.log("비밀번호 재설정 실패:", error);
       return { success: false, error: error.message };
     } finally {
       setAuthLoading(false);
