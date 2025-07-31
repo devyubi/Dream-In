@@ -169,7 +169,6 @@ function HomePage() {
               </div>
             </div>
           </section>
-
           {/* 나의 통계 */}
           <section className="main_section">
             <div className="my_state">

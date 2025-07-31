@@ -58,7 +58,7 @@ function Header() {
           <img
             src={isDarkMode ? "/images/lightmode.svg" : "/images/darkmode.svg"}
             alt={isDarkMode ? "라이트모드" : "다크모드"}
-            className="header__icon"
+            className="header_icon"
           />
           {isDarkMode ? "라이트모드" : "다크모드"}
         </button>
@@ -67,7 +67,7 @@ function Header() {
           onClick={handleAuthClick}
           aria-label={authText}
         >
-          <img src={authIconSrc} alt={authText} className="header__icon" />
+          <img src={authIconSrc} alt={authText} className="header_icon" />
           {authText}
         </button>
       </div>
