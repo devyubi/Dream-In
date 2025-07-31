@@ -357,9 +357,12 @@ export const AuthProvider = ({ children }) => {
   const value = {
     // 상태
     user,
+    setUser, // 유비 - 얘 추가했어요
     profile,
     loading,
     authLoading,
+    // 유비 - 이거 없어서 헤더 로그인해도 로그아웃 버튼으로 안넘어간거에요 지우시면 안ㄷㅚㅂ니다~~ 주석은 확인 후 지우셔도 됨다
+    isLoggedIn: !!user,
 
     // 인증 상태 확인
     isAuthenticated: !!user,
@@ -381,3 +384,5 @@ export const AuthProvider = ({ children }) => {
 AuthProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };
+
+export default AuthContext;

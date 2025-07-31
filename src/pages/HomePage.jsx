@@ -66,7 +66,7 @@ function HomePage() {
           <section className="dream_list">
             <div className="main_login">
               <h2>즐겨찾기</h2>
-              <div className={`login_content ${isLoggedIn ? "blurred" : ""}`}>
+              <div className={`login_content ${!isLoggedIn ? "blurred" : ""}`}>
                 {!isLoggedIn && (
                   <div className="blur_overlay">로그인 시 이용 가능합니다</div>
                 )}

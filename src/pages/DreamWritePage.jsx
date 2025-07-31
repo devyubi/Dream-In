@@ -10,18 +10,9 @@ import prenatal from "../assets/images/prenatal_dream_icon.png";
 import scared from "../assets/images/scared_icon.png";
 import etc from "../assets/images/etc_icon.png";
 import { useState } from "react";
+import Container from "../components/Container";
 
 // 전역(window) 자리
-const Container = styled.div`
-  font-family: "tj400";
-  position: relative;
-  max-width: 1280px;
-  min-height: 100vh;
-  margin: auto;
-  margin: 0 20% 0 20%;
-  padding: 20px;
-  background-color: rgba(252, 243, 246, 0.43);
-`;
 const Top = styled.div`
   display: flex;
   justify-content: center;
