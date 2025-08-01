@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { supabase } from "../../api/supabaseClient";
 import { useAuth } from "../../contexts/AuthContext";
 import { useThemeContext } from "../../contexts/ThemeContext";
 import "../../css/header.css";
@@ -27,8 +26,9 @@ function Header() {
   const handleAuthClick = async () => {
     if (isLoggedIn) {
       // 로그아웃
-
-      await supabase.auth.signOut(); // 세션 종료
+      localStorage.clear();
+      sessionStorage.clear();
+      // await supabase.auth.signOut();
       setUser(null); // 유저 정보 초기화함
     } else {
       // 이건 새로고침 없이 로그인 페이지로 이동함다
