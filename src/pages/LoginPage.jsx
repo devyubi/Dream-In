@@ -1,8 +1,10 @@
+/* eslint-disable no-unused-vars */
 // src/pages/LoginPage.jsx
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import { validateEmail } from "../api/auth";
+import { validateEmail, signInWithKakao, signInWithGoogle } from "../api/auth";
+import "../css/loginpage.css";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -18,15 +20,14 @@ const LoginPage = () => {
   const [showResetModal, setShowResetModal] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
 
-  // 이미 로그인된 사용자는 홈으로 리다이렉트
   useEffect(() => {
     if (user) {
       navigate("/", { replace: true });
     }
   }, [user, navigate]);
 
-  // 입력값 변경 처리
   const handleChange = e => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -34,7 +35,6 @@ const LoginPage = () => {
       [name]: value,
     }));
 
-    // 실시간 유효성 검사
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -43,7 +43,6 @@ const LoginPage = () => {
     }
   };
 
-  // 폼 유효성 검사
   const validateForm = () => {
     const newErrors = {};
 
@@ -61,7 +60,6 @@ const LoginPage = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // 로그인 처리
   const handleSubmit = async e => {
     e.preventDefault();
     setMessage("");
@@ -76,7 +74,6 @@ const LoginPage = () => {
         navigate("/", { replace: true });
       }, 1000);
     } else {
-      // Supabase 에러 메시지를 사용자 친화적으로 변환
       let errorMessage = result.error;
 
       if (result.error.includes("Invalid login credentials")) {
@@ -93,7 +90,28 @@ const LoginPage = () => {
     }
   };
 
-  // 비밀번호 재설정 처리
+  const handleKakaoLogin = async () => {
+    try {
+      const result = await signInWithKakao();
+      if (!result.success) {
+        setErrors({ submit: "카카오 로그인에 실패했습니다." });
+      }
+    } catch (error) {
+      setErrors({ submit: "카카오 로그인 중 오류가 발생했습니다." });
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithGoogle();
+      if (!result.success) {
+        setErrors({ submit: "구글 로그인에 실패했습니다." });
+      }
+    } catch (error) {
+      setErrors({ submit: "구글 로그인 중 오류가 발생했습니다." });
+    }
+  };
+
   const handlePasswordReset = async e => {
     e.preventDefault();
 
@@ -119,7 +137,6 @@ const LoginPage = () => {
     }
   };
 
-  // Enter 키 처리
   const handleKeyPress = e => {
     if (e.key === "Enter") {
       handleSubmit(e);
@@ -127,107 +144,152 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="login-container">
-      <div className="login-wrapper">
-        {/* 로고/헤더 */}
-        <div className="login-header">
-          <h1 className="app-title">Dream-In</h1>
-          <p className="app-subtitle">꿈을 기록하고 나를 이해하는 여정</p>
+    <div className="login-page">
+      <div className="login-container">
+        <div className="logo-section">
+          <div className="logo-circle">
+            <img src="/logo.png" alt="Dream-in Logo" className="logo-image" />
+          </div>
+          <h1 className="app-title">Dream-in</h1>
         </div>
 
-        {/* 로그인 폼 */}
-        <form className="login-form" onSubmit={handleSubmit}>
-          <h2>로그인</h2>
-
-          {/* 성공/에러 메시지 */}
-          {message && <div className="message success">{message}</div>}
-
-          {errors.submit && (
-            <div className="message error">{errors.submit}</div>
-          )}
-
-          {/* 이메일 입력 */}
-          <div className="form-group">
-            <label htmlFor="email">이메일</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              onKeyPress={handleKeyPress}
-              placeholder="이메일을 입력하세요"
-              className={errors.email ? "error" : ""}
-              disabled={authLoading}
-            />
-            {errors.email && <span className="error-text">{errors.email}</span>}
-          </div>
-
-          {/* 비밀번호 입력 */}
-          <div className="form-group">
-            <label htmlFor="password">비밀번호</label>
-            <div className="password-input-wrapper">
-              <input
-                type={showPassword ? "text" : "password"}
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                onKeyPress={handleKeyPress}
-                placeholder="비밀번호를 입력하세요"
-                className={errors.password ? "error" : ""}
-                disabled={authLoading}
-              />
-              <button
-                type="button"
-                className="password-toggle"
-                onClick={() => setShowPassword(!showPassword)}
-                disabled={authLoading}
-              >
-                {showPassword ? "🙈" : "👁️"}
-              </button>
-            </div>
-            {errors.password && (
-              <span className="error-text">{errors.password}</span>
+        <div className="login-card">
+          <form onSubmit={handleSubmit}>
+            {message && <div className="message success">{message}</div>}
+            {errors.submit && (
+              <div className="message error">{errors.submit}</div>
             )}
-          </div>
 
-          {/* 로그인 버튼 */}
-          <button type="submit" className="login-button" disabled={authLoading}>
-            {authLoading ? "로그인 중..." : "로그인"}
-          </button>
+            <div className="form-group">
+              <label htmlFor="email">이메일</label>
+              <div className="input-wrapper">
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  onKeyPress={handleKeyPress}
+                  placeholder="Dream-in@dream.in"
+                  className={errors.email ? "error" : ""}
+                  disabled={authLoading}
+                />
+                <span className="input-icon">
+                  <img
+                    className="input-svg svg-email"
+                    src="/email_light.svg"
+                    alt="email"
+                  />
+                </span>
+              </div>
+              {errors.email && (
+                <span className="error-text">{errors.email}</span>
+              )}
+            </div>
 
-          {/* 링크들 */}
-          <div className="login-links">
+            <div className="form-group">
+              <label htmlFor="password">비밀번호</label>
+              <div className="input-wrapper">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  onKeyPress={handleKeyPress}
+                  placeholder="••••••••"
+                  className={errors.password ? "error" : ""}
+                  disabled={authLoading}
+                />
+                <button
+                  type="button"
+                  className="input-icon password-toggle"
+                  onClick={() => setShowPassword(!showPassword)}
+                  disabled={authLoading}
+                >
+                  <img
+                    className="input-svg showpass"
+                    src="/lock_light.svg"
+                    alt="lock_dark"
+                  />
+                </button>
+              </div>
+              {errors.password && (
+                <span className="error-text">{errors.password}</span>
+              )}
+            </div>
+
+            <div className="remember-me">
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={e => setRememberMe(e.target.checked)}
+                  disabled={authLoading}
+                />
+                <span className="checkbox-custom"></span>
+                자동 로그인
+              </label>
+            </div>
+
             <button
-              type="button"
-              className="link-button"
-              onClick={() => setShowResetModal(true)}
+              type="submit"
+              className="login-button"
               disabled={authLoading}
             >
-              비밀번호를 잊으셨나요?
+              {authLoading ? "로그인 중..." : "로그인"}
             </button>
 
-            <div className="signup-link">
-              아직 계정이 없으신가요?{" "}
-              <Link to="/signup" className="link">
-                회원가입
-              </Link>
+            <div className="login-links">
+              <button
+                type="button"
+                className="link-button"
+                onClick={() => setShowResetModal(true)}
+                disabled={authLoading}
+              >
+                아이디 찾기
+              </button>
+              <button
+                type="button"
+                className="link-button"
+                onClick={() => setShowResetModal(true)}
+                disabled={authLoading}
+              >
+                비밀번호 찾기
+              </button>
             </div>
-          </div>
-        </form>
+          </form>
+        </div>
 
-        {/* 소셜 로그인 (선택사항) */}
-        <div className="social-login">
-          <p>또는</p>
-          {/* 나중에 구글/카카오 로그인 추가 가능 */}
+        <div className="social-section">
           <div className="social-buttons">
-            {/* <button className="social-button google">구글로 로그인</button> */}
+            <button
+              className="social-button kakao"
+              onClick={handleKakaoLogin}
+              disabled={authLoading}
+            >
+              <span className="social-icon">💬</span>
+              카카오로 시작하기
+            </button>
+            <button
+              className="social-button google"
+              onClick={handleGoogleLogin}
+              disabled={authLoading}
+            >
+              <span className="social-icon">G</span>
+              구글로 시작하기
+            </button>
           </div>
+        </div>
+
+        <div className="signup-section">
+          <span>아직 계정이 없으신가요?</span>
+          <Link to="/signup" className="signup-link">
+            회원가입
+          </Link>
         </div>
       </div>
 
-      {/* 비밀번호 재설정 모달 */}
       {showResetModal && (
         <div className="modal-overlay" onClick={() => setShowResetModal(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
