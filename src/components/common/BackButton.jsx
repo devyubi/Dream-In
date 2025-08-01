@@ -1,7 +1,8 @@
 /* eslint-disable react/prop-types */
 /** @jsxImportSource @emotion/react */
 import styled from "@emotion/styled";
-import { useThemeContext } from "../contexts/ThemeContext";
+import { useThemeContext } from "../../contexts/ThemeContext";
+import { Link } from "react-router-dom";
 
 // 2. styled.button으로 스타일링된 버튼 만들기
 // 라이트모드용 버튼
@@ -54,7 +55,7 @@ const BackDark = styled.button`
 `;
 
 // 3. props로 onClick 받기
-function BackButton({ onClick }) {
+function BackButton({ to, onClick }) {
   // useThemeContext가 undefined를 반환할 경우를 대비
   const themeContext = useThemeContext() || { isDarkMode: false };
 
@@ -73,9 +74,11 @@ function BackButton({ onClick }) {
 
   // 실제 반영
   return (
-    <BackButton onClick={onClick}>
-      <img src={iconSrc} alt="뒤로가기" />
-    </BackButton>
+    <Link to={to}>
+      <BackButton onClick={onClick}>
+        <img src={iconSrc} alt="뒤로가기" />
+      </BackButton>
+    </Link>
   );
 }
 

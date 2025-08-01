@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Container from "../components/Container";
+import Container from "../components/common/Container";
 import QuoteSwiper from "../components/QuoteSwiper";
 import { useAuth } from "../contexts/AuthContext";
 import "../css/homepage.css";
@@ -93,7 +93,11 @@ function HomePage() {
                       </span>
 
                       <img
-                        src={dream.isBookmarked ? "/images/fullstar.svg" : "/images/star.svg"}
+                        src={
+                          dream.isBookmarked
+                            ? "/images/fullstar.svg"
+                            : "/images/star.svg"
+                        }
                         alt="즐겨찾기"
                         onClick={() => toggleBookmark(dream.id)}
                       />
