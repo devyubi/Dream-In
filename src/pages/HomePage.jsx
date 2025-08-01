@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Container from "../components/Container";
 import QuoteSwiper from "../components/QuoteSwiper";
 import { useAuth } from "../contexts/AuthContext";
-import "../../css/homepage.css";
+import "../css/homepage.css";
 import RecordSection from "../components/home/RecordSection";
 import StatsSection from "../components/home/StatsSection";
 
@@ -90,7 +90,7 @@ function HomePage() {
           <section className="dream_list">
             <div className="main_login">
               <h2>즐겨찾기</h2>
-              <div className={`login_content ${isLoggedIn ? "blurred" : ""}`}>
+              <div className={`login_content ${isLoggedIn ? "" : "blurred"}`}>
                 {!isLoggedIn && (
                   <div className="blur_overlay">로그인 시 이용 가능합니다</div>
                 )}
