@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Container from "../components/Container";
+import Container from "../components/common/Container";
 import QuoteSwiper from "../components/QuoteSwiper";
 import { useAuth } from "../contexts/AuthContext";
 import "../css/homepage.css";

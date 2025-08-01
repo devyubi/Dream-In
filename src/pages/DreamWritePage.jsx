@@ -1,8 +1,9 @@
 import styled from "@emotion/styled";
-import { Link } from "react-router-dom";
-import BackButton from "../components/BackButton";
 import { useState } from "react";
-import Container from "../components/Container";
+import BackButton from "../components/common/BackButton";
+import Container from "../components/common/Container";
+import PostButton from "../components/common/PostButton";
+import TextArea from "../components/common/TextArea";
 
 // 전역(window) 자리
 const Top = styled.div`
@@ -10,17 +11,18 @@ const Top = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  gap: 5px;
+  gap: 10px;
   border-top: 1px solid #000;
   padding-top: 20px;
 `;
 const Title = styled.h1`
   margin: 0;
-  color: #493d78;
+  color: #25254d;
 `;
 const SubTitle = styled.h2`
   margin: 0;
   color: #493d78;
+  font-size: 14px;
 `;
 const DreamTitleWrap = styled.div`
   position: relative;
@@ -28,9 +30,7 @@ const DreamTitleWrap = styled.div`
   padding-left: 25px;
   padding-right: 25px;
 `;
-const DreamTitle = styled.h2`
-  color: #493d78;
-`;
+const DreamTitle = styled.h2``;
 const DreamTitleText = styled.input`
   font-family: "tj400";
   border: 1px solid #c8c8c8;
@@ -51,7 +51,9 @@ const DreamTitleTextNum = styled.span`
   text-align: right;
   top: 125px;
   right: 50px;
-  color: #493d78;
+  /* 입력 글자수가 최대 글자수가 되면 글자수에 경고 표시 */
+  color: ${({ isMax }) => (isMax ? "red" : "#493d78")};
+  font-weight: ${({ isMax }) => (isMax ? "700" : "400")};
 `;
 const DreamEmojiWrap = styled.div`
   padding-top: 30px;
@@ -87,79 +89,6 @@ const DreamEmojiList = styled.li`
     margin-bottom: 10px;
   }
 `;
-const DreamStoryWrap = styled.div`
-  position: relative;
-  padding-top: 30px;
-  padding-left: 25px;
-  padding-right: 25px;
-`;
-const DreamStoryTitle = styled.h2``;
-const DreamStroyText = styled.textarea`
-  font-family: "tj400";
-  border: 1px solid #c8c8c8;
-  padding: 15px 10px;
-  border-radius: 16px;
-  background: linear-gradient(
-    to right,
-    rgba(230, 179, 247, 0.3),
-    rgba(211, 188, 232, 0.3),
-    rgba(194, 193, 238, 0.3)
-  );
-  width: 100%;
-  height: 200px;
-  resize: none;
-
-  /* Scrollbar styling (WebKit only: Chrome, Safari, Edge Chromium) */
-  &::-webkit-scrollbar {
-    width: 10px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: #b58edc; /* 스크롤바 색 */
-    border-radius: 8px;
-    border: 2px solid #f5e6ff; /* thumb 주변 테두리 (배경색과 맞추면 공간처럼 보임) */
-  }
-
-  &::-webkit-scrollbar-track {
-    background-color: #f5e6ff; /* 트랙 색상 */
-    border-radius: 16px;
-  }
-
-  /* Optional: Firefox */
-  scrollbar-width: thin;
-  scrollbar-color: #b58edc #f5e6ff;
-`;
-const DreamStoryTextNum = styled.span`
-  position: absolute;
-  top: 285px;
-  right: 50px;
-`;
-const DreamPostWrap = styled.div`
-  padding-top: 30px;
-  padding-left: 25px;
-  padding-right: 25px;
-`;
-const DreamPost = styled.button`
-  font-family: "tj400";
-  width: 100%;
-  height: 40px;
-  background: linear-gradient(
-    to right,
-    rgba(230, 179, 247, 0.3),
-    rgba(211, 188, 232, 0.3),
-    rgba(194, 193, 238, 0.3)
-  );
-  border: 1px solid #c8c8c8;
-  border-radius: 12px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  &&:hover {
-    background-color: #fad4e8;
-    box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.15);
-  }
-`;
 
 function DreamWritePage() {
   // 글자 입력 시 글자 카운트 함수
@@ -169,9 +98,7 @@ function DreamWritePage() {
   const [selectEmoji, setSelectEmoji] = useState(null);
   return (
     <Container>
-      <Link to="/">
-        <BackButton />
-      </Link>
+      <BackButton to="/" />
       <Top>
         <Title>꿈 이야기 기록하기</Title>
         <SubTitle>어젯밤 꾼 꿈을 아름다운 이야기로 남겨주세요.</SubTitle>
@@ -185,7 +112,9 @@ function DreamWritePage() {
           onChange={e => setTitleTextCount(e.target.value)}
           maxLength={50}
         ></DreamTitleText>
-        <DreamTitleTextNum>{titleTextCount.length}/50</DreamTitleTextNum>
+        <DreamTitleTextNum isMax={titleTextCount.length >= 50}>
+          {titleTextCount.length}/50
+        </DreamTitleTextNum>
       </DreamTitleWrap>
       <DreamEmojiWrap>
         <DreamEmojiTitle>Dream-Emoji</DreamEmojiTitle>
@@ -229,7 +158,7 @@ function DreamWritePage() {
             onClick={() => setSelectEmoji("prenatal")}
             isSelected={selectEmoji === "prenatal"}
           >
-            <img src="/images/prenatal_icon.png" alt="prenatal" />
+            <img src="/images/prenatal_dream_icon.png" alt="prenatal_dream" />
             태몽
           </DreamEmojiList>
           <DreamEmojiList
@@ -248,21 +177,12 @@ function DreamWritePage() {
           </DreamEmojiList>
         </DreamEmojiBox>
       </DreamEmojiWrap>
-      <DreamStoryWrap>
-        <DreamStoryTitle>꿈 이야기</DreamStoryTitle>
-        <DreamStroyText
-          placeholder="어젯 밤 꿈에서 무슨 일이 일어났나요? 생생하게 기록해 보세요! 장소, 감정, 감각, 색상 등 기억나는 모든 것을 기록 해보세요!"
-          value={storyTextCount}
-          onChange={e => setStoryTextCount(e.target.value)}
-          maxLength={1500}
-        ></DreamStroyText>
-        <DreamStoryTextNum>{storyTextCount.length}/1500</DreamStoryTextNum>
-      </DreamStoryWrap>
-      <DreamPostWrap>
-        <Link to="/dreamdetailrecord">
-          <DreamPost>꿈 이야기 게시하기</DreamPost>
-        </Link>
-      </DreamPostWrap>
+      <TextArea
+        value={storyTextCount}
+        onChange={e => setStoryTextCount(e.target.value)}
+        maxLength={1500}
+      />
+      <PostButton to="/dreamlist">꿈 이야기 게시하기</PostButton>
     </Container>
   );
 }

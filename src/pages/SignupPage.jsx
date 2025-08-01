@@ -9,12 +9,11 @@ import {
   validatePassword,
 } from "../api/auth";
 import { useAuth } from "../contexts/AuthContext";
+import "../css/signuppage.css";
 
 const SignupPage = () => {
   const navigate = useNavigate();
   const { signUp, user, authLoading } = useAuth();
-
-  const [currentStep, setCurrentStep] = useState(1); // 1: 기본정보, 2: 추가정보, 3: 완료
 
   const [formData, setFormData] = useState({
     email: "",
@@ -71,8 +70,8 @@ const SignupPage = () => {
     }
   };
 
-  // 1단계 유효성 검사 (기본정보)
-  const validateStep1 = () => {
+  // 전체 폼 유효성 검사
+  const validateForm = () => {
     const newErrors = {};
 
     // 이메일 검증
@@ -102,14 +101,6 @@ const SignupPage = () => {
     } else if (!nicknameChecked) {
       newErrors.nickname = "닉네임 중복확인을 해주세요.";
     }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  // 2단계 유효성 검사 (추가정보)
-  const validateStep2 = () => {
-    const newErrors = {};
 
     // 생년월일 검증 (선택사항)
     if (formData.birthdate) {
@@ -174,39 +165,30 @@ const SignupPage = () => {
     }
   };
 
-  // 다음 단계로
-  const handleNextStep = () => {
-    if (currentStep === 1 && validateStep1()) {
-      setCurrentStep(2);
-    } else if (currentStep === 2 && validateStep2()) {
-      handleSubmit();
-    }
-  };
-
-  // 이전 단계로
-  const handlePrevStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
-
   // 회원가입 처리
-  const handleSubmit = async () => {
+  const handleSubmit = async e => {
+    e.preventDefault();
     setMessage("");
 
-    // 프로필 이미지 업로드는 회원가입 후에 처리
+    if (!validateForm()) {
+      return;
+    }
+
     const result = await signUp({
       email: formData.email,
       password: formData.password,
       nickname: formData.nickname,
       birthdate: formData.birthdate || null,
       gender: formData.gender || null,
-      profileImage: formData.profileImage, // 파일 객체 전달
+      profileImage: formData.profileImage,
     });
 
     if (result.success) {
-      setCurrentStep(3);
       setMessage(result.message);
+      // 회원가입 성공 후 로그인 페이지로 이동
+      setTimeout(() => {
+        navigate("/login", { replace: true });
+      }, 2000);
     } else {
       // Supabase 에러 메시지를 사용자 친화적으로 변환
       let errorMessage = result.error;
@@ -221,7 +203,6 @@ const SignupPage = () => {
       }
 
       setErrors({ submit: errorMessage });
-      setCurrentStep(1);
     }
   };
 
@@ -229,315 +210,287 @@ const SignupPage = () => {
   const handleKeyPress = e => {
     if (e.key === "Enter") {
       e.preventDefault();
-      if (currentStep === 1) {
-        handleNextStep();
-      } else if (currentStep === 2) {
-        handleSubmit();
-      }
+      handleSubmit(e);
     }
   };
 
-  // 프로그레스 바
-  const renderProgressBar = () => (
-    <div className="progress-container">
-      <div className="progress-bar">
-        <div
-          className="progress-fill"
-          style={{ width: `${(currentStep / 3) * 100}%` }}
-        />
-      </div>
-      <div className="step-labels">
-        <span className={currentStep >= 1 ? "active" : ""}>기본정보</span>
-        <span className={currentStep >= 2 ? "active" : ""}>추가정보</span>
-        <span className={currentStep >= 3 ? "active" : ""}>완료</span>
-      </div>
-    </div>
-  );
-
-  // 1단계: 기본정보 입력
-  const renderStep1 = () => (
-    <div className="step-content">
-      <h2>기본정보 입력</h2>
-      <p>Dream-In에 오신 것을 환영합니다!</p>
-
-      {/* 이메일 */}
-      <div className="form-group">
-        <label htmlFor="email">이메일 *</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          onKeyPress={handleKeyPress}
-          placeholder="이메일을 입력하세요"
-          className={errors.email ? "error" : ""}
-          disabled={authLoading}
-        />
-        {errors.email && <span className="error-text">{errors.email}</span>}
-      </div>
-
-      {/* 비밀번호 */}
-      <div className="form-group">
-        <label htmlFor="password">비밀번호 *</label>
-        <div className="password-input-wrapper">
-          <input
-            type={showPassword ? "text" : "password"}
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            onKeyPress={handleKeyPress}
-            placeholder="8자 이상, 대/소문자, 숫자 포함"
-            className={errors.password ? "error" : ""}
-            disabled={authLoading}
-          />
-          <button
-            type="button"
-            className="password-toggle"
-            onClick={() => setShowPassword(!showPassword)}
-            disabled={authLoading}
-          >
-            {showPassword ? "🙈" : "👁️"}
-          </button>
-        </div>
-        {errors.password && (
-          <span className="error-text">{errors.password}</span>
-        )}
-      </div>
-
-      {/* 비밀번호 확인 */}
-      <div className="form-group">
-        <label htmlFor="confirmPassword">비밀번호 확인 *</label>
-        <div className="password-input-wrapper">
-          <input
-            type={showConfirmPassword ? "text" : "password"}
-            id="confirmPassword"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            onKeyPress={handleKeyPress}
-            placeholder="비밀번호를 다시 입력하세요"
-            className={errors.confirmPassword ? "error" : ""}
-            disabled={authLoading}
-          />
-          <button
-            type="button"
-            className="password-toggle"
-            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            disabled={authLoading}
-          >
-            {showConfirmPassword ? "🙈" : "👁️"}
-          </button>
-        </div>
-        {errors.confirmPassword && (
-          <span className="error-text">{errors.confirmPassword}</span>
-        )}
-      </div>
-
-      {/* 닉네임 */}
-      <div className="form-group">
-        <label htmlFor="nickname">닉네임 *</label>
-        <div className="nickname-input-wrapper">
-          <input
-            type="text"
-            id="nickname"
-            name="nickname"
-            value={formData.nickname}
-            onChange={handleChange}
-            onKeyPress={handleKeyPress}
-            placeholder="2-20자, 한글/영문/숫자/_/- 가능"
-            className={
-              errors.nickname ? "error" : nicknameChecked ? "success" : ""
-            }
-            disabled={authLoading}
-          />
-          <button
-            type="button"
-            className="check-button"
-            onClick={handleNicknameCheck}
-            disabled={authLoading || !formData.nickname}
-          >
-            중복확인
-          </button>
-        </div>
-        {errors.nickname && (
-          <span className="error-text">{errors.nickname}</span>
-        )}
-        {nicknameChecked && (
-          <span className="success-text">✓ 사용 가능한 닉네임입니다</span>
-        )}
-      </div>
-    </div>
-  );
-
-  // 2단계: 추가정보 입력
-  const renderStep2 = () => (
-    <div className="step-content">
-      <h2>추가정보 입력</h2>
-      <p>더 나은 서비스를 위해 추가 정보를 입력해주세요. (선택사항)</p>
-
-      {/* 생년월일 */}
-      <div className="form-group">
-        <label htmlFor="birthdate">생년월일</label>
-        <input
-          type="date"
-          id="birthdate"
-          name="birthdate"
-          value={formData.birthdate}
-          onChange={handleChange}
-          className={errors.birthdate ? "error" : ""}
-          disabled={authLoading}
-        />
-        {errors.birthdate && (
-          <span className="error-text">{errors.birthdate}</span>
-        )}
-      </div>
-
-      {/* 성별 */}
-      <div className="form-group">
-        <label htmlFor="gender">성별</label>
-        <select
-          id="gender"
-          name="gender"
-          value={formData.gender}
-          onChange={handleChange}
+  return (
+    <div className="signup-page">
+      {/* 네비게이션 */}
+      <nav className="signup-nav">
+        <button
+          className="nav-icon"
+          onClick={() => navigate(-1)}
           disabled={authLoading}
         >
-          <option value="">선택안함</option>
-          <option value="male">남성</option>
-          <option value="female">여성</option>
-          <option value="other">기타</option>
-        </select>
-      </div>
-
-      {/* 프로필 이미지 */}
-      <div className="form-group">
-        <label htmlFor="profileImage">프로필 이미지</label>
-        <div className="profile-image-wrapper">
-          {profileImagePreview && (
-            <div className="image-preview">
-              <img
-                src={profileImagePreview}
-                alt="프로필 미리보기"
-                style={{ width: "50px", height: "50px" }}
-              />
-              <button
-                type="button"
-                className="remove-image"
-                onClick={() => {
-                  setFormData(prev => ({ ...prev, profileImage: null }));
-                  setProfileImagePreview(null);
-                }}
-              >
-                ✕
-              </button>
-            </div>
-          )}
-          <input
-            type="file"
-            id="profileImage"
-            name="profileImage"
-            onChange={handleChange}
-            accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
-            className={errors.profileImage ? "error" : ""}
-            disabled={authLoading}
-          />
-          <small>JPG, PNG, WebP, GIF 파일만 가능 (최대 5MB)</small>
-        </div>
-        {errors.profileImage && (
-          <span className="error-text">{errors.profileImage}</span>
-        )}
-      </div>
-    </div>
-  );
-
-  // 3단계: 완료
-  const renderStep3 = () => (
-    <div className="step-content completion">
-      <div className="completion-icon">🎉</div>
-      <h2>회원가입 완료!</h2>
-      <p>Dream-In에 가입해주셔서 감사합니다.</p>
-      <p className="email-notice">
-        가입하신 이메일(<strong>{formData.email}</strong>)로 인증 메일을
-        발송했습니다.
-        <br />
-        이메일 인증 후 로그인해주세요.
-      </p>
-
-      <div className="completion-buttons">
-        <button className="login-button" onClick={() => navigate("/login")}>
-          로그인 페이지로
+          ←
         </button>
-      </div>
-    </div>
-  );
+        <div></div>
+      </nav>
 
-  return (
-    <div className="signup-container">
-      <div className="signup-wrapper">
-        {/* 로고/헤더 */}
-        <div className="signup-header">
+      {/* 메인 컨테이너 */}
+      <div className="signup-container">
+        {/* 로고 섹션 */}
+        <div className="logo-section">
+          <div className="logo-circle">
+            <div className="logo-placeholder">
+              <img src="/logo.png" alt="Dream-in Logo" className="logo-image" />
+            </div>
+          </div>
           <h1 className="app-title">Dream-In</h1>
           <p className="app-subtitle">꿈을 기록하고 나를 이해하는 여정</p>
         </div>
 
-        {/* 프로그레스 바 */}
-        {renderProgressBar()}
-
-        {/* 폼 */}
-        <form className="signup-form" onSubmit={e => e.preventDefault()}>
+        {/* 회원가입 카드 */}
+        <div className="signup-card">
           {/* 메시지 */}
           {message && <div className="message success">{message}</div>}
-
           {errors.submit && (
             <div className="message error">{errors.submit}</div>
           )}
 
-          {/* 단계별 콘텐츠 */}
-          {currentStep === 1 && renderStep1()}
-          {currentStep === 2 && renderStep2()}
-          {currentStep === 3 && renderStep3()}
+          <form className="signup-form" onSubmit={handleSubmit}>
+            {/* 이메일 */}
+            <div className="form-group">
+              <label htmlFor="email">이메일 *</label>
+              <div className="input-wrapper">
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  onKeyPress={handleKeyPress}
+                  placeholder="이메일을 입력하세요"
+                  className={errors.email ? "error" : ""}
+                  disabled={authLoading}
+                />
+                <span className="input-icon">
+                  <img
+                    className="input-svg"
+                    src="/email_light.svg"
+                    alt="email"
+                  />
+                </span>
+              </div>
+              {errors.email && (
+                <span className="error-text">{errors.email}</span>
+              )}
+            </div>
 
-          {/* 버튼들 */}
-          {currentStep < 3 && (
-            <div className="form-buttons">
-              {currentStep > 1 && (
+            {/* 비밀번호 */}
+            <div className="form-group">
+              <label htmlFor="password">비밀번호 *</label>
+              <div className="input-wrapper">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  onKeyPress={handleKeyPress}
+                  placeholder="8자 이상, 대/소문자, 숫자 포함"
+                  className={errors.password ? "error" : ""}
+                  disabled={authLoading}
+                />
                 <button
                   type="button"
-                  className="prev-button"
-                  onClick={handlePrevStep}
+                  className="input-icon"
+                  onClick={() => setShowPassword(!showPassword)}
                   disabled={authLoading}
                 >
-                  이전
+                  <img
+                    className="input-svg showpass"
+                    src="/lock_light.svg"
+                    alt="lock_dark"
+                  />
                 </button>
+              </div>
+              {errors.password && (
+                <span className="error-text">{errors.password}</span>
               )}
-
-              <button
-                type="button"
-                className="next-button"
-                onClick={handleNextStep}
-                disabled={authLoading}
-              >
-                {authLoading
-                  ? "처리 중..."
-                  : currentStep === 2
-                    ? "회원가입"
-                    : "다음"}
-              </button>
             </div>
-          )}
 
-          {/* 로그인 링크 */}
-          {currentStep < 3 && (
-            <div className="login-link">
-              이미 계정이 있으신가요?{" "}
-              <Link to="/login" className="link">
-                로그인
-              </Link>
+            {/* 비밀번호 확인 */}
+            <div className="form-group">
+              <label htmlFor="confirmPassword">비밀번호 확인 *</label>
+              <div className="input-wrapper">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  onKeyPress={handleKeyPress}
+                  placeholder="비밀번호를 다시 입력하세요"
+                  className={errors.confirmPassword ? "error" : ""}
+                  disabled={authLoading}
+                />
+                <button
+                  type="button"
+                  className="input-icon password-toggle"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  disabled={authLoading}
+                >
+                  <img
+                    className="input-svg showpass"
+                    src="/lock_light.svg"
+                    alt="lock_dark"
+                  />
+                </button>
+              </div>
+              {errors.confirmPassword && (
+                <span className="error-text">{errors.confirmPassword}</span>
+              )}
             </div>
-          )}
-        </form>
+
+            {/* 닉네임 */}
+            <div className="form-group">
+              <label htmlFor="nickname">닉네임 *</label>
+              <div className="nickname-input-wrapper">
+                <input
+                  type="text"
+                  id="nickname"
+                  name="nickname"
+                  value={formData.nickname}
+                  onChange={handleChange}
+                  onKeyPress={handleKeyPress}
+                  placeholder="2-20자, 한글/영문/숫자/_/- 가능"
+                  className={
+                    errors.nickname ? "error" : nicknameChecked ? "success" : ""
+                  }
+                  disabled={authLoading}
+                />
+                <button
+                  type="button"
+                  className="check-button"
+                  onClick={handleNicknameCheck}
+                  disabled={authLoading || !formData.nickname}
+                >
+                  중복확인
+                </button>
+              </div>
+              {errors.nickname && (
+                <span className="error-text">{errors.nickname}</span>
+              )}
+              {nicknameChecked && (
+                <span className="success-text">✓ 사용 가능한 닉네임입니다</span>
+              )}
+            </div>
+
+            {/* 생년월일 */}
+            <div className="form-group">
+              <label htmlFor="birthdate">생년월일 (선택사항)</label>
+              <div className="input-wrapper">
+                <input
+                  type="date"
+                  id="birthdate"
+                  name="birthdate"
+                  value={formData.birthdate}
+                  onChange={handleChange}
+                  className={errors.birthdate ? "error" : ""}
+                  disabled={authLoading}
+                />
+                <span className="input-icon"></span>
+              </div>
+              {errors.birthdate && (
+                <span className="error-text">{errors.birthdate}</span>
+              )}
+            </div>
+
+            {/* 성별 */}
+            <div className="form-group">
+              <label htmlFor="gender">성별 (선택사항)</label>
+              <div className="input-wrapper">
+                <select
+                  id="gender"
+                  name="gender"
+                  value={formData.gender}
+                  onChange={handleChange}
+                  disabled={authLoading}
+                >
+                  <option value="">선택안함</option>
+                  <option value="male">남성</option>
+                  <option value="female">여성</option>
+                  <option value="other">기타</option>
+                </select>
+                <span className="input-icon">
+                  <svg
+                    className="input-svg"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
+                  </svg>
+                </span>
+              </div>
+            </div>
+
+            {/* 프로필 이미지 */}
+            <div className="form-group">
+              <label htmlFor="profileImage">프로필 이미지 (선택사항)</label>
+              <div className="profile-image-wrapper">
+                {profileImagePreview && (
+                  <div className="image-preview">
+                    <img
+                      src={profileImagePreview}
+                      alt="프로필 미리보기"
+                      className="preview-image"
+                    />
+                    <button
+                      type="button"
+                      className="remove-image"
+                      onClick={() => {
+                        setFormData(prev => ({ ...prev, profileImage: null }));
+                        setProfileImagePreview(null);
+                      }}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                )}
+                <input
+                  type="file"
+                  id="profileImage"
+                  name="profileImage"
+                  onChange={handleChange}
+                  accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+                  className={errors.profileImage ? "error" : ""}
+                  disabled={authLoading}
+                />
+                <small className="file-info">
+                  JPG, PNG, WebP, GIF 파일만 가능 (최대 5MB)
+                </small>
+              </div>
+              {errors.profileImage && (
+                <span className="error-text">{errors.profileImage}</span>
+              )}
+            </div>
+
+            {/* 회원가입 버튼 */}
+            <button
+              type="submit"
+              className="signup-button"
+              disabled={authLoading}
+            >
+              {authLoading ? "처리 중..." : "회원가입"}
+            </button>
+          </form>
+        </div>
+
+        {/* 로그인 링크 */}
+        <div className="login-section">
+          이미 계정이 있으신가요?
+          <Link to="/login" className="login-link">
+            로그인
+          </Link>
+        </div>
       </div>
     </div>
   );
