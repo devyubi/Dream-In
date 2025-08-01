@@ -1,8 +1,8 @@
+/* eslint-disable no-unused-vars */
 // src/api/auth.js
 
 import { supabase } from "./supabaseClient";
 
-// ✅ 현재 로그인된 사용자의 프로필 정보 불러오기
 export const getCurrentUserProfile = async () => {
   try {
     // console.log("getCurrentUserProfile 시작...");
@@ -84,7 +84,6 @@ export const uploadProfileImage = async (file, userId) => {
     const filePath = `profiles/${fileName}`;
 
     // Storage에 업로드
-    // eslint-disable-next-line no-unused-vars
     const { data, error } = await supabase.storage
       .from("profile-images")
       .upload(filePath, file, {
@@ -176,5 +175,62 @@ export const checkNicknameDuplicate = async nickname => {
   } catch (error) {
     // console.log("checkNicknameDuplicate 예외:", error);
     return { isDuplicate: false, error: error.message };
+  }
+};
+// 카카오 로그인 추가
+export const signInWithKakao = async () => {
+  try {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "kakao",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+
+    if (error) {
+      console.error("카카오 로그인 에러:", error.message);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, data };
+  } catch (error) {
+    console.error("카카오 로그인 예외:", error);
+    return { success: false, error: error.message };
+  }
+};
+
+// 로그아웃 (기존 함수 수정)
+export const signOut = async () => {
+  try {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error("로그아웃 에러:", error.message);
+      return { success: false, error: error.message };
+    }
+    return { success: true };
+  } catch (error) {
+    console.error("로그아웃 예외:", error);
+    return { success: false, error: error.message };
+  }
+};
+// 구글 로그인 추가
+export const signInWithGoogle = async () => {
+  try {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+
+    if (error) {
+      console.error("구글 로그인 에러:", error.message);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, data };
+  } catch (error) {
+    console.error("구글 로그인 예외:", error);
+    return { success: false, error: error.message };
   }
 };

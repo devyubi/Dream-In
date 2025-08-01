@@ -11,6 +11,7 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import SleepRecordPage from "./pages/SleepRecordPage";
 import TestPage from "./pages/TestPage";
+import AuthCallbackPage from "./pages/AuthCallbackPage";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />}></Route>
           <Route path="/login" element={<LoginPage />}></Route>
+          <Route path="/auth/callback" element={<AuthCallbackPage />} />
           <Route path="/signup" element={<SignupPage />}></Route>
           <Route path="/profile" element={<h1>프로필</h1>}></Route>
           <Route path="/dreamwrite" element={<DreamWritePage />}></Route>
@@ -36,4 +38,5 @@ function App() {
   );
 }
 
+// Routes 안에 추가
 export default App;

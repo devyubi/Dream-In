@@ -3,7 +3,9 @@ import { Link } from "react-router-dom";
 import Container from "../components/common/Container";
 import QuoteSwiper from "../components/QuoteSwiper";
 import { useAuth } from "../contexts/AuthContext";
-import "../css/homepage.css";
+import "../../css/homepage.css";
+import RecordSection from "../components/home/RecordSection";
+import StatsSection from "../components/home/StatsSection";
 
 const mockDreams = [
   {
@@ -18,6 +20,14 @@ const mockDreams = [
     title: "바다 속 모험",
     description: "깊은 바다 속에서 신비로운 생물들을 만났어요.",
     date: "2025.07.16",
+    isBookmarked: true,
+  },
+  {
+    id: 3,
+    title: "뺑소니 당하는 꿈",
+    description:
+      "뺑소니를 당하는 꿈을 꿨는데 꿈이 아니었어요. 경찰에 신고할거에요.ㅉ",
+    date: "2025.07.14",
     isBookmarked: true,
   },
 ];
@@ -55,10 +65,10 @@ function HomePage() {
         )
         .filter(dream => dream.isBookmarked);
 
-      // 모킹데이터라서 강제로 2번째 보여줌
-      if (updated.length < 1) {
+      // 모킹데이터라서 강제로 3번째 보여줌
+      if (updated.length < 2) {
         const extra = mockDreams.find(
-          d => d.id === 2 && !updated.some(u => u.id === 3),
+          d => d.id === 3 && !updated.some(u => u.id === 4),
         );
         if (extra) updated.push(extra);
       }
@@ -174,67 +184,9 @@ function HomePage() {
             </div>
           </section>
           {/* 나의 통계 */}
-          <section className="main_section">
-            <div className="my_state">
-              <h2>나의 통계</h2>
-              {!isLoggedIn ? (
-                <div className="overlay">로그인 시 이용 가능합니다</div>
-              ) : (
-                <div className="total">
-                  {[
-                    ["/images/total_light.svg", 24, "총 꿈 기록"],
-                    ["/images/calendar_light.svg", 13, "이번 달 기록"],
-                    ["/images/clock_light.svg", 8, "평균 수면 시간"],
-                    ["/images/ai_light.svg", 4, "주간 꿈 해몽"],
-                  ].map(([icon, num, text], i) => (
-                    <div key={i}>
-                      <img src={icon} alt={text} />
-                      <span>{num}</span>
-                      <span>{text}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </section>
-          <section className="main_record">
-            {/* 기록하기 */}
-            <div className="main_record_wrap">
-              <h2>기록하기</h2>
-              {!isLoggedIn ? (
-                <div className="overlay">로그인 시 이용 가능합니다</div>
-              ) : (
-                <div className="record">
-                  {[
-                    [
-                      "/images/note_light.svg",
-                      "꿈 기록하기",
-                      "오늘 밤 꾼 꿈을 기록해보세요.",
-                      "/write",
-                    ],
-                    [
-                      "/images/moon_light.svg",
-                      "감정 일기",
-                      "오늘의 감정을 기록해 보세요.",
-                      "/emotion",
-                    ],
-                    [
-                      "/images/smile_light.svg",
-                      "수면 기록",
-                      "수면 패턴을 기록하고 관리해 보세요.",
-                      "/sleep",
-                    ],
-                  ].map(([icon, title, desc, link], i) => (
-                    <Link to={link} className="record_box" key={i}>
-                      <img src={icon} alt={title} />
-                      <span>{title}</span>
-                      <span>{desc}</span>
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-          </section>
+          <RecordSection />
+          {/* 기록하기 */}
+          <StatsSection />
           {/* 스와이퍼 */}
           <section className="quotes">
             <h3>꿈 관련 명언</h3>
