@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 // PostButton 컴포넌트 emotion
 const PostButtonWrap = styled.div`
-  padding-top: 30px;
+  padding-top: 40px;
   padding-left: 25px;
   padding-right: 25px;
 `;
