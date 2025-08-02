@@ -46,7 +46,7 @@ const DetailsText = styled.textarea`
 `;
 const DetailsTextNum = styled.span`
   position: absolute;
-  top: 285px;
+  top: 290px;
   right: 50px;
   /* 입력 글자수가 최대 글자수가 되면 글자수에 경고 표시 */
   color: ${({ isMax }) => (isMax ? "red" : "inherit")};

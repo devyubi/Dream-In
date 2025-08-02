@@ -12,6 +12,9 @@ const BackLight = styled.button`
   border-radius: 24px;
   margin-bottom: 15px;
   background-color: #fcf3fb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
   img {
     width: 20px;
@@ -29,6 +32,9 @@ const BackDark = styled.button`
   border: 1px solid #dbdbdb;
   border-radius: 24px;
   margin-bottom: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background: linear-gradient(
     to bottom,
     rgba(230, 179, 247, 0.3),

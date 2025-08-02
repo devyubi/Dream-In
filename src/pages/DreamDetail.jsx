@@ -4,7 +4,7 @@ import Container from "../components/common/Container";
 function DreamDetail() {
   return (
     <Container>
-      <BackButton to="/" />
+      <BackButton to="/dreamlist" />
       <h1>꿈 상세보기</h1>
     </Container>
   );

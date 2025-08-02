@@ -49,7 +49,7 @@ const DreamTitleTextNum = styled.span`
   font-family: "tj400";
   position: absolute;
   text-align: right;
-  top: 125px;
+  top: 130px;
   right: 50px;
   /* 입력 글자수가 최대 글자수가 되면 글자수에 경고 표시 */
   color: ${({ isMax }) => (isMax ? "red" : "#493d78")};
@@ -63,6 +63,7 @@ const DreamEmojiWrap = styled.div`
 const DreamEmojiTitle = styled.h2``;
 const DreamEmojiBox = styled.ul`
   display: flex;
+  justify-content: center;
   flex-wrap: wrap;
   gap: 20px;
   padding: 0;
@@ -74,15 +75,29 @@ const DreamEmojiList = styled.li`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 208px;
-  height: 130px;
+  width: 200px;
+  height: 150px;
+  /* 선택했을 때 배경색 변경 */
   background-color: ${({ isSelected }) => (isSelected ? "#fad4e8" : "#fcf3fb")};
   font-size: 14px;
-  cursor: pointer;
-  &&:hover {
-    background-color: #fad4e8;
-    box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.15);
-  }
+  /* 선택했을 때 커서모양 기본 */
+  cursor: ${({ isSelected }) => (isSelected ? "default" : "pointer")};
+  /* 부드럽게 전환되는 효과 */
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
+  /* 선택되지 않은 경우에만 hover 적용 */
+  ${({ isSelected }) =>
+    !isSelected &&
+    `    
+    &&:hover {
+      background-color: #fad4e8;
+      box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.15);
+      transform: translateY(-2px);
+    }
+  `}
+
   img {
     width: 35px;
     height: 30px;
@@ -101,7 +116,7 @@ function DreamWritePage() {
       <BackButton to="/" />
       <Top>
         <Title>꿈 이야기 기록하기</Title>
-        <SubTitle>어젯밤 꾼 꿈을 아름다운 이야기로 남겨주세요.</SubTitle>
+        <SubTitle>어젯 밤 꾼 꿈을 아름다운 이야기로 남겨주세요.</SubTitle>
       </Top>
       <DreamTitleWrap>
         <DreamTitle>꿈 제목</DreamTitle>
@@ -110,10 +125,10 @@ function DreamWritePage() {
           placeholder="어젯 밤 꿈의 제목을 작성해주세요."
           value={titleTextCount}
           onChange={e => setTitleTextCount(e.target.value)}
-          maxLength={50}
+          maxLength={20}
         ></DreamTitleText>
-        <DreamTitleTextNum isMax={titleTextCount.length >= 50}>
-          {titleTextCount.length}/50
+        <DreamTitleTextNum isMax={titleTextCount.length >= 20}>
+          {titleTextCount.length}/20
         </DreamTitleTextNum>
       </DreamTitleWrap>
       <DreamEmojiWrap>
@@ -182,7 +197,7 @@ function DreamWritePage() {
         onChange={e => setStoryTextCount(e.target.value)}
         maxLength={1500}
       />
-      <PostButton to="/dreamlist">꿈 이야기 게시하기</PostButton>
+      <PostButton to="/dreamdetail">꿈 이야기 게시하기</PostButton>
     </Container>
   );
 }
