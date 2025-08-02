@@ -7,11 +7,11 @@ import "../css/header.css";
 
 function Header() {
   const { isDarkMode, setIsDarkMode } = useThemeContext();
-  const { isLoggedIn, setUser } = useAuth();
+  const { isLoggedIn, setUser, signOut } = useAuth();
 
   const navigate = useNavigate();
 
-  // 다크모드 & 로그인 상태에 따라 이미지 경로 변경
+  // 로그인 상태 및 다크모드 상태에 따라 로고 및 아이콘 경로 설정
   const logoSrc = "/images/logo.png";
   const authIconSrc = isDarkMode
     ? isLoggedIn
@@ -23,20 +23,26 @@ function Header() {
 
   const authText = isLoggedIn ? "로그아웃" : "로그인";
 
-  // 로그인, 로그아웃 버튼
+  // 로그인 또는 로그아웃 버튼 클릭 시 동작
   const handleAuthClick = async () => {
-    if (isLoggedIn) {
-      // 로그아웃
-
-      await supabase.auth.signOut(); // 세션 종료
-      setUser(null); // 유저 정보 초기화함
+    if (isLoggedIn) { 
+      // 로그아웃 처리
+      try {
+        await supabase.auth.signOut(); // Supabase 세션 종료
+        localStorage.clear(); // 저장된 토큰 및 사용자 정보 제거 (로컬스토리지에서 제거)
+        sessionStorage.clear(); // 세션 스로티지 제거
+        setUser(null); // 전역 사용자 상태 초기화
+        navigate("/"); // 강제 새로고침을 위해 홈으로 이동
+      } catch (error) {
+        // console.error("또오류났냐")
+      }
     } else {
-      // 이건 새로고침 없이 로그인 페이지로 이동함다
+      // 로그인 페이지로 이동
       navigate("/login");
     }
   };
 
-  // 다크모드 테마 변경 전역변수
+  // 다크모드 테마 설정 변경 (body 태그에 data-theme 속성 적용)
   useEffect(() => {
     if (isDarkMode) {
       document.body.setAttribute("data-theme", "dark");
@@ -63,6 +69,7 @@ function Header() {
           />
           {isDarkMode ? "라이트모드" : "다크모드"}
         </button>
+
         <button
           className="header_button"
           onClick={handleAuthClick}

@@ -3,7 +3,10 @@ import { Link } from "react-router-dom";
 import Container from "../components/Container";
 import QuoteSwiper from "../components/QuoteSwiper";
 import { useAuth } from "../contexts/AuthContext";
-import "../css/homepage.css";
+import "../css/home/homepage.css";
+import StatsSection from "../components/home/StatsSection";
+import RecordSection from "../components/home/RecordSection";
+import { useTheme } from "@emotion/react";
 
 const mockDreams = [
   {
@@ -20,6 +23,14 @@ const mockDreams = [
     date: "2025.07.16",
     isBookmarked: true,
   },
+  {
+    id: 3,
+    title: "뺑소니 당하는 꿈",
+    description:
+      "뺑소니 당하는 꿈을 꿨어요. 와 이거 꿈인줄 알았는데 실화였어요. 젠장할",
+    date: "2025.07.14",
+    isBookmarked: true,
+  },
 ];
 
 // [
@@ -29,13 +40,14 @@ const mockDreams = [
 //   ["ai", 4, "주간 꿈 해몽"],
 // ].map(([name, value, label]) => (
 //   <div key={label}>
-//     <img src={`/${name}_${isDarkMode ? "darkmode" : "lightmode"}.svg`} alt={label} />
+//     <img src={`/${name}_${isDarkMode ? "darkmode" : "lightmode"}/images/.svg`} alt={label} />
 //     <span>{value}</span>
 //     <span>{label}</span>
 //   </div>
 // ));
 
 function HomePage() {
+  const { isDarkMode } = useTheme();
   const { isLoggedIn, user } = useAuth();
   const [bookmarkedDreams, setBookmarkedDreams] = useState([]);
 
@@ -56,9 +68,9 @@ function HomePage() {
         .filter(dream => dream.isBookmarked);
 
       // 모킹데이터라서 강제로 2번째 보여줌
-      if (updated.length < 1) {
+      if (updated.length < 2) {
         const extra = mockDreams.find(
-          d => d.id === 2 && !updated.some(u => u.id === 3),
+          d => d.id === 3 && !updated.some(u => u.id === 4),
         );
         if (extra) updated.push(extra);
       }
@@ -80,7 +92,7 @@ function HomePage() {
           <section className="dream_list">
             <div className="main_login">
               <h2>즐겨찾기</h2>
-              <div className={`login_content ${isLoggedIn ? "blurred" : ""}`}>
+              <div className={`login_content ${isLoggedIn ? "" : "blurred"}`}>
                 {!isLoggedIn && (
                   <div className="blur_overlay">로그인 시 이용 가능합니다</div>
                 )}
@@ -93,7 +105,11 @@ function HomePage() {
                       </span>
 
                       <img
-                        src={dream.isBookmarked ? "/images/fullstar.svg" : "/images/star.svg"}
+                        src={
+                          dream.isBookmarked
+                            ? "/images/fullstar.svg"
+                            : "/images/star.svg"
+                        }
                         alt="즐겨찾기"
                         onClick={() => toggleBookmark(dream.id)}
                       />
@@ -110,7 +126,7 @@ function HomePage() {
               <div className="auth_box">
                 {user ? (
                   <div className="user_info">
-                    <Link to="/profile">
+                    <Link to="/ProfileEditor">
                       <img
                         className="user_profile_img"
                         src={user.profile_img || "/images/unknown.svg"}
@@ -169,68 +185,12 @@ function HomePage() {
               </div>
             </div>
           </section>
+
           {/* 나의 통계 */}
-          <section className="main_section">
-            <div className="my_state">
-              <h2>나의 통계</h2>
-              {!isLoggedIn ? (
-                <div className="overlay">로그인 시 이용 가능합니다</div>
-              ) : (
-                <div className="total">
-                  {[
-                    ["/images/total_light.svg", 24, "총 꿈 기록"],
-                    ["/images/calendar_light.svg", 13, "이번 달 기록"],
-                    ["/images/clock_light.svg", 8, "평균 수면 시간"],
-                    ["/images/ai_light.svg", 4, "주간 꿈 해몽"],
-                  ].map(([icon, num, text], i) => (
-                    <div key={i}>
-                      <img src={icon} alt={text} />
-                      <span>{num}</span>
-                      <span>{text}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </section>
-          <section className="main_record">
-            {/* 기록하기 */}
-            <div className="main_record_wrap">
-              <h2>기록하기</h2>
-              {!isLoggedIn ? (
-                <div className="overlay">로그인 시 이용 가능합니다</div>
-              ) : (
-                <div className="record">
-                  {[
-                    [
-                      "/images/note_light.svg",
-                      "꿈 기록하기",
-                      "오늘 밤 꾼 꿈을 기록해보세요.",
-                      "/write",
-                    ],
-                    [
-                      "/images/moon_light.svg",
-                      "감정 일기",
-                      "오늘의 감정을 기록해 보세요.",
-                      "/emotion",
-                    ],
-                    [
-                      "/images/smile_light.svg",
-                      "수면 기록",
-                      "수면 패턴을 기록하고 관리해 보세요.",
-                      "/sleep",
-                    ],
-                  ].map(([icon, title, desc, link], i) => (
-                    <Link to={link} className="record_box" key={i}>
-                      <img src={icon} alt={title} />
-                      <span>{title}</span>
-                      <span>{desc}</span>
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-          </section>
+          <h2>나의 통계</h2>
+          <StatsSection />
+          {/* 기록하기 */}
+          <RecordSection />
           {/* 스와이퍼 */}
           <section className="quotes">
             <h3>꿈 관련 명언</h3>
