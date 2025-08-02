@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { supabase } from "../api/supabaseClient";
-import { useAuth } from "../contexts/AuthContext";
-import { useThemeContext } from "../contexts/ThemeContext";
-import "../css/header.css";
+import { supabase } from "../../api/supabaseClient";
+import { useAuth } from "../../contexts/AuthContext";
+import { useThemeContext } from "../../contexts/ThemeContext";
+import "../../css/header.css";
 
 function Header() {
   const { isDarkMode, setIsDarkMode } = useThemeContext();
@@ -25,10 +25,10 @@ function Header() {
 
   // 로그인 또는 로그아웃 버튼 클릭 시 동작
   const handleAuthClick = async () => {
-    if (isLoggedIn) { 
+    if (isLoggedIn) {
       // 로그아웃 처리
       try {
-        await supabase.auth.signOut(); // Supabase 세션 종료
+        await signOut();
         localStorage.clear(); // 저장된 토큰 및 사용자 정보 제거 (로컬스토리지에서 제거)
         sessionStorage.clear(); // 세션 스로티지 제거
         setUser(null); // 전역 사용자 상태 초기화
@@ -37,7 +37,6 @@ function Header() {
         // console.error("또오류났냐")
       }
     } else {
-      // 로그인 페이지로 이동
       navigate("/login");
     }
   };

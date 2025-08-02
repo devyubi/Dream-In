@@ -19,22 +19,22 @@ export function StatsSection() {
   return (
     <section className="main_section">
       <div className="my_state">
-        <div className={`login_content ${!isLoggedIn ? "" : "blurred"}`}>
+        <div className={`login_content ${!isLoggedIn ? "blurred" : ""}`}>
           {!isLoggedIn && (
             <div className="blur_overlay">로그인 시 이용 가능합니다</div>
           )}
 
-          {!isLoggedIn && (
-            <div className="total">
-              {iconSet.map(([icon, num, text], i) => (
-                <button className="mytotal" key={i}>
-                  <img src={icon} alt={text} />
-                  <span><h3>{num}</h3></span>
-                  <span>{text}</span>
-                </button>
-              ))}
-            </div>
-          )}
+          <div className="total">
+            {iconSet.map(([icon, num, text], i) => (
+              <button className="mytotal" key={i}>
+                <img src={icon} alt={text} />
+                <span>
+                  <h3>{num}</h3>
+                </span>
+                <span>{text}</span>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </section>

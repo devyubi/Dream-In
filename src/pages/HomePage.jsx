@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Container from "../components/Container";
+import Container from "../components/common/Container";
 import QuoteSwiper from "../components/QuoteSwiper";
 import { useAuth } from "../contexts/AuthContext";
 import "../css/home/homepage.css";
-import StatsSection from "../components/home/StatsSection";
 import RecordSection from "../components/home/RecordSection";
 import { useTheme } from "@emotion/react";
+import StatsSection from "../components/home/StatsSection";
 
 const mockDreams = [
   {
@@ -70,6 +70,7 @@ function HomePage() {
       // 모킹데이터라서 강제로 2번째 보여줌
       if (updated.length < 2) {
         const extra = mockDreams.find(
+          d => d.id === 3 && !updated.some(u => u.id === 4),
           d => d.id === 3 && !updated.some(u => u.id === 4),
         );
         if (extra) updated.push(extra);
@@ -164,9 +165,9 @@ function HomePage() {
                     <p className="main_msg">
                       Dream-in을 편리하게 관리해보세요!
                     </p>
-                    <button className="login_btn">
-                      <Link to="/login">Dream-in 로그인</Link>
-                    </button>
+                    <Link to="/login" className="login_btn">
+                      Dream-in 로그인
+                    </Link>
                     <div className="sub_links">
                       <Link to="/find-id" className="sub_link">
                         아이디 찾기

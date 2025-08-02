@@ -3,7 +3,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useThemeContext } from "../../contexts/ThemeContext";
 import "../../css/home/statssection.css";
 
-function RecordSection() {
+export function RecordSection() {
   const { isDarkMode } = useThemeContext();
   const { isLoggedIn, user } = useAuth();
 

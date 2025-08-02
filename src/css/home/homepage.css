@@ -89,6 +89,11 @@ section {
   justify-content: space-between;
   padding: 0px 15px;
 }
+.dream_item p {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .dream_date {
   padding-left: 10px;
   font-size: 11px;
@@ -96,7 +101,7 @@ section {
 
 /* 유저 프로필 및 로그인창 - 로그인 완료한 화면 */
 .login_box {
-  padding-top: 30px;
+  padding-top: 20px;
   flex: 1;
   min-width: 0;
   /* margin-left: 20px; */
@@ -107,14 +112,12 @@ section {
   background: #f7f7f7;
   padding: 30px;
   border-radius: 20px;
-  width: 60%;
   box-sizing: border-box;
-  max-width: 100%;
   flex-wrap: wrap;
 }
-.user_profile_img {
-  width: 80px;
-  height: 80px;
+.user_profile img {
+  width: 60px;
+  height: 60px;
   white-space: nowrap;
 }
 
@@ -186,5 +189,3 @@ section {
 .login_prompt span {
   padding: 0px 5px;
 }
-
-/* 나의 통계 */
