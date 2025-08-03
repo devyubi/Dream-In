@@ -4,6 +4,8 @@ import BackButton from "../components/common/BackButton";
 import Container from "../components/common/Container";
 import PostButton from "../components/common/PostButton";
 import TextArea from "../components/common/TextArea";
+import InputErrorMessage from "../components/common/InputErrorMessage";
+import { useNavigate } from "react-router-dom";
 
 // 전역(window) 자리
 const Top = styled.div`
@@ -29,11 +31,13 @@ const DreamTitleWrap = styled.div`
   padding-top: 30px;
   padding-left: 25px;
   padding-right: 25px;
+  height: 120px;
 `;
 const DreamTitle = styled.h2``;
 const DreamTitleText = styled.input`
   font-family: "tj400";
-  border: 1px solid #c8c8c8;
+  border: ${({ error }) => (error ? "2px" : "1px")} solid
+    ${({ error }) => (error ? "#ff0000" : "#c8c8c8")};
   padding: 8px 10px;
   border-radius: 16px;
   background: linear-gradient(
@@ -56,17 +60,24 @@ const DreamTitleTextNum = styled.span`
   font-weight: ${({ isMax }) => (isMax ? "700" : "400")};
 `;
 const DreamEmojiWrap = styled.div`
-  padding-top: 30px;
+  padding-top: 60px;
   padding-left: 20px;
   padding-right: 20px;
+  min-height: 500px;
 `;
-const DreamEmojiTitle = styled.h2``;
+const DreamEmojiTitle = styled.h2`
+  margin-bottom: 10px;
+`;
 const DreamEmojiBox = styled.ul`
+  border: ${({ error }) => (error ? "2px" : "1px")} solid
+    ${({ error }) => (error ? "#ff0000" : "transparent")};
+  border-radius: 16px;
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
   gap: 20px;
-  padding: 0;
+  padding: 10px 0;
+  height: calc(170px * 2 + 20px);
 `;
 const DreamEmojiList = styled.li`
   border: 1px solid #c8c8c8;
@@ -75,8 +86,9 @@ const DreamEmojiList = styled.li`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 200px;
-  height: 150px;
+  max-width: 230px;
+  height: 130px;
+  flex: 1 1 calc((100% - 60px) / 4);
   /* 선택했을 때 배경색 변경 */
   background-color: ${({ isSelected }) => (isSelected ? "#fad4e8" : "#fcf3fb")};
   font-size: 14px;
@@ -111,6 +123,50 @@ function DreamWritePage() {
   const [storyTextCount, setStoryTextCount] = useState("");
   // 꿈 이모지 클릭하면 포커스되고 옮겨가기
   const [selectEmoji, setSelectEmoji] = useState(null);
+
+  // 입력하지 않았을 때 에러
+  const [titleError, setTitleError] = useState("");
+  const [emojiError, setEmojiError] = useState("");
+  const [storyError, setStoryError] = useState("");
+
+  const navigate = useNavigate();
+
+  // 게시하기 클릭 시 체크할 내용 함수
+  const handlePost = () => {
+    // 에러 메세지 초기화
+    setTitleError("");
+    setEmojiError("");
+    setStoryError("");
+
+    let isValid = true;
+
+    if (!titleTextCount) {
+      setTitleError("꿈 제목을 작성해주세요.");
+      isValid = false;
+    }
+
+    if (!selectEmoji) {
+      setEmojiError("감정을 선택해주세요.");
+      isValid = false;
+    }
+
+    if (!storyTextCount) {
+      setStoryError("꿈 이야기를 작성해주세요.");
+      isValid = false;
+    }
+
+    if (!isValid) return;
+
+    // 정상 입력 시 연결된 페이지 이동
+    navigate("/dreamdetail", {
+      state: {
+        title: titleTextCount,
+        emotion: selectEmoji,
+        story: storyTextCount,
+      },
+    });
+  };
+
   return (
     <Container>
       <BackButton to="/" />
@@ -124,80 +180,116 @@ function DreamWritePage() {
           type="text"
           placeholder="어젯 밤 꿈의 제목을 작성해주세요."
           value={titleTextCount}
-          onChange={e => setTitleTextCount(e.target.value)}
+          onChange={e => {
+            setTitleTextCount(e.target.value);
+            if (titleError) setTitleError("");
+          }}
           maxLength={20}
-        ></DreamTitleText>
+          error={!!titleError}
+        />
+        {/* 에러 메세지 */}
+        {titleError && <InputErrorMessage message={titleError} />}
         <DreamTitleTextNum isMax={titleTextCount.length >= 20}>
           {titleTextCount.length}/20
         </DreamTitleTextNum>
       </DreamTitleWrap>
       <DreamEmojiWrap>
         <DreamEmojiTitle>Dream-Emoji</DreamEmojiTitle>
-        <DreamEmojiBox>
+        <DreamEmojiBox error={!!emojiError}>
           <DreamEmojiList
-            onClick={() => setSelectEmoji("shine")}
+            onClick={() => {
+              setSelectEmoji("shine");
+              if (emojiError) setEmojiError("");
+            }}
             isSelected={selectEmoji === "shine"}
           >
             <img src="/images/shine_icon.png" alt="shine" />
             빛나는
           </DreamEmojiList>
           <DreamEmojiList
-            onClick={() => setSelectEmoji("happy")}
+            onClick={() => {
+              setSelectEmoji("happy");
+              if (emojiError) setEmojiError("");
+            }}
             isSelected={selectEmoji === "happy"}
           >
             <img src="/images/happy_icon.png" alt="happy" />
             행복한
           </DreamEmojiList>
           <DreamEmojiList
-            onClick={() => setSelectEmoji("dreamy")}
+            onClick={() => {
+              setSelectEmoji("dreamy");
+              if (emojiError) setEmojiError("");
+            }}
             isSelected={selectEmoji === "dreamy"}
           >
             <img src="/images/dreamy_icon.png" alt="dreamy" />
             몽환적
           </DreamEmojiList>
           <DreamEmojiList
-            onClick={() => setSelectEmoji("shy")}
+            onClick={() => {
+              setSelectEmoji("shy");
+              if (emojiError) setEmojiError("");
+            }}
             isSelected={selectEmoji === "shy"}
           >
             <img src="/images/shy_icon.png" alt="shy" />
             부끄러움
           </DreamEmojiList>
           <DreamEmojiList
-            onClick={() => setSelectEmoji("weird")}
+            onClick={() => {
+              setSelectEmoji("weird");
+              if (emojiError) setEmojiError("");
+            }}
             isSelected={selectEmoji === "weird"}
           >
             <img src="/images/weird_icon.png" alt="weird" />
             신기한
           </DreamEmojiList>
           <DreamEmojiList
-            onClick={() => setSelectEmoji("prenatal")}
+            onClick={() => {
+              setSelectEmoji("prenatal");
+              if (emojiError) setEmojiError("");
+            }}
             isSelected={selectEmoji === "prenatal"}
           >
             <img src="/images/prenatal_dream_icon.png" alt="prenatal_dream" />
             태몽
           </DreamEmojiList>
           <DreamEmojiList
-            onClick={() => setSelectEmoji("scared")}
+            onClick={() => {
+              setSelectEmoji("scared");
+              if (emojiError) setEmojiError("");
+            }}
             isSelected={selectEmoji === "scared"}
           >
             <img src="/images/scared_icon.png" alt="scared" />
             무서운
           </DreamEmojiList>
           <DreamEmojiList
-            onClick={() => setSelectEmoji("etc")}
+            onClick={() => {
+              setSelectEmoji("etc");
+              if (emojiError) setEmojiError("");
+            }}
             isSelected={selectEmoji === "etc"}
           >
             <img src="/images/etc_icon.png" alt="etc" />
             기타
           </DreamEmojiList>
         </DreamEmojiBox>
+        {/* 에러 메세지 */}
+        {emojiError && <InputErrorMessage message={emojiError} />}
       </DreamEmojiWrap>
       <TextArea
         value={storyTextCount}
-        onChange={e => setStoryTextCount(e.target.value)}
+        onChange={e => {
+          setStoryTextCount(e.target.value);
+          if (storyError) setStoryError("");
+        }}
         maxLength={1500}
+        error={storyError}
       />
-      <PostButton to="/dreamdetail">꿈 이야기 게시하기</PostButton>
+      <PostButton onClick={handlePost}>꿈 이야기 게시하기</PostButton>
     </Container>
   );
 }
