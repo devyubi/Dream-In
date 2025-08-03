@@ -17,7 +17,7 @@ const Top = styled.div`
   align-items: center;
   flex-direction: column;
   gap: 10px;
-  border-top: 1px solid #000;
+  border-top: 1px solid #544783;
   padding-top: 20px;
 `;
 const Title = styled.h1`
@@ -42,6 +42,38 @@ const Label = styled.label`
   color: #25254d;
 `;
 
+// 백엔드에서 전달받은 자료
+const todoApi = [
+  {
+    pk: 0,
+    title: "점심먹기",
+    text: "내용 1",
+    day: "2025-07-04",
+    img: "/logo192.png",
+  },
+  {
+    pk: 1,
+    title: "영화보기",
+    text: "내용 2",
+    day: "2025-07-17",
+    img: "/logo192.png",
+  },
+  {
+    pk: 2,
+    title: "책읽기",
+    text: "내용 3",
+    day: "2025-07-19",
+    img: "/logo192.png",
+  },
+  {
+    pk: 3,
+    title: "그림그리기",
+    text: "내용 4",
+    day: "2025-07-29",
+    img: "/logo192.png",
+  },
+];
+
 function EmotionDiaryPage() {
   const [date, setDate] = useState(new Date());
   const [text, setText] = useState("");
@@ -64,6 +96,12 @@ function EmotionDiaryPage() {
     });
   };
 
+  const weekName = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+  const formatShortWeekday = (locale, date) => {
+    const idx = date.getDay();
+    return weekName[idx];
+  };
+
   return (
     <Container>
       <BackButton to="/" />
@@ -73,7 +111,12 @@ function EmotionDiaryPage() {
       </Top>
 
       <CalendarWrap>
-        <Calendar onChange={setDate} value={date} locale="ko-KR" />
+        <Calendar
+          onChange={setDate}
+          value={date}
+          locale="us-US"
+          calendarType="gregory"
+        />
       </CalendarWrap>
 
       <DiarySection>
@@ -88,7 +131,6 @@ function EmotionDiaryPage() {
           maxLength={1000}
           error={error}
         />
-        {error && <InputErrorMessage message={error} />}
       </DiarySection>
 
       <PostButton onClick={handlePost}>일기 저장하기</PostButton>
