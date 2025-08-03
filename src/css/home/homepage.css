@@ -24,7 +24,15 @@ section {
   margin-top: 5px;
   margin-bottom: 20px;
 }
+
 /* 즐겨찾기 */
+.no_bookmarks {
+  text-align: center;
+  color: #999;
+  font-size: 14px;
+  margin: 20px 0;
+}
+
 .main_login {
   flex: 1;
   min-width: 0;
@@ -46,7 +54,6 @@ section {
   border-radius: 12px;
 }
 
-/* 흐림 위에 올라갈 오버레이 문구 */
 .blur_overlay {
   position: absolute;
   top: 0;
@@ -110,17 +117,42 @@ section {
 .auth_box {
   display: flex;
   background: #f7f7f7;
-  padding: 30px;
+  padding: 20px;
   border-radius: 20px;
   box-sizing: border-box;
   flex-wrap: wrap;
-}
-.user_profile img {
-  width: 60px;
-  height: 60px;
-  white-space: nowrap;
+  align-items: center;
+  gap: 12px;
 }
 
+.user_profile {
+  width: 24px;
+  height: 24px;
+  overflow: hidden;
+}
+.user_top {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.main_welcome {
+  font-size: 16px;
+  color: #3a3a74;
+}
+
+.user_profile_img {
+  width: 70px;
+  height: 70px;
+  border-radius: 20%;
+  white-space: nowrap;
+  max-width: 100%;
+  object-fit: cover;
+  display: block;
+}
+.user_text p {
+  margin: 6px;
+}
 .dream_card_top {
   padding: 10px 15px 0px;
   display: flex;

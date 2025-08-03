@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Container from "../components/common/Container";
 import QuoteSwiper from "../components/QuoteSwiper";
 import { useAuth } from "../contexts/AuthContext";
@@ -33,52 +33,34 @@ const mockDreams = [
   },
 ];
 
-// [
-//   ["total", 24, "총 꿈 기록"],
-//   ["calendar", 13, "이번 달 기록"],
-//   ["clock", 8, "평균 수면 시간"],
-//   ["ai", 4, "주간 꿈 해몽"],
-// ].map(([name, value, label]) => (
-//   <div key={label}>
-//     <img src={`/${name}_${isDarkMode ? "darkmode" : "lightmode"}/images/.svg`} alt={label} />
-//     <span>{value}</span>
-//     <span>{label}</span>
-//   </div>
-// ));
-
 function HomePage() {
   const { isDarkMode } = useTheme();
-  const { isLoggedIn, user } = useAuth();
-  const [bookmarkedDreams, setBookmarkedDreams] = useState([]);
+  const { isLoggedIn, user, profile } = useAuth();
+  const navigate = useNavigate();
+  const [dreams, setDreams] = useState(mockDreams);
 
-  useEffect(() => {
-    // 최신순 정렬
-    const sortedDreams = [...mockDreams].sort(
-      (a, b) => new Date(b.date) - new Date(a.date),
-    );
-    setBookmarkedDreams(sortedDreams);
-  }, []);
+  const bookmarkedDreams = dreams
+    .filter(d => d.isBookmarked)
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .slice(0, 2);
 
   const toggleBookmark = id => {
-    setBookmarkedDreams(prev => {
-      const updated = prev
-        .map(dream =>
-          dream.id === id ? { ...dream, isBookmarked: false } : dream,
-        )
-        .filter(dream => dream.isBookmarked);
-
-      // 모킹데이터라서 강제로 2번째 보여줌
-      if (updated.length < 2) {
-        const extra = mockDreams.find(
-          d => d.id === 3 && !updated.some(u => u.id === 4),
-          d => d.id === 3 && !updated.some(u => u.id === 4),
-        );
-        if (extra) updated.push(extra);
-      }
-      return updated.sort((a, b) => new Date(b.date) - new Date(a.date));
-    });
+    setDreams(prev =>
+      prev.map(dream =>
+        dream.id === id
+          ? { ...dream, isBookmarked: !dream.isBookmarked }
+          : dream,
+      ),
+    );
   };
 
+  // 즐겨찾기 카드 클릭 시 /favorites 페이지로 이동 추가
+  const onDreamClick = () => {
+    navigate("/favorites");
+  };
+  // useEffect(() => {
+  //   console.log("user:", user);
+  // }, [user]);
   return (
     <Container className="mainpage">
       <div className="mainpage_wrap">
@@ -89,6 +71,7 @@ function HomePage() {
             </h1>
             <p>오늘도 새로운 꿈의 여행을 떠나보세요!</p>
           </section>
+
           {/* 즐겨찾기 */}
           <section className="dream_list">
             <div className="main_login">
@@ -97,66 +80,88 @@ function HomePage() {
                 {!isLoggedIn && (
                   <div className="blur_overlay">로그인 시 이용 가능합니다</div>
                 )}
-                {bookmarkedDreams.map(dream => (
-                  <div className="dream_card" key={dream.id}>
-                    <div className="dream_card_top">
-                      <span>
-                        {dream.title}
-                        <span className="dream_date">{dream.date}</span>
-                      </span>
 
-                      <img
-                        src={
-                          dream.isBookmarked
-                            ? "/images/fullstar.svg"
-                            : "/images/star.svg"
-                        }
-                        alt="즐겨찾기"
-                        onClick={() => toggleBookmark(dream.id)}
-                      />
+                {isLoggedIn && bookmarkedDreams.length === 0 && (
+                  <p className="no-bookmarks">즐겨찾기가 없습니다.</p>
+                )}
+
+                {isLoggedIn &&
+                  bookmarkedDreams.map(dream => (
+                    <div className="dream_card" key={dream.id}>
+                      <div
+                        className="dream_card_top"
+                        style={{ cursor: "pointer" }}
+                        onClick={onDreamClick}
+                      >
+                        <span>
+                          {dream.title}
+                          <span className="dream_date">{dream.date}</span>
+                        </span>
+
+                        <img
+                          src={
+                            dream.isBookmarked
+                              ? "/images/fullstar.svg"
+                              : "/images/star.svg"
+                          }
+                          alt="즐겨찾기"
+                          onClick={e => {
+                            e.stopPropagation();
+                            toggleBookmark(dream.id);
+                          }}
+                          style={{ cursor: "pointer" }}
+                        />
+                      </div>
+                      <div
+                        className="dream_item"
+                        style={{ cursor: "pointer" }}
+                        onClick={onDreamClick}
+                      >
+                        <p>{dream.description}</p>
+                      </div>
                     </div>
-                    <div className="dream_item">
-                      <p>{dream.description}</p>
-                    </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             </div>
-            {/* 유저 프로필 및 로그인창 - 로그인 완료한 화면*/}
+
+            {/* 유저 프로필 및 로그인창 - 로그인 완료한 화면 */}
             <div className="login_box">
               <div className="auth_box">
                 {user ? (
                   <div className="user_info">
-                    <Link to="/ProfileEditor">
-                      <img
-                        className="user_profile_img"
-                        src={user.profile_img || "/images/unknown.svg"}
-                        alt="유저 프로필"
-                      />
-                    </Link>
-                    <div className="user_text">
+                    <div className="user_top">
+                      <Link to="/ProfileEditor">
+                        <img
+                          className="user_profile_img"
+                          src={
+                            profile?.profile_image_url || "/images/unknown.svg"
+                          }
+                          alt="유저 프로필"
+                        />
+                      </Link>
                       <p className="main_welcome">
-                        {user.nickname}님 어서오세요!
+                        <strong>{profile?.nickname || "회원"}</strong> 님
+                        어서오세요!
                       </p>
-                      <p className="email">{user.email}</p>
-                      <div className="user_links">
-                        <Link to="/profile">
-                          <img
-                            className="main_mypage"
-                            src="/images/mypage_light.svg"
-                            alt="마이페이지"
-                          />
-                          마이페이지
-                        </Link>
-                        <Link to="/favorites">
-                          <img
-                            className="main_favorite"
-                            src="/images/fullstar.svg"
-                            alt="즐겨찾기"
-                          />
-                          즐겨찾기
-                        </Link>
-                      </div>
+                    </div>
+                    <p className="email">{user.email}</p>
+                    <div className="user_links">
+                      <Link to="/profile">
+                        <img
+                          className="main_mypage"
+                          src="/images/mypage_light.svg"
+                          alt="마이페이지"
+                        />
+                        마이페이지
+                      </Link>
+                      <Link to="/favorites">
+                        <img
+                          className="main_favorite"
+                          src="/images/fullstar.svg"
+                          alt="즐겨찾기"
+                        />
+                        즐겨찾기
+                      </Link>
                     </div>
                   </div>
                 ) : (
@@ -191,6 +196,7 @@ function HomePage() {
           <h2>나의 통계</h2>
           <StatsSection />
           {/* 기록하기 */}
+          <h2>기록하기</h2>
           <RecordSection />
           {/* 스와이퍼 */}
           <section className="quotes">

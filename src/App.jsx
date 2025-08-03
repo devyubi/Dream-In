@@ -12,6 +12,7 @@ import SignupPage from "./pages/SignupPage";
 import SleepRecordPage from "./pages/SleepRecordPage";
 import TestPage from "./pages/TestPage";
 import AuthCallbackPage from "./pages/AuthCallbackPage";
+import AIDreamResultPage from "./pages/AIDreamResultPage";
 import Footer from "./components/common/Footer";
 
 function App() {
@@ -30,7 +31,7 @@ function App() {
           <Route path="/dreamdetail" element={<DreamDetail />}></Route>
           <Route path="/emotionwrite" element={<EmotionWritePage />}></Route>
           <Route path="/sleeprecord" element={<SleepRecordPage />}></Route>
-          <Route path="/aidreamsresult" element={<h1>꿈 해몽</h1>}></Route>
+          <Route path="/aidreamsresult" element={<AIDreamResultPage />}></Route>
           {/* 테스트페이지입니다-병근 */}
           <Route path="/test" element={<TestPage />} />
         </Routes>
