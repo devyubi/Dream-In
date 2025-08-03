@@ -36,7 +36,6 @@ function App() {
           {/* 테스트페이지입니다-병근 */}
           <Route path="/test" element={<TestPage />} />
         </Routes>
-        <MadeIn></MadeIn>
         <Footer />
       </AuthProvider>
     </Router>
