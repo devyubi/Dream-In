@@ -58,9 +58,7 @@ function HomePage() {
   const onDreamClick = () => {
     navigate("/favorites");
   };
-  // useEffect(() => {
-  //   console.log("user:", user);
-  // }, [user]);
+
   return (
     <Container className="mainpage">
       <div className="mainpage_wrap">
@@ -107,6 +105,11 @@ function HomePage() {
                           alt="즐겨찾기"
                           onClick={e => {
                             e.stopPropagation();
+                            if (dream.isBookmarked) {
+                              const confirmUnbookmark =
+                                window.confirm("즐겨찾기를 해제하시겠습니까?");
+                              if (!confirmUnbookmark) return;
+                            }
                             toggleBookmark(dream.id);
                           }}
                           style={{ cursor: "pointer" }}

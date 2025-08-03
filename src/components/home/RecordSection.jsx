@@ -39,7 +39,9 @@ export function RecordSection() {
           >
             <div className="record_title">
               <img src={item.icon} alt={item.label} />
-              <span>{item.label}</span>
+              <span>
+                <strong>{item.label}</strong>
+              </span>
               <span>{item.desc}</span>
             </div>
           </Link>

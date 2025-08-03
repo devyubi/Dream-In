@@ -12,6 +12,8 @@ import SignupPage from "./pages/SignupPage";
 import SleepRecordPage from "./pages/SleepRecordPage";
 import TestPage from "./pages/TestPage";
 import AuthCallbackPage from "./pages/AuthCallbackPage";
+import AIDreamResultPage from "./pages/AIDreamResultPage";
+import Footer from "./components/common/Footer";
 
 function App() {
   return (
