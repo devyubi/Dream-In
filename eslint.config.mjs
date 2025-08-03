@@ -31,6 +31,7 @@ export default defineConfig([
     settings: {
       react: {
         version: "detect",
+        "no-unused-vars": "off",
       },
     },
   },

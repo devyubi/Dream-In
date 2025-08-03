@@ -86,7 +86,7 @@ function MadeIn() {
             <img src="images/photo1.png" alt="1" />
           </MadeInPersonPhoto>
           <MadeInPersonName>박재현</MadeInPersonName>
-          <MadeInPersonRole>꿈 기록, AI 연동 등 (팀장)</MadeInPersonRole>
+          <MadeInPersonRole>꿈 기록, AI 연동 등</MadeInPersonRole>
           <MadeInPersonEmail>dev.clarova@gmail.com</MadeInPersonEmail>
           <MadeInPersonOneLiner>
             협업과 실행을 주도하는 리더

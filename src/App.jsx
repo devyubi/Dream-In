@@ -14,6 +14,7 @@ import TestPage from "./pages/TestPage";
 import AuthCallbackPage from "./pages/AuthCallbackPage";
 import AIDreamResultPage from "./pages/AIDreamResultPage";
 import Footer from "./components/common/Footer";
+import MadeIn from "./components/common/MadeIn";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
           {/* 테스트페이지입니다-병근 */}
           <Route path="/test" element={<TestPage />} />
         </Routes>
+        <MadeIn></MadeIn>
         <Footer />
       </AuthProvider>
     </Router>
