@@ -3,8 +3,9 @@ import { Link } from "react-router-dom";
 import Container from "../components/common/Container";
 import QuoteSwiper from "../components/QuoteSwiper";
 import { useAuth } from "../contexts/AuthContext";
-import "../css/homepage.css";
+import "../css/home/homepage.css";
 import RecordSection from "../components/home/RecordSection";
+import { useTheme } from "@emotion/react";
 import StatsSection from "../components/home/StatsSection";
 
 const mockDreams = [
@@ -26,7 +27,7 @@ const mockDreams = [
     id: 3,
     title: "뺑소니 당하는 꿈",
     description:
-      "뺑소니를 당하는 꿈을 꿨는데 꿈이 아니었어요. 경찰에 신고할거에요.ㅉ",
+      "뺑소니 당하는 꿈을 꿨어요. 와 이거 꿈인줄 알았는데 실화였어요. 젠장할",
     date: "2025.07.14",
     isBookmarked: true,
   },
@@ -39,13 +40,14 @@ const mockDreams = [
 //   ["ai", 4, "주간 꿈 해몽"],
 // ].map(([name, value, label]) => (
 //   <div key={label}>
-//     <img src={`/${name}_${isDarkMode ? "darkmode" : "lightmode"}.svg`} alt={label} />
+//     <img src={`/${name}_${isDarkMode ? "darkmode" : "lightmode"}/images/.svg`} alt={label} />
 //     <span>{value}</span>
 //     <span>{label}</span>
 //   </div>
 // ));
 
 function HomePage() {
+  const { isDarkMode } = useTheme();
   const { isLoggedIn, user } = useAuth();
   const [bookmarkedDreams, setBookmarkedDreams] = useState([]);
 
@@ -65,9 +67,10 @@ function HomePage() {
         )
         .filter(dream => dream.isBookmarked);
 
-      // 모킹데이터라서 강제로 3번째 보여줌
+      // 모킹데이터라서 강제로 2번째 보여줌
       if (updated.length < 2) {
         const extra = mockDreams.find(
+          d => d.id === 3 && !updated.some(u => u.id === 4),
           d => d.id === 3 && !updated.some(u => u.id === 4),
         );
         if (extra) updated.push(extra);
@@ -90,7 +93,7 @@ function HomePage() {
           <section className="dream_list">
             <div className="main_login">
               <h2>즐겨찾기</h2>
-              <div className={`login_content ${isLoggedIn ? "blurred" : ""}`}>
+              <div className={`login_content ${isLoggedIn ? "" : "blurred"}`}>
                 {!isLoggedIn && (
                   <div className="blur_overlay">로그인 시 이용 가능합니다</div>
                 )}
@@ -124,7 +127,7 @@ function HomePage() {
               <div className="auth_box">
                 {user ? (
                   <div className="user_info">
-                    <Link to="/profile">
+                    <Link to="/ProfileEditor">
                       <img
                         className="user_profile_img"
                         src={user.profile_img || "/images/unknown.svg"}
@@ -162,9 +165,9 @@ function HomePage() {
                     <p className="main_msg">
                       Dream-in을 편리하게 관리해보세요!
                     </p>
-                    <button className="login_btn">
-                      <Link to="/login">Dream-in 로그인</Link>
-                    </button>
+                    <Link to="/login" className="login_btn">
+                      Dream-in 로그인
+                    </Link>
                     <div className="sub_links">
                       <Link to="/find-id" className="sub_link">
                         아이디 찾기
@@ -183,10 +186,12 @@ function HomePage() {
               </div>
             </div>
           </section>
+
           {/* 나의 통계 */}
-          <RecordSection />
-          {/* 기록하기 */}
+          <h2>나의 통계</h2>
           <StatsSection />
+          {/* 기록하기 */}
+          <RecordSection />
           {/* 스와이퍼 */}
           <section className="quotes">
             <h3>꿈 관련 명언</h3>

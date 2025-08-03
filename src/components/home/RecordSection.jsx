@@ -1,8 +1,12 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import { useThemeContext } from "../../contexts/ThemeContext";
+import "../../css/home/statssection.css";
 
-function StatsSection() {
+export function RecordSection() {
+  const { isDarkMode } = useThemeContext();
   const { isLoggedIn, user } = useAuth();
+
   return (
     <section className="main_record">
       {/* 기록하기 */}
@@ -45,4 +49,4 @@ function StatsSection() {
   );
 }
 
-export default StatsSection;
+export default RecordSection;

@@ -1,10 +1,11 @@
 /* 메인 페이지 */
 .mainpage {
   font-family: "tj400";
-  max-width: 300%;
-  max-height: 300%;
+  /* max-width: 300%;
+  max-height: 300%; */
 }
 .mainpage_wrap {
+  color: #3a3a74;
   padding: 30px 25px;
   display: flex;
   flex-direction: column;
@@ -19,6 +20,7 @@ section {
   margin-bottom: 0px;
 }
 .greeting p {
+  color: #544783;
   margin-top: 5px;
   margin-bottom: 20px;
 }
@@ -39,7 +41,6 @@ section {
 .blurred {
   pointer-events: none; /* 클릭 막기 */
   user-select: none;
-  filter: blur(5px);
   position: relative;
   z-index: 1;
   border-radius: 12px;
@@ -79,6 +80,7 @@ section {
   margin-bottom: 10px;
   flex-shrink: 1;
   border-radius: 20px;
+  color: #8f8f8f;
   background: var(--color-primary-p-100, #fcf3fb);
 }
 
@@ -87,6 +89,11 @@ section {
   justify-content: space-between;
   padding: 0px 15px;
 }
+.dream_item p {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .dream_date {
   padding-left: 10px;
   font-size: 11px;
@@ -94,7 +101,7 @@ section {
 
 /* 유저 프로필 및 로그인창 - 로그인 완료한 화면 */
 .login_box {
-  padding-top: 30px;
+  padding-top: 20px;
   flex: 1;
   min-width: 0;
   /* margin-left: 20px; */
@@ -105,14 +112,12 @@ section {
   background: #f7f7f7;
   padding: 30px;
   border-radius: 20px;
-  width: 60%;
   box-sizing: border-box;
-  max-width: 100%;
   flex-wrap: wrap;
 }
-.user_profile_img {
-  width: 80px;
-  height: 80px;
+.user_profile img {
+  width: 60px;
+  height: 60px;
   white-space: nowrap;
 }
 
@@ -135,10 +140,12 @@ section {
 
 /* 유저 프로필 및 로그인창 - 로그인 안한 화면 */
 .main_msg {
+  color: #544783;
   text-align: center;
   font-size: 13px;
 }
 .login_btn {
+  cursor: pointer;
   border-radius: 15px;
   background: var(
     --background-dark-space,
@@ -162,12 +169,23 @@ section {
 }
 
 .sub_links {
+  color: #544783;
   padding-top: 20px;
   white-space: nowrap;
+}
+.sub_links:hover {
+  color: #8672d0;
+}
+
+/* 슥삭에서 배운 hover */
+.sub_links:hover a:not(:hover) {
+  color: #544783;
+}
+
+.sub_links span {
+  color: #544783;
 }
 
 .login_prompt span {
   padding: 0px 5px;
 }
-
-/* 나의 통계 */

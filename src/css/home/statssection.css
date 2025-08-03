@@ -1,0 +1,45 @@
+.main_section {
+  font-family: "tj400";
+  /* min-width: 10%;
+  min-height: 10%; */
+}
+.my_state {
+}
+.login_content {
+}
+.total {
+  display: flex;
+  gap: 10px;
+  min-width: 0;
+}
+
+.mytotal {
+  font-family: "tj400";
+  border: none;
+  cursor: pointer;
+  display: flex;
+  width: 25%;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 20px;
+  background: var(--color-primary-p-100, #fcf3fb);
+  padding: 15px 40px 20px 40px;
+  color: #493d78;
+}
+
+.mytotal:hover {
+  background-color: #fad4e8;
+  box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.mytotal img {
+  padding-top: 10px;
+  width: 23px;
+  height: 23px;
+  flex-shrink: 0;
+}
+
+.mytotal span {
+  white-space: nowrap;
+}
