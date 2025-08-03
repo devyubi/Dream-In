@@ -177,6 +177,7 @@ export const checkNicknameDuplicate = async nickname => {
     return { isDuplicate: false, error: error.message };
   }
 };
+
 // 카카오 로그인 추가
 export const signInWithKakao = async () => {
   try {
