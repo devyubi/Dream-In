@@ -12,6 +12,7 @@ import SignupPage from "./pages/SignupPage";
 import SleepRecordPage from "./pages/SleepRecordPage";
 import TestPage from "./pages/TestPage";
 import AuthCallbackPage from "./pages/AuthCallbackPage";
+import Footer from "./components/common/Footer";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
           {/* 테스트페이지입니다-병근 */}
           <Route path="/test" element={<TestPage />} />
         </Routes>
+        <Footer />
       </AuthProvider>
     </Router>
   );
