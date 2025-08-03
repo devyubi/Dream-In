@@ -14,7 +14,7 @@ const Top = styled.div`
   align-items: center;
   flex-direction: column;
   gap: 10px;
-  border-top: 1px solid #000;
+  border-top: 1px solid #544783;
   padding-top: 20px;
 `;
 const Title = styled.h1`

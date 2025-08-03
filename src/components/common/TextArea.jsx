@@ -61,14 +61,15 @@ export default function TextArea({
   value,
   onChange,
   maxLength = 1500,
-  placeholder = "",
+  title = "꿈 이야기",
+  placeholder = "어젯 밤 꿈에서 무슨 일이 일어났나요? 생생하게 기록해 보세요! 장소, 감정, 감각, 색상 등 기억나는 모든 것을 기록 해보세요!",
   error = false,
 }) {
   return (
     <DetailsWrap>
-      <DetailsTitle>꿈 이야기</DetailsTitle>
+      <DetailsTitle>{title}</DetailsTitle>
       <DetailsText
-        placeholder="어젯 밤 꿈에서 무슨 일이 일어났나요? 생생하게 기록해 보세요! 장소, 감정, 감각, 색상 등 기억나는 모든 것을 기록 해보세요!"
+        placeholder={placeholder}
         value={value}
         onChange={onChange}
         maxLength={maxLength}

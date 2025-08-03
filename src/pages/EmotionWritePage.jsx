@@ -33,7 +33,7 @@ const CalendarWrap = styled.div`
   padding: 30px 25px 0 25px;
 `;
 const DiarySection = styled.div`
-  padding: 40px 25px 60px 25px;
+  padding: 40px 25px 0px 25px;
 `;
 const Label = styled.label`
   display: block;
