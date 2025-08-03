@@ -1,49 +1,49 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useThemeContext } from "../../contexts/ThemeContext";
-import "../../css/home/statssection.css";
+import "../../css/home/recordsection.css";
 
 export function RecordSection() {
   const { isDarkMode } = useThemeContext();
-  const { isLoggedIn, user } = useAuth();
+  const { isLoggedIn } = useAuth();
+
+  const recordItems = [
+    {
+      icon: "/images/note_light.svg",
+      label: "꿈 기록하기",
+      desc: "오늘 밤 꾼 꿈을 기록해보세요.",
+      path: "/dreamwrite",
+    },
+    {
+      icon: "/images/moon_light.svg",
+      label: "감정 일기",
+      desc: "오늘의 감정을 기록해 보세요.",
+      path: "/emotionwrite",
+    },
+    {
+      icon: "/images/smile_light.svg",
+      label: "수면 기록",
+      desc: "수면 패턴을 기록하고 관리해 보세요.",
+      path: "/sleeprecord",
+    },
+  ];
 
   return (
     <section className="main_record">
-      {/* 기록하기 */}
       <div className="main_record_wrap">
-        <h2>기록하기</h2>
-        {!isLoggedIn ? (
-          <div className="overlay">로그인 시 이용 가능합니다</div>
-        ) : (
-          <div className="record">
-            {[
-              [
-                "/images/note_light.svg",
-                "꿈 기록하기",
-                "오늘 밤 꾼 꿈을 기록해보세요.",
-                "/write",
-              ],
-              [
-                "/images/moon_light.svg",
-                "감정 일기",
-                "오늘의 감정을 기록해 보세요.",
-                "/emotion",
-              ],
-              [
-                "/images/smile_light.svg",
-                "수면 기록",
-                "수면 패턴을 기록하고 관리해 보세요.",
-                "/sleep",
-              ],
-            ].map(([icon, title, desc, link], i) => (
-              <Link to={link} className="record_box" key={i}>
-                <img src={icon} alt={title} />
-                <span>{title}</span>
-                <span>{desc}</span>
-              </Link>
-            ))}
-          </div>
-        )}
+        {recordItems.map((item, i) => (
+          <Link
+            to={isLoggedIn ? item.path : "/login"}
+            className="record_box"
+            key={i}
+          >
+            <div className="record_title">
+              <img src={item.icon} alt={item.label} />
+              <span>{item.label}</span>
+              <span>{item.desc}</span>
+            </div>
+          </Link>
+        ))}
       </div>
     </section>
   );

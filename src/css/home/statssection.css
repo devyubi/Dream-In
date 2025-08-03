@@ -8,6 +8,7 @@
 .login_content {
 }
 .total {
+  cursor: pointer;
   display: flex;
   gap: 10px;
   min-width: 0;
