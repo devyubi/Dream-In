@@ -35,7 +35,7 @@ const slideData = [
   },
 ];
 
-function Slide() {
+function QuoteSwiper() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -69,4 +69,4 @@ function Slide() {
   );
 }
 
-export default Slide;
+export default QuoteSwiper;
