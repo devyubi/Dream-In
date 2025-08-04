@@ -28,15 +28,14 @@ function Header() {
       // 로그아웃
       localStorage.clear();
       sessionStorage.clear();
-      // await supabase.auth.signOut();
-      setUser(null); // 유저 정보 초기화함
+      setUser(null);
       // 로그아웃 처리
       try {
         await signOut();
         localStorage.clear(); // 저장된 토큰 및 사용자 정보 제거 (로컬스토리지에서 제거)
-        sessionStorage.clear(); // 세션 스로티지 제거
-        setUser(null); // 전역 사용자 상태 초기화
-        navigate("/"); // 강제 새로고침을 위해 홈으로 이동
+        sessionStorage.clear();
+        setUser(null);
+        navigate("/");
       } catch (error) {
         // console.error("또오류났냐")
       }

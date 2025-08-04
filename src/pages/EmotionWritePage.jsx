@@ -1,15 +1,14 @@
 import styled from "@emotion/styled";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
+import { useNavigate } from "react-router-dom";
 import BackButton from "../components/common/BackButton";
 import Container from "../components/common/Container";
 import PostButton from "../components/common/PostButton";
-import Calendar from "react-calendar";
-import "react-calendar/dist/Calendar.css";
 import TextArea from "../components/common/TextArea";
-import InputErrorMessage from "../components/common/InputErrorMessage";
-import { useNavigate } from "react-router-dom";
-import "../css/emotionwritepage.css";
 import "../css/calendar.css";
+import "../css/emotionwritepage.css";
 
 const Top = styled.div`
   display: flex;
@@ -33,7 +32,7 @@ const CalendarWrap = styled.div`
   padding: 30px 25px 0 25px;
 `;
 const DiarySection = styled.div`
-  padding: 40px 25px 0px 25px;
+  padding: 30px 25px 0px 25px;
 `;
 const Label = styled.label`
   display: block;
@@ -43,34 +42,30 @@ const Label = styled.label`
 `;
 
 // 백엔드에서 전달받은 자료
-const todoApi = [
+const emotionDiaryApi = [
   {
     pk: 0,
-    title: "점심먹기",
-    text: "내용 1",
+    title: "우울",
+    text: "굉장하게 우울함",
     day: "2025-07-04",
-    img: "/logo192.png",
   },
   {
     pk: 1,
-    title: "영화보기",
-    text: "내용 2",
+    title: "기쁨",
+    text: "굉장하게 기쁨. 선물받음!",
     day: "2025-07-17",
-    img: "/logo192.png",
   },
   {
     pk: 2,
-    title: "책읽기",
-    text: "내용 3",
+    title: "보통",
+    text: "",
     day: "2025-07-19",
-    img: "/logo192.png",
   },
   {
     pk: 3,
-    title: "그림그리기",
-    text: "내용 4",
+    title: "무서움",
+    text: "천둥번개쳐서 엄청 무서웠음",
     day: "2025-07-29",
-    img: "/logo192.png",
   },
 ];
 
@@ -78,17 +73,27 @@ function EmotionDiaryPage() {
   const [date, setDate] = useState(new Date());
   const [text, setText] = useState("");
   const [error, setError] = useState("");
+  const [mockData] = useState(emotionDiaryApi);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const selectedDate = date.toISOString().split("T")[0];
+    const diary = mockData.find(item => item.day === selectedDate);
+    if (diary) {
+      setText(diary.text);
+    } else {
+      setText("");
+    }
+  }, [date]);
 
   const handlePost = () => {
     setError("");
-
     if (!text) {
       setError("감정일기를 입력해주세요.");
       return;
     }
 
-    navigate("/emotiondetail", {
+    navigate("/", {
       state: {
         date: date.toISOString().split("T")[0],
         diary: text,
