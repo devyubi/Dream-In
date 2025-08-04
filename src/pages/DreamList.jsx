@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import BackButton from "../components/common/BackButton";
 import Container from "../components/common/Container";
 import { useEffect, useState } from "react";
+import WarningModal from "../components/common/WarningModal";
 
 const EmojiCategoryWrap = styled.ul`
   display: flex;
@@ -20,6 +21,16 @@ const EmojiCategoryItem = styled.li`
   border: 1px solid #e7e7e7;
   padding: 15px 30px;
   border-radius: 24px;
+  cursor: pointer;
+
+  background-color: ${({ isActive }) => (isActive ? "#fad4e8" : "transparent")};
+  box-shadow: ${({ isActive }) =>
+    isActive ? "6px 6px 8px rgba(0,0,0,0.15" : "none"};
+
+  &:hover {
+    background-color: #fad4e8;
+    box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.15);
+  }
 `;
 const DreamListWrap = styled.ul`
   display: flex;
@@ -69,6 +80,19 @@ const DreamListItemTime = styled.span`
 `;
 const DreamListItemTitle = styled.p`
   margin-left: 30px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+const DreamListItemCategory = styled.span`
+  border: 1px solid #c2c2c2;
+  border-radius: 16px;
+  background-color: #fcf3fb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #8672d0;
+  padding: 3px 6px;
 `;
 const DreamListItemDetail = styled.div`
   margin-left: 30px;
@@ -99,13 +123,20 @@ const DreamListItemFavorites = styled.div`
   position: absolute;
   top: 25px;
   right: 35px;
+  cursor: pointer;
 
   img {
+  }
+  &:hover {
+    box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.15);
   }
 `;
 
 function DreamList() {
   const [dreamList, setDreamList] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedDreamId, setSelectedDreamId] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState("전체");
 
   useEffect(() => {
     const mockData = [
@@ -114,17 +145,21 @@ function DreamList() {
         name: "박송문",
         time: "1시간 전",
         title: "하늘을 나는 꿈을 꾸었습니다.",
+        category: "행복한",
         detail: "하늘을 아이언맨처럼 빠르게 날았습니다. I'm ironman.",
         photo: "/images/photo1.png",
+        isFavorite: false,
       },
       {
         id: 2,
         name: "송문박",
         time: "1시간 전",
         title: "하늘에서 아이언맨이 날고 있는 것을 보는 꿈을 꾸었습니다.",
+        category: "신기한",
         detail:
           "하늘을 올려다 보았을 때 아이언맨처럼 빠른 사람이 날고 있었어요. He is ironman.",
         photo: "/images/photo2.png",
+        isFavorite: false,
       },
       {
         id: 3,
@@ -132,14 +167,50 @@ function DreamList() {
         time: "1시간 전",
         title:
           "하늘에서 아이언맨이 날고 있는 것을 보는 사람을 보는 꿈을 꾸었습니다.",
+        category: "몽환적",
         detail:
           "하늘을 올려다 보았며 아이언맨을 보고 있는 사람을 보는 꿈을 꾸었어요. He is man.",
         photo: "/images/photo3.png",
+        isFavorite: false,
       },
     ];
 
     setDreamList(mockData);
   }, []);
+
+  const toggleFavorite = id => {
+    setDreamList(prevList =>
+      prevList.map(dream =>
+        dream.id === id ? { ...dream, isFavorite: !dream.isFavorite } : dream,
+      ),
+    );
+  };
+
+  // 감정 카테고리 필터
+  const filteredDreams =
+    selectedCategory === "전체"
+      ? dreamList
+      : dreamList.filter(dream => dream.category === selectedCategory);
+
+  // 삭제 모달 열기
+  const openDeleteModal = id => {
+    setIsModalOpen(true);
+    setSelectedDreamId(id);
+  };
+
+  // 모달 닫기
+  const closeDeleteModal = () => {
+    setIsModalOpen(false);
+    setSelectedDreamId(null);
+  };
+
+  // 삭제 확인 시 처리
+  const confirmDelete = () => {
+    setDreamList(
+      prevList => prevList.filter(dream => dream.id !== selectedDreamId),
+      closeDeleteModal(),
+    );
+  };
 
   const emojiCategories = [
     "전체",
@@ -158,13 +229,19 @@ function DreamList() {
     <Container>
       <BackButton to="/" />
       <EmojiCategoryWrap>
-        {emojiCategories.map((category, index) => (
-          <EmojiCategoryItem key={index}>{category}</EmojiCategoryItem>
+        {emojiCategories.map((categorylist, index) => (
+          <EmojiCategoryItem
+            key={index}
+            onClick={() => setSelectedCategory(categorylist)}
+            isActive={selectedCategory === categorylist}
+          >
+            {categorylist}
+          </EmojiCategoryItem>
         ))}
       </EmojiCategoryWrap>
-      {dreamList.length > 0 && (
+      {filteredDreams.length > 0 && (
         <DreamListWrap>
-          {dreamList.map(dream => (
+          {filteredDreams.map(dream => (
             <DreamListItem key={dream.id}>
               <DreamListItemUser>
                 <DreamListItemUserPhoto>
@@ -172,18 +249,40 @@ function DreamList() {
                 </DreamListItemUserPhoto>
                 <DreamListItemUserName>{dream.name}</DreamListItemUserName>
                 <DreamListItemTime>{dream.time}</DreamListItemTime>
-                <DreamListItemFavorites>
-                  <img src="/images/star.svg" alt="즐겨찾기" />
+                <DreamListItemFavorites
+                  onClick={() => toggleFavorite(dream.id)}
+                >
+                  <img
+                    src={
+                      dream.isFavorite
+                        ? "/images/fullstar.svg"
+                        : "/images/star.svg"
+                    }
+                    alt={dream.isFavorite ? "즐겨찾기 취소" : "즐겨찾기"}
+                  />
                 </DreamListItemFavorites>
               </DreamListItemUser>
-              <DreamListItemTitle>{dream.title}</DreamListItemTitle>
+              <DreamListItemTitle>
+                {dream.title}
+                <DreamListItemCategory>#{dream.category}</DreamListItemCategory>
+              </DreamListItemTitle>
               <DreamListItemDetail>{dream.detail}</DreamListItemDetail>
-              <DreamListItemDelete>
+              <DreamListItemDelete onClick={() => openDeleteModal(dream.id)}>
                 <img src="/images/delete_icon.png" alt="삭제" />
               </DreamListItemDelete>
             </DreamListItem>
           ))}
         </DreamListWrap>
+      )}
+
+      {isModalOpen && (
+        <WarningModal
+          onClose={closeDeleteModal}
+          onConfirm={confirmDelete}
+          dreamTitle={
+            dreamList.find(d => d.id === selectedDreamId)?.title || ""
+          }
+        />
       )}
     </Container>
   );
