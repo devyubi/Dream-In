@@ -60,9 +60,7 @@ const DreamTitleTextNum = styled.span`
   font-weight: ${({ isMax }) => (isMax ? "700" : "400")};
 `;
 const DreamEmojiWrap = styled.div`
-  padding-top: 60px;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding: 60px 20px 0px 20px;
   min-height: 500px;
 `;
 const DreamEmojiTitle = styled.h2`

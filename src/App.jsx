@@ -2,6 +2,8 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Header from "./components/common/Header";
 import { AuthProvider } from "./contexts/AuthContext";
 import "./index.css";
+import AIDreamResultPage from "./pages/AIDreamResultPage";
+import AuthCallbackPage from "./pages/AuthCallbackPage";
 import DreamDetail from "./pages/DreamDetail";
 import DreamList from "./pages/DreamList";
 import DreamWritePage from "./pages/DreamWritePage";
@@ -11,10 +13,6 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import SleepRecordPage from "./pages/SleepRecordPage";
 import TestPage from "./pages/TestPage";
-import AuthCallbackPage from "./pages/AuthCallbackPage";
-import AIDreamResultPage from "./pages/AIDreamResultPage";
-import Footer from "./components/common/Footer";
-import MadeIn from "./components/common/MadeIn";
 
 function App() {
   return (
@@ -29,7 +27,7 @@ function App() {
           <Route path="/profile" element={<h1>프로필</h1>}></Route>
           <Route path="/dreamwrite" element={<DreamWritePage />}></Route>
           <Route path="/dreamlist" element={<DreamList />}></Route>
-          <Route path="/dreamdetail" element={<DreamDetail />}></Route>
+          <Route path="/dreamdetail/:id" element={<DreamDetail />}></Route>
           <Route path="/emotionwrite" element={<EmotionWritePage />}></Route>
           <Route path="/sleeprecord" element={<SleepRecordPage />}></Route>
           <Route path="/aidreamsresult" element={<AIDreamResultPage />}></Route>
