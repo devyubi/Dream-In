@@ -139,7 +139,7 @@ function DreamList() {
     ];
 
     setDreamList(mockData);
-  });
+  }, []);
 
   const emojiCategories = [
     "전체",
