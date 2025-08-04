@@ -26,7 +26,6 @@ function HomePage() {
 
           {/* 즐겨찾기 */}
           <FavoriteSection />
-
           {/* 나의 통계 */}
           <h2>나의 통계</h2>
           <StatsSection />

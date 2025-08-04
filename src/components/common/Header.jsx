@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { supabase } from "../../api/supabaseClient";
 import { useAuth } from "../../contexts/AuthContext";
 import { useThemeContext } from "../../contexts/ThemeContext";
 import "../../css/header.css";
@@ -26,6 +25,11 @@ function Header() {
   // 로그인 또는 로그아웃 버튼 클릭 시 동작
   const handleAuthClick = async () => {
     if (isLoggedIn) {
+      // 로그아웃
+      localStorage.clear();
+      sessionStorage.clear();
+      // await supabase.auth.signOut();
+      setUser(null); // 유저 정보 초기화함
       // 로그아웃 처리
       try {
         await signOut();
