@@ -25,13 +25,11 @@ function Header() {
   // 로그인 또는 로그아웃 버튼 클릭 시 동작
   const handleAuthClick = async () => {
     if (isLoggedIn) {
-<<<<<<< HEAD
       // 로그아웃
       localStorage.clear();
       sessionStorage.clear();
       // await supabase.auth.signOut();
       setUser(null); // 유저 정보 초기화함
-=======
       // 로그아웃 처리
       try {
         await signOut();
@@ -42,7 +40,6 @@ function Header() {
       } catch (error) {
         // console.error("또오류났냐")
       }
->>>>>>> origin/main
     } else {
       navigate("/login");
     }
