@@ -1,5 +1,6 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Header from "./components/common/Header";
+import Profile from "./components/user/Profile";
 import { AuthProvider } from "./contexts/AuthContext";
 import "./index.css";
 import AIDreamResultPage from "./pages/AIDreamResultPage";
@@ -24,7 +25,7 @@ function App() {
           <Route path="/login" element={<LoginPage />}></Route>
           <Route path="/auth/callback" element={<AuthCallbackPage />} />
           <Route path="/signup" element={<SignupPage />}></Route>
-          <Route path="/profile" element={<h1>프로필</h1>}></Route>
+          <Route path="/profile" element={<Profile />}></Route>
           <Route path="/dreamwrite" element={<DreamWritePage />}></Route>
           <Route path="/dreamlist" element={<DreamList />}></Route>
           <Route path="/dreamdetail/:id" element={<DreamDetail />}></Route>

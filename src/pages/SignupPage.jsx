@@ -234,7 +234,11 @@ const SignupPage = () => {
         <div className="logo-section">
           <div className="logo-circle">
             <div className="logo-placeholder">
-              <img src="/logo.png" alt="Dream-in Logo" className="logo-image" />
+              <img
+                src="/images/logo.png"
+                alt="Dream-in Logo"
+                className="logo-image"
+              />
             </div>
           </div>
           <h1 className="app-title">Dream-In</h1>

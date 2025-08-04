@@ -1,0 +1,200 @@
+/* 공통 설정 */
+.profile-page {
+  font-family: "tj400", sans-serif;
+  background: linear-gradient(180deg, #ffe0e9 0%, #f5e3ff 100%);
+  min-height: 100vh;
+  color: #3a3a74;
+  display: flex;
+  justify-content: center; /* 수평 정렬 */
+  align-items: center; /* 수직 정렬 (선택사항) */
+  padding: 40px 20px;
+  box-sizing: border-box;
+}
+
+.profile-main {
+  width: 100%;
+  /* max-width: 600px; */
+}
+
+/* 프로필 카드 */
+.profile-container {
+  width: auto;
+  background-color: #fff7ff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(157, 119, 202, 0.15);
+  overflow: hidden;
+  padding: 30px 0;
+}
+
+/* 프로필 정보 섹션 */
+.profile-info-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #eee1f3;
+}
+
+.profile-avatar {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin-bottom: 16px;
+}
+
+.avatar-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #e8d5f9;
+  box-shadow: 0 0 0 4px #f6e9ff;
+}
+
+.avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+}
+
+.avatar-badge {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  background: linear-gradient(135deg, #c77dff, #9d4edd);
+  border-radius: 50%;
+  padding: 6px;
+  font-size: 12px;
+  color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* 이름 및 이메일 */
+.profile-details {
+  text-align: center;
+}
+.profile-name {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+.profile-email {
+  font-size: 14px;
+  color: #77679a;
+}
+
+/* 계정 관리 섹션 */
+.account-management-section {
+  padding: 24px 24px 0;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 16px;
+  color: #5a4894;
+}
+
+.menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  background-color: #faf3fd;
+  border-radius: 12px;
+  padding: 14px 18px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border: none;
+  width: 100%;
+  text-align: left;
+}
+
+.menu-item:hover {
+  background-color: #f0e2fc;
+}
+
+.menu-icon {
+  margin-right: 12px;
+  font-size: 20px;
+  color: #8f5cd0;
+}
+
+.menu-content {
+  flex-grow: 1;
+}
+
+.menu-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #3a3a74;
+}
+
+.menu-description {
+  font-size: 12px;
+  color: #8672d0;
+}
+
+.menu-arrow {
+  font-size: 18px;
+  color: #c2a4e6;
+}
+
+/* 파괴적 작업 스타일 */
+.menu-item.destructive {
+  background-color: #ffe5ec;
+  color: #b33a5c;
+}
+.menu-item.destructive:hover {
+  background-color: #ffd6e3;
+}
+.menu-item.destructive .menu-icon,
+.menu-item.destructive .menu-arrow {
+  color: #b33a5c;
+}
+
+/* 로딩 상태 */
+.loading-spinner {
+  text-align: center;
+  margin-top: 100px;
+}
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 5px solid #ddd;
+  border-top: 5px solid #c299ff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 12px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 다크 모드 예시 */
+.profile-page.dark-mode {
+  background: #2a2a3a;
+  color: #e1d5f0;
+}
+.profile-page.dark-mode .profile-container {
+  background-color: #3a3a4a;
+}
+.profile-page.dark-mode .menu-item {
+  background-color: #4a3a5a;
+}
+.profile-page.dark-mode .menu-item:hover {
+  background-color: #5a4a6a;
+}

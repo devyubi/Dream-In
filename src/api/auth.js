@@ -1,52 +1,29 @@
-/* eslint-disable no-unused-vars */
 // src/api/auth.js
-
 import { supabase } from "./supabaseClient";
+
+// ===== 프로필 관련 함수들 =====
 
 export const getCurrentUserProfile = async () => {
   try {
-    // console.log("getCurrentUserProfile 시작...");
-
-    // 1. 현재 사용자 세션 확인
     const {
       data: { session },
       error: sessionError,
     } = await supabase.auth.getSession();
 
-    if (sessionError) {
-      // console.log("세션 조회 실패:", sessionError);
+    if (sessionError || !session?.user) {
       return null;
     }
 
-    if (!session?.user) {
-      // console.log("세션 또는 사용자 정보 없음");
-      return null;
-    }
-
-    // console.log("사용자 세션 확인:", session.user.email);
-
-    // 2. 프로필 정보 조회 (테이블명을 profiles로 통일)
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("*")
       .eq("auth_user_id", session.user.id)
-      .maybeSingle(); // single() 대신 maybeSingle() 사용
+      .maybeSingle();
 
-    if (profileError) {
-      // console.log("프로필 조회 실패:", profileError);
-      // console.log("에러 코드:", profileError.code);
-      // console.log("에러 메시지:", profileError.message);
+    if (profileError || !profile) {
       return null;
     }
 
-    if (!profile) {
-      // console.log("프로필 데이터가 없습니다. 사용자 ID:", session.user.id);
-      return null;
-    }
-
-    // console.log("프로필 조회 성공:", profile.nickname);
-
-    // 3. auth.users 정보와 profiles 정보 결합
     return {
       // auth.users 정보
       id: session.user.id,
@@ -57,7 +34,6 @@ export const getCurrentUserProfile = async () => {
       last_sign_in_at: session.user.last_sign_in_at,
       app_metadata: session.user.app_metadata,
       user_metadata: session.user.user_metadata,
-
       // profiles 정보
       profile_id: profile.id,
       nickname: profile.nickname,
@@ -68,40 +44,88 @@ export const getCurrentUserProfile = async () => {
       profile_updated_at: profile.updated_at,
     };
   } catch (error) {
-    // console.log("getCurrentUserProfile 예외 발생:", error);
+    console.error("getCurrentUserProfile 예외:", error);
     return null;
   }
 };
 
-// 프로필 이미지 업로드 함수
+// 소셜 로그인 사용자 프로필 자동 생성
+export const createSocialUserProfile = async user => {
+  try {
+    console.log("=== 소셜 로그인 사용자 프로필 생성 ===");
+
+    const userMetadata = user.user_metadata || {};
+    const appMetadata = user.app_metadata || {};
+
+    let nickname = null;
+    let profileImageUrl = null;
+
+    if (appMetadata.provider === "google") {
+      nickname =
+        userMetadata.full_name || userMetadata.name || user.email.split("@")[0];
+      profileImageUrl = userMetadata.picture || userMetadata.avatar_url;
+    } else if (appMetadata.provider === "kakao") {
+      nickname =
+        userMetadata.name || userMetadata.nickname || user.email.split("@")[0];
+      profileImageUrl = userMetadata.picture || userMetadata.avatar_url;
+    } else {
+      nickname = user.email.split("@")[0];
+    }
+
+    const { data, error } = await supabase
+      .from("profiles")
+      .upsert(
+        {
+          auth_user_id: user.id,
+          email: user.email,
+          nickname: nickname,
+          profile_image_url: profileImageUrl,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
+        {
+          onConflict: "auth_user_id",
+        },
+      )
+      .select()
+      .single();
+
+    if (error) {
+      console.error("소셜 프로필 생성 실패:", error);
+      return null;
+    }
+
+    console.log("소셜 프로필 생성/업데이트 성공:", data);
+    return data;
+  } catch (error) {
+    console.error("소셜 프로필 생성 예외:", error);
+    return null;
+  }
+};
+
+// ===== 파일 업로드 함수 =====
+
 export const uploadProfileImage = async (file, userId) => {
   try {
-    // console.log("프로필 이미지 업로드 시작...");
-
-    // 파일 확장자 추출
     const fileExt = file.name.split(".").pop();
     const fileName = `${userId}.${fileExt}`;
     const filePath = `profiles/${fileName}`;
 
-    // Storage에 업로드
     const { data, error } = await supabase.storage
       .from("profile-images")
       .upload(filePath, file, {
         cacheControl: "3600",
-        upsert: true, // 덮어쓰기 허용
+        upsert: true,
       });
 
     if (error) {
-      console.log("이미지 업로드 실패:", error);
+      console.error("이미지 업로드 실패:", error);
       throw error;
     }
 
-    // 공개 URL 생성
     const {
       data: { publicUrl },
     } = supabase.storage.from("profile-images").getPublicUrl(filePath);
-
-    // console.log("이미지 업로드 성공:", publicUrl);
 
     return {
       success: true,
@@ -109,7 +133,7 @@ export const uploadProfileImage = async (file, userId) => {
       path: filePath,
     };
   } catch (error) {
-    console.log("uploadProfileImage 실패:", error);
+    console.error("uploadProfileImage 실패:", error);
     return {
       success: false,
       error: error.message,
@@ -117,73 +141,36 @@ export const uploadProfileImage = async (file, userId) => {
   }
 };
 
-// 이메일 유효성 검사
-export const validateEmail = email => {
-  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return re.test(email);
-};
+// ===== 소셜 로그인 함수들 =====
 
-// 비밀번호 유효성 검사
-export const validatePassword = password => {
-  const errors = [];
-  if (password.length < 6) {
-    errors.push("비밀번호는 6자 이상이어야 합니다.");
-  }
-
-  return {
-    isValid: errors.length === 0,
-    errors,
-  };
-};
-
-// 닉네임 유효성 검사
-export const validateNickname = nickname => {
-  const re = /^[a-zA-Z0-9가-힣_-]{2,20}$/;
-  const isValid = re.test(nickname);
-  return {
-    isValid,
-    errors: isValid ? [] : ["닉네임 형식이 올바르지 않습니다."],
-  };
-};
-
-// 생년월일 유효성 검사 (yyyy-mm-dd)
-export const validateBirthdate = birthdate => {
-  const isValid = /^\d{4}-\d{2}-\d{2}$/.test(birthdate);
-  return {
-    isValid,
-    errors: isValid ? [] : ["생년월일 형식이 올바르지 않습니다."],
-  };
-};
-
-// 닉네임 중복 확인
-export const checkNicknameDuplicate = async nickname => {
+export const signInWithGoogle = async () => {
   try {
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("nickname")
-      .eq("nickname", nickname);
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        scopes: "profile email",
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
 
     if (error) {
-      // console.log("닉네임 중복 확인 실패:", error);
-      return { isDuplicate: false, error: error.message };
+      console.error("구글 로그인 에러:", error.message);
+      return { success: false, error: error.message };
     }
 
-    return {
-      isDuplicate: data && data.length > 0,
-      error: null,
-    };
+    return { success: true, data };
   } catch (error) {
-    // console.log("checkNicknameDuplicate 예외:", error);
-    return { isDuplicate: false, error: error.message };
+    console.error("구글 로그인 예외:", error);
+    return { success: false, error: error.message };
   }
 };
 
-// 카카오 로그인 추가
 export const signInWithKakao = async () => {
   try {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "kakao",
       options: {
+        scopes: "profile_nickname profile_image account_email",
         redirectTo: `${window.location.origin}/auth/callback`,
       },
     });
@@ -200,38 +187,57 @@ export const signInWithKakao = async () => {
   }
 };
 
-// 로그아웃 (기존 함수 수정)
-export const signOut = async () => {
-  try {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error("로그아웃 에러:", error.message);
-      return { success: false, error: error.message };
-    }
-    return { success: true };
-  } catch (error) {
-    console.error("로그아웃 예외:", error);
-    return { success: false, error: error.message };
-  }
+// ===== 유효성 검사 함수들 =====
+
+export const validateEmail = email => {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email);
 };
-// 구글 로그인 추가
-export const signInWithGoogle = async () => {
+
+export const validatePassword = password => {
+  const errors = [];
+  if (password.length < 6) {
+    errors.push("비밀번호는 6자 이상이어야 합니다.");
+  }
+  return {
+    isValid: errors.length === 0,
+    errors,
+  };
+};
+
+export const validateNickname = nickname => {
+  const re = /^[a-zA-Z0-9가-힣_-]{2,20}$/;
+  const isValid = re.test(nickname);
+  return {
+    isValid,
+    errors: isValid ? [] : ["닉네임 형식이 올바르지 않습니다."],
+  };
+};
+
+export const validateBirthdate = birthdate => {
+  const isValid = /^\d{4}-\d{2}-\d{2}$/.test(birthdate);
+  return {
+    isValid,
+    errors: isValid ? [] : ["생년월일 형식이 올바르지 않습니다."],
+  };
+};
+
+export const checkNicknameDuplicate = async nickname => {
   try {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("nickname")
+      .eq("nickname", nickname);
 
     if (error) {
-      console.error("구글 로그인 에러:", error.message);
-      return { success: false, error: error.message };
+      return { isDuplicate: false, error: error.message };
     }
 
-    return { success: true, data };
+    return {
+      isDuplicate: data && data.length > 0,
+      error: null,
+    };
   } catch (error) {
-    console.error("구글 로그인 예외:", error);
-    return { success: false, error: error.message };
+    return { isDuplicate: false, error: error.message };
   }
 };

@@ -1,9 +1,8 @@
-/* eslint-disable no-unused-vars */
 // src/pages/LoginPage.jsx
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { signInWithGoogle, signInWithKakao, validateEmail } from "../api/auth";
 import { useAuth } from "../contexts/AuthContext";
-import { validateEmail, signInWithKakao, signInWithGoogle } from "../api/auth";
 import "../css/loginpage.css";
 
 const LoginPage = () => {
@@ -148,7 +147,11 @@ const LoginPage = () => {
       <div className="login-container">
         <div className="logo-section">
           <div className="logo-circle">
-            <img src="/logo.png" alt="Dream-in Logo" className="logo-image" />
+            <img
+              src="/images/logo.png"
+              alt="Dream-in Logo"
+              className="logo-image"
+            />
           </div>
           <h1 className="app-title">Dream-in</h1>
         </div>
