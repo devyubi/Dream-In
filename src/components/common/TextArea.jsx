@@ -27,7 +27,7 @@ const DetailsText = styled.textarea`
   height: 200px;
   resize: none;
 
-  /* Scrollbar styling (WebKit only: Chrome, Safari, Edge Chromium) */
+  /* 스크롤바 */
   &::-webkit-scrollbar {
     width: 10px;
   }
@@ -35,7 +35,7 @@ const DetailsText = styled.textarea`
   &::-webkit-scrollbar-thumb {
     background-color: #b58edc; /* 스크롤바 색 */
     border-radius: 8px;
-    border: 2px solid #f5e6ff; /* thumb 주변 테두리 (배경색과 맞추면 공간처럼 보임) */
+    border: 2px solid #f5e6ff; /* 주변 테두리 */
   }
 
   &::-webkit-scrollbar-track {
@@ -47,6 +47,7 @@ const DetailsText = styled.textarea`
   scrollbar-width: thin;
   scrollbar-color: #b58edc #f5e6ff;
 `;
+
 const DetailsTextNum = styled.span`
   position: absolute;
   top: 270px;
