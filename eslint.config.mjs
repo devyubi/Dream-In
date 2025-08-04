@@ -25,8 +25,8 @@ export default defineConfig([
       ...pluginReact.configs.recommended.rules,
       "prettier/prettier": "warn",
       "no-var": "warn",
-      "no-unused-vars": "warn",
       "react/react-in-jsx-scope": "off",
+      "no-unused-vars": "off",
     },
     settings: {
       react: {

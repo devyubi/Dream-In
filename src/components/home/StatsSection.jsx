@@ -1,33 +1,62 @@
+import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import { useThemeContext } from "../../contexts/ThemeContext";
+import "../../css/home/statssection.css";
 
-/* eslint-disable no-unused-vars */
-function RecordSection() {
+export function StatsSection() {
+  const { isDarkMode } = useThemeContext();
   const { isLoggedIn, user } = useAuth();
+
+  const iconSet = [
+    [
+      `/images/total_${isDarkMode ? "dark" : "light"}.svg`,
+      24,
+      "총 꿈 기록",
+      "/dreamlist",
+    ],
+    [
+      `/images/calendar_${isDarkMode ? "dark" : "light"}.svg`,
+      13,
+      "이번 달 기록",
+      "/dreamlist",
+    ],
+    [
+      `/images/clock_${isDarkMode ? "dark" : "light"}.svg`,
+      8,
+      "평균 수면 시간",
+      "/sleeprecord",
+    ],
+    [
+      `/images/ai_${isDarkMode ? "dark" : "light"}.svg`,
+      4,
+      "주간 꿈 해몽",
+      "/aidreamsresult",
+    ],
+  ];
+
   return (
     <section className="main_section">
       <div className="my_state">
-        <h2>나의 통계</h2>
-        {!isLoggedIn ? (
-          <div className="overlay">로그인 시 이용 가능합니다</div>
-        ) : (
+        <div className={`login_content ${!isLoggedIn ? "blurred" : ""}`}>
+          {!isLoggedIn && (
+            <div className="blur_overlay">로그인 시 이용 가능합니다</div>
+          )}
+
           <div className="total">
-            {[
-              ["/images/total_light.svg", 24, "총 꿈 기록"],
-              ["/images/calendar_light.svg", 13, "이번 달 기록"],
-              ["/images/clock_light.svg", 8, "평균 수면 시간"],
-              ["/images/ai_light.svg", 4, "주간 꿈 해몽"],
-            ].map(([icon, num, text], i) => (
-              <div key={i}>
+            {iconSet.map(([icon, num, text, path], i) => (
+              <Link to={path} className="mytotal" key={i}>
                 <img src={icon} alt={text} />
-                <span>{num}</span>
+                <span>
+                  <h3>{num}</h3>
+                </span>
                 <span>{text}</span>
-              </div>
+              </Link>
             ))}
           </div>
-        )}
+        </div>
       </div>
     </section>
   );
 }
 
-export default RecordSection;
+export default StatsSection;

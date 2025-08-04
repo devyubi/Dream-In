@@ -1,80 +1,20 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useTheme } from "@emotion/react";
+import { useNavigate } from "react-router-dom";
 import Container from "../components/common/Container";
 import QuoteSwiper from "../components/QuoteSwiper";
 import { useAuth } from "../contexts/AuthContext";
 import "../css/homepage.css";
+import FavoriteSection from "../components/home/FavoriteSection";
 import RecordSection from "../components/home/RecordSection";
 import StatsSection from "../components/home/StatsSection";
-
-const mockDreams = [
-  {
-    id: 1,
-    title: "하늘을 나는 꿈",
-    description: "구름 위를 자유롭게 날아다니는 꿈을 꾸었어요",
-    date: "2025.07.18",
-    isBookmarked: true,
-  },
-  {
-    id: 2,
-    title: "바다 속 모험",
-    description: "깊은 바다 속에서 신비로운 생물들을 만났어요.",
-    date: "2025.07.16",
-    isBookmarked: true,
-  },
-  {
-    id: 3,
-    title: "뺑소니 당하는 꿈",
-    description:
-      "뺑소니를 당하는 꿈을 꿨는데 꿈이 아니었어요. 경찰에 신고할거에요.ㅉ",
-    date: "2025.07.14",
-    isBookmarked: true,
-  },
-];
-
-// [
-//   ["total", 24, "총 꿈 기록"],
-//   ["calendar", 13, "이번 달 기록"],
-//   ["clock", 8, "평균 수면 시간"],
-//   ["ai", 4, "주간 꿈 해몽"],
-// ].map(([name, value, label]) => (
-//   <div key={label}>
-//     <img src={`/${name}_${isDarkMode ? "darkmode" : "lightmode"}.svg`} alt={label} />
-//     <span>{value}</span>
-//     <span>{label}</span>
-//   </div>
-// ));
+import QuoteSwiper from "../components/QuoteSwiper";
+import { useAuth } from "../contexts/AuthContext";
+import "../css/home/homepage.css";
 
 function HomePage() {
-  const { isLoggedIn, user } = useAuth();
-  const [bookmarkedDreams, setBookmarkedDreams] = useState([]);
-
-  useEffect(() => {
-    // 최신순 정렬
-    const sortedDreams = [...mockDreams].sort(
-      (a, b) => new Date(b.date) - new Date(a.date),
-    );
-    setBookmarkedDreams(sortedDreams);
-  }, []);
-
-  const toggleBookmark = id => {
-    setBookmarkedDreams(prev => {
-      const updated = prev
-        .map(dream =>
-          dream.id === id ? { ...dream, isBookmarked: false } : dream,
-        )
-        .filter(dream => dream.isBookmarked);
-
-      // 모킹데이터라서 강제로 3번째 보여줌
-      if (updated.length < 2) {
-        const extra = mockDreams.find(
-          d => d.id === 3 && !updated.some(u => u.id === 4),
-        );
-        if (extra) updated.push(extra);
-      }
-      return updated.sort((a, b) => new Date(b.date) - new Date(a.date));
-    });
-  };
+  const { isDarkMode } = useTheme();
+  const { isLoggedIn, user, profile } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <Container className="mainpage">
@@ -86,6 +26,7 @@ function HomePage() {
             </h1>
             <p>오늘도 새로운 꿈의 여행을 떠나보세요!</p>
           </section>
+
           {/* 즐겨찾기 */}
           <section className="dream_list">
             <div className="main_login">
@@ -183,10 +124,14 @@ function HomePage() {
               </div>
             </div>
           </section>
+          <FavoriteSection />
+
           {/* 나의 통계 */}
-          <RecordSection />
-          {/* 기록하기 */}
+          <h2>나의 통계</h2>
           <StatsSection />
+          {/* 기록하기 */}
+          <h2>기록하기</h2>
+          <RecordSection />
           {/* 스와이퍼 */}
           <section className="quotes">
             <h3>꿈 관련 명언</h3>
