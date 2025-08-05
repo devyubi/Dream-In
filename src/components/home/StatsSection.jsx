@@ -17,8 +17,8 @@ export function StatsSection() {
     [
       `/images/calendar_${isDarkMode ? "dark" : "light"}.svg`,
       13,
-      "이번 달 기록",
-      "/dreamlist",
+      "총 감정 기록",
+      "/emotionlist",
     ],
     [
       `/images/clock_${isDarkMode ? "dark" : "light"}.svg`,
