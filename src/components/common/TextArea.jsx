@@ -50,10 +50,11 @@ const DetailsText = styled.textarea`
 
 const DetailsTextNum = styled.span`
   position: absolute;
-  top: 270px;
+  top: 240px;
   right: 50px;
+  font-family: "tj400";
   /* 입력 글자수가 최대 글자수가 되면 글자수에 경고 표시 */
-  color: ${({ isMax }) => (isMax ? "red" : "inherit")};
+  color: ${({ isMax }) => (isMax ? "red" : "#493d78")};
   font-weight: ${({ isMax }) => (isMax ? "700" : "400")};
 `;
 

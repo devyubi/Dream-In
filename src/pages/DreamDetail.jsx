@@ -1,181 +1,13 @@
-import styled from "@emotion/styled";
+import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import BackButton from "../components/common/BackButton";
 import Container from "../components/common/Container";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
-
-const Top = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  gap: 10px;
-  border-top: 1px solid #544783;
-  padding-top: 20px;
-  margin-bottom: 30px;
-`;
-const Title = styled.h1`
-  margin: 0;
-  color: #25254d;
-`;
-const DreamDetailWrap = styled.div`
-  width: 100%;
-  height: 100vh;
-  background: linear-gradient(
-    to right,
-    rgba(230, 179, 247, 0.3),
-    rgba(211, 188, 232, 0.3),
-    rgba(194, 193, 238, 0.3)
-  );
-  border-radius: 24px;
-  display: flex;
-  flex-direction: column;
-`;
-const DreamDetailTop = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 30px;
-`;
-const DreamDetailTitleWrap = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-`;
-const DreanDetailTitle = styled.h2`
-  margin: 0;
-  font-size: 20px;
-`;
-const DreamDetailSubTitle = styled.p`
-  margin: 0;
-  font-size: 16px;
-`;
-const DreamDetailAiAsk = styled.button`
-  padding: 17px 25px;
-  max-height: 30px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 1px solid #e2e2e2;
-  border-radius: 16px;
-  background-color: #fcf3fb;
-  font-size: 16px;
-  cursor: pointer;
-  &:hover {
-    background-color: #fad4e8;
-    box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.15);
-  }
-`;
-const DreamDetailName = styled.input`
-  font-family: "tj400";
-  font-size: 16px;
-  margin: 0 30px 30px 30px;
-  border: 1px solid #c8c8c8;
-  border-radius: 16px;
-  background-color: #fcf3fb;
-  padding: 8px 10px;
-  background: linear-gradient(
-    to right,
-    rgba(230, 179, 247, 0.3),
-    rgba(211, 188, 232, 0.3),
-    rgba(194, 193, 238, 0.3)
-  );
-  height: 40px;
-`;
-const DreamDetailText = styled.textarea`
-  font-family: "tj400";
-  font-size: 16px;
-  margin: 0 30px 30px 30px;
-  padding: 15px 10px;
-  border: 1px solid #c8c8c8;
-  border-radius: 16px;
-  background: linear-gradient(
-    to right,
-    rgba(230, 179, 247, 0.3),
-    rgba(211, 188, 232, 0.3),
-    rgba(194, 193, 238, 0.3)
-  );
-  min-height: 200px;
-  resize: none;
-  /* 스크롤바 */
-  &::-webkit-scrollbar {
-    width: 10px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: #b58edc; /* 스크롤바 색 */
-    border-radius: 8px;
-    border: 2px solid #f5e6ff; /* 주변 테두리 */
-  }
-
-  &::-webkit-scrollbar-track {
-    background-color: #f5e6ff; /* 트랙 색상 */
-    border-radius: 16px;
-  }
-
-  scrollbar-width: thin;
-  scrollbar-color: #b58edc #f5e6ff;
-`;
-const DreamDetailButtonWrap = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 100px;
-  margin-bottom: 30px;
-`;
-const DreamDetailBttuon = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 16px;
-  padding: 10px 30px;
-  border: 1px solid #e2e2e2;
-  border-radius: 16px;
-  background-color: #fcf3fb;
-  cursor: pointer;
-  &:hover {
-    background-color: #fad4e8;
-    box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.15);
-  }
-`;
-const DreamDetailAiResult = styled.textarea`
-  margin: 0 30px;
-  font-family: "tj400";
-  font-size: 16px;
-  padding: 15px 10px;
-  border: 1px solid #c8c8c8;
-  border-radius: 16px;
-  background: linear-gradient(
-    to right,
-    rgba(230, 179, 247, 0.3),
-    rgba(211, 188, 232, 0.3),
-    rgba(194, 193, 238, 0.3)
-  );
-  min-height: 200px;
-  resize: none;
-  /* 스크롤바 */
-  &::-webkit-scrollbar {
-    width: 10px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: #b58edc; /* 스크롤바 색 */
-    border-radius: 8px;
-    border: 2px solid #f5e6ff; /* 주변 테두리 */
-  }
-
-  &::-webkit-scrollbar-track {
-    background-color: #f5e6ff; /* 트랙 색상 */
-    border-radius: 16px;
-  }
-
-  scrollbar-width: thin;
-  scrollbar-color: #b58edc #f5e6ff;
-`;
+import Title from "../components/common/Title";
+import { Detail } from "./Detail.styles";
 
 function DreamDetail() {
-  const location = useLocation();
   const navigate = useNavigate();
+  const { state: dream } = useLocation();
 
   const handleDelete = () => {
     const confirmResult = window.confirm("이 꿈을 정말 삭제하시겠습니까?");
@@ -189,36 +21,53 @@ function DreamDetail() {
     }
   };
 
-  const dream = location.state;
   const [dreamList, setDreamList] = useState([]);
 
   return (
     <Container>
       <BackButton to="/dreamlist" />
-      <Top>
-        <Title>꿈 상세보기</Title>
-      </Top>
-      <DreamDetailWrap>
-        <DreamDetailTop>
-          <DreamDetailTitleWrap>
-            <DreanDetailTitle>꿈 상세내용</DreanDetailTitle>
-            <DreamDetailSubTitle>
+      <Title title="꿈 상세보기" />
+      <Detail.DetailWrap>
+        <Detail.DetailTop>
+          <Detail.DetailTitleWrap>
+            <Detail.DetailTitle>꿈 상세내용</Detail.DetailTitle>
+            <Detail.DetailSubTitle>
               지난 꿈을 다시 기억해보세요.
-            </DreamDetailSubTitle>
-          </DreamDetailTitleWrap>
-          <DreamDetailAiAsk>AI 해몽 요청하기</DreamDetailAiAsk>
-        </DreamDetailTop>
-        <DreamDetailName readOnly value={dream?.title || ""}></DreamDetailName>
-        <DreamDetailText readOnly value={dream?.detail || ""}></DreamDetailText>
-        <DreamDetailButtonWrap>
-          <DreamDetailBttuon>수정하기</DreamDetailBttuon>
-          <DreamDetailBttuon onClick={handleDelete}>삭제하기</DreamDetailBttuon>
-        </DreamDetailButtonWrap>
-        <DreamDetailAiResult
+            </Detail.DetailSubTitle>
+          </Detail.DetailTitleWrap>
+          <Detail.DetailAiAsk>AI 해몽 요청하기</Detail.DetailAiAsk>
+        </Detail.DetailTop>
+        <Detail.DetailName
+          readOnly
+          value={dream?.title || ""}
+        ></Detail.DetailName>
+        <Detail.DetailText
+          readOnly
+          value={dream?.detail || ""}
+        ></Detail.DetailText>
+        <Detail.DetailButtonWrap>
+          <Detail.DetailBttuon
+            onClick={() =>
+              navigate("/dreamedit", {
+                state: {
+                  id: dream?.id,
+                  title: dream?.title,
+                  detail: dream?.detail,
+                },
+              })
+            }
+          >
+            수정하기
+          </Detail.DetailBttuon>
+          <Detail.DetailBttuon onClick={handleDelete}>
+            삭제하기
+          </Detail.DetailBttuon>
+        </Detail.DetailButtonWrap>
+        <Detail.DetailAiResult
           readOnly
           value={`AI 해몽 결과 예시입니다.`}
-        ></DreamDetailAiResult>
-      </DreamDetailWrap>
+        ></Detail.DetailAiResult>
+      </Detail.DetailWrap>
     </Container>
   );
 }

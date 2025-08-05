@@ -9,6 +9,7 @@ const TitleWrap = styled.div`
   gap: 10px;
   border-top: 1px solid #544783;
   padding-top: 20px;
+  margin-bottom: 20px;
 `;
 const TitleH1 = styled.h1`
   margin: 0;
