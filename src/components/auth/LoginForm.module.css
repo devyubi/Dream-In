@@ -1,14 +1,27 @@
 /* src/components/auth/LoginForm.module.css */
 
+:root {
+  --color-primary-p-100: #fcf3fb;
+  --background-dark-space: linear-gradient(
+    180deg,
+    #1e1b27 0%,
+    #25254d 19.71%,
+    #33336e 40.87%,
+    #3a3a74 60.98%,
+    #493d78 80.96%,
+    #544783 100%
+  );
+}
+
 .loginForm {
   width: 100%;
   max-width: 400px;
-  background: rgba(55, 65, 81, 0.95);
+  background: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(20px);
   border-radius: 24px;
   padding: 32px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(107, 114, 128, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .formGroup {
@@ -19,7 +32,7 @@
   display: block;
   margin-bottom: 8px;
   font-weight: 500;
-  color: #d1d5db;
+  color: #544783;
   font-size: 14px;
   letter-spacing: 0.5px;
 }
@@ -34,20 +47,20 @@
   width: 100%;
   padding: 16px 20px;
   padding-right: 48px;
-  border: 2px solid #4b5563;
+  border: 2px solid rgba(84, 71, 131, 0.2);
   border-radius: 16px;
   font-size: 14px;
-  background: rgba(31, 41, 55, 0.8);
+  background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
   outline: none;
-  color: #f3f4f6;
+  color: #3a3a74;
 }
 
 .inputWrapper input:focus {
-  background: rgba(31, 41, 55, 0.95);
-  border-color: #ef4444;
-  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3);
+  background: rgba(255, 255, 255, 0.95);
+  border-color: #544783;
+  box-shadow: 0 0 0 2px rgba(84, 71, 131, 0.3);
   transform: translateY(-1px);
 }
 
@@ -57,13 +70,13 @@
 }
 
 .inputWrapper input:disabled {
-  background-color: rgba(17, 24, 39, 0.5);
-  color: #6b7280;
+  background-color: rgba(255, 255, 255, 0.5);
+  color: #8f8f8f;
   cursor: not-allowed;
 }
 
 .inputWrapper input::placeholder {
-  color: #6b7280;
+  color: #8f8f8f;
   opacity: 0.8;
 }
 
@@ -77,7 +90,7 @@
   height: 20px;
   pointer-events: none;
   opacity: 0.6;
-  color: #9ca3af;
+  color: #8f8f8f;
 }
 
 .passwordToggle {
@@ -89,13 +102,13 @@
   border-radius: 8px;
   transition: all 0.2s ease;
   opacity: 0.6;
-  color: #9ca3af;
+  color: #8f8f8f;
 }
 
 .passwordToggle:hover:not(:disabled) {
-  background-color: rgba(239, 68, 68, 0.1);
+  background-color: rgba(84, 71, 131, 0.1);
   opacity: 1;
-  color: #ef4444;
+  color: #544783;
 }
 
 .passwordToggle:disabled {
@@ -130,7 +143,7 @@
   gap: 8px;
   cursor: pointer;
   font-size: 14px;
-  color: #d1d5db;
+  color: #544783;
   font-weight: 500;
 }
 
@@ -141,18 +154,18 @@
 .checkboxCustom {
   width: 20px;
   height: 20px;
-  border: 2px solid #6b7280;
+  border: 2px solid rgba(84, 71, 131, 0.3);
   border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
-  background: rgba(31, 41, 55, 0.5);
+  background: rgba(255, 255, 255, 0.5);
 }
 
 .checkboxLabel input[type="checkbox"]:checked + .checkboxCustom {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  border-color: #ef4444;
+  background: var(--background-dark-space);
+  border-color: #544783;
   transform: scale(1.05);
 }
 
@@ -166,8 +179,8 @@
 .loginButton {
   width: 100%;
   padding: 16px 24px;
-  background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
-  color: white;
+  background: var(--background-dark-space);
+  color: rgba(252, 243, 251, 1);
   border: none;
   border-radius: 16px;
   font-size: 16px;
@@ -177,6 +190,7 @@
   margin-bottom: 20px;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 4px 16px rgba(84, 71, 131, 0.3);
 }
 
 .loginButton::before {
@@ -201,11 +215,11 @@
 
 .loginButton:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(75, 85, 99, 0.4);
+  box-shadow: 0 6px 20px rgba(84, 71, 131, 0.4);
 }
 
 .loginButton:disabled {
-  background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+  background: linear-gradient(135deg, #8f8f8f 0%, #999 100%);
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
@@ -222,7 +236,7 @@
 .linkButton {
   background: none;
   border: none;
-  color: #9ca3af;
+  color: #544783;
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -237,7 +251,7 @@
   left: 0;
   width: 0;
   height: 1px;
-  background: #ef4444;
+  background: #3a3a74;
   transition: width 0.3s ease;
 }
 
@@ -246,7 +260,7 @@
 }
 
 .linkButton:hover:not(:disabled) {
-  color: #ef4444;
+  color: #8672d0;
 }
 
 .linkButton:disabled {
@@ -255,7 +269,7 @@
 }
 
 .socialSection {
-  border-top: 1px solid rgba(107, 114, 128, 0.3);
+  border-top: 1px solid rgba(84, 71, 131, 0.3);
   padding-top: 24px;
   margin-top: 24px;
 }

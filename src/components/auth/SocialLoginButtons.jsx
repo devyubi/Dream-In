@@ -55,7 +55,11 @@ const SocialLoginButtons = ({ disabled = false, onError = null }) => {
         disabled={disabled}
         className={`${styles.socialLoginButton} ${styles.kakaoLogin}`}
       >
-        <span className={`${styles.socialIcon} ${styles.kakaoIcon}`}>TALK</span>
+        <img
+          src="/images/kakao-icon.svg"
+          alt="Kakao"
+          className={styles.socialIcon}
+        />
         <span className={styles.socialText}>카카오로 시작하기</span>
       </button>
 
@@ -66,7 +70,11 @@ const SocialLoginButtons = ({ disabled = false, onError = null }) => {
         disabled={disabled}
         className={`${styles.socialLoginButton} ${styles.googleLogin}`}
       >
-        <span className={`${styles.socialIcon} ${styles.googleIcon}`}>G</span>
+        <img
+          src="/images/google-icon.svg"
+          alt="Google"
+          className={styles.socialIcon}
+        />
         <span className={styles.socialText}>구글로 시작하기</span>
       </button>
     </div>

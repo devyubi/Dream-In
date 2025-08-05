@@ -1,5 +1,4 @@
 /* src/components/auth/SocialLoginButtons.module.css */
-
 .socialLoginButtons {
   display: flex;
   flex-direction: column;
@@ -55,67 +54,38 @@
 
 .kakaoLogin {
   background: #fee500;
-  color: #3c1e1e;
-  border: 1px solid rgba(60, 30, 30, 0.1);
+  color: #3a3a74;
+  border: 1px solid rgba(58, 58, 116, 0.1);
 }
 
 .kakaoLogin:hover:not(:disabled) {
-  background: #ffd700;
+  background: #fdd835;
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(254, 229, 0, 0.4);
 }
 
 .googleLogin {
-  background: rgba(31, 41, 55, 0.95);
-  color: #f3f4f6;
-  border: 1px solid rgba(107, 114, 128, 0.3);
+  background: rgba(255, 255, 255, 0.8);
+  color: #3a3a74;
+  border: 1px solid rgba(84, 71, 131, 0.3);
 }
 
 .googleLogin:hover:not(:disabled) {
-  background: rgba(55, 65, 81, 1);
+  background: rgba(255, 255, 255, 0.95);
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(31, 41, 55, 0.5);
+  box-shadow: 0 8px 25px rgba(84, 71, 131, 0.2);
 }
 
 .socialIcon {
-  font-size: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   width: 24px;
   height: 24px;
+  object-fit: contain;
 }
 
 .socialText {
   font-size: 16px;
   font-weight: 600;
   letter-spacing: 0.3px;
-}
-
-/* Kakao 아이콘 스타일링 */
-.kakaoIcon {
-  background: #3c1e1e;
-  color: #fee500;
-  border-radius: 6px;
-  padding: 2px;
-  font-size: 16px;
-  font-weight: bold;
-}
-
-/* Google 아이콘 스타일링 */
-.googleIcon {
-  background: linear-gradient(
-    135deg,
-    #4285f4 0%,
-    #34a853 25%,
-    #fbbc05 50%,
-    #ea4335 100%
-  );
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-weight: bold;
-  font-size: 18px;
 }
 
 @media (max-width: 480px) {
@@ -125,7 +95,6 @@
   }
 
   .socialIcon {
-    font-size: 18px;
     width: 20px;
     height: 20px;
   }
