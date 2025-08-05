@@ -82,4 +82,10 @@
   background: #f0f0f0;
 }
 
-
+/* 날짜 숫자에 직접 색 입히기 */
+.react-calendar__tile.diary-date {
+  background: #ffeaa7; /* 배경색 */
+  color: #339900; /* 글자색 */
+  font-weight: bold;
+  border-radius: 20px; /* 동그랗게 */
+}
