@@ -13,6 +13,7 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import SleepRecordPage from "./pages/SleepRecordPage";
 import TestPage from "./pages/TestPage";
+import EmotionList from "./pages/EmotionList";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           <Route path="/dreamlist" element={<DreamList />}></Route>
           <Route path="/dreamdetail/:id" element={<DreamDetail />}></Route>
           <Route path="/emotionwrite" element={<EmotionWritePage />}></Route>
+          <Route path="/emotionlist" element={<EmotionList />}></Route>
           <Route path="/sleeprecord" element={<SleepRecordPage />}></Route>
           <Route path="/aidreamsresult" element={<AIDreamResultPage />}></Route>
           {/* 테스트페이지입니다-병근 */}

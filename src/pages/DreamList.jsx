@@ -3,147 +3,8 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import BackButton from "../components/common/BackButton";
 import Container from "../components/common/Container";
-
-const EmojiCategoryWrap = styled.ul`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  left: 50%;
-  width: calc(100%);
-  margin: 0 0px 30px 0px;
-  background-color: rgba(252, 243, 251, 0.4);
-  gap: 10px;
-  padding: 20px 0;
-  border-radius: 16px;
-`;
-const EmojiCategoryItem = styled.li`
-  border: 1px solid #e7e7e7;
-  padding: 15px 30px;
-  border-radius: 24px;
-  cursor: pointer;
-
-  background-color: ${({ isActive }) => (isActive ? "#fad4e8" : "transparent")};
-  box-shadow: ${({ isActive }) =>
-    isActive ? "6px 6px 8px rgba(0,0,0,0.15" : "none"};
-
-  &:hover {
-    background-color: #fad4e8;
-    box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.15);
-  }
-`;
-const DreamListWrap = styled.ul`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  margin: 0;
-  padding: 0;
-`;
-const DreamListItem = styled.li`
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  background-color: rgba(252, 243, 251, 0.4);
-  width: 100%;
-  border-radius: 24px;
-  padding: 20px;
-  gap: 7px;
-  transition:
-    background-color 0.3s ease,
-    box-shadow 0.3s ease,
-    transform 0.3s ease;
-  cursor: pointer;
-  &:hover {
-    background-color: #fad4e8;
-    box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.15);
-    transform: translateY(-2px);
-  }
-`;
-const DreamListItemUser = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 20px;
-`;
-const DreamListItemUserPhoto = styled.div`
-  display: flex;
-  justify-content: center;
-  width: 35px;
-  height: 35px;
-  border-radius: 8px;
-  overflow: hidden;
-  margin-left: 30px;
-  padding: 0;
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-`;
-const DreamListItemUserName = styled.p`
-  border-radius: 24px;
-  background-color: #fdebfd;
-  padding: 10px;
-  color: #8672d0;
-  font-size: 13px;
-  font-weight: 600;
-`;
-const DreamListItemTime = styled.span`
-  color: #8672d0;
-`;
-const DreamListItemTitle = styled.h3`
-  margin-left: 30px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 16px;
-`;
-const DreamListItemCategory = styled.span`
-  border: 1px solid #c2c2c2;
-  border-radius: 16px;
-  background-color: #fcf3fb;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #8672d0;
-  padding: 5px 8px;
-  font-weight: 400;
-  font-size: 13px;
-`;
-const DreamListItemDetail = styled.div`
-  margin: 0 30px;
-  height: 50px;
-  border-bottom: 1px solid #544783;
-  font-size: 14px;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1.7;
-`;
-const DreamListItemDelete = styled.div`
-  padding: 0;
-  margin: 5px 30px 0 0;
-  width: 15px;
-  height: 17px;
-  overflow: hidden;
-  align-self: flex-end;
-  transform: translateX(-30px);
-  cursor: pointer;
-  img {
-    object-fit: cover;
-    width: 100%;
-    height: 100%;
-  }
-`;
-const DreamListItemFavorites = styled.div`
-  position: absolute;
-  top: 25px;
-  right: 70px;
-  cursor: pointer;
-
-  img {
-  }
-`;
+import { List } from "./List.styles";
+import Title from "../components/common/Title";
 
 function DreamList() {
   const navigate = useNavigate();
@@ -151,11 +12,7 @@ function DreamList() {
   const [selectedCategory, setSelectedCategory] = useState("전체");
   const deletedId = location.state?.deletedId;
 
-  const [dreamList, setDreamList] = useState([
-    { id: 1, title: "꿈 A", detail: "내용 A", isFavorite: false },
-    { id: 2, title: "꿈 B", detail: "내용 B", isFavorite: false },
-    { id: 3, title: "꿈 C", detail: "내용 C", isFavorite: false },
-  ]);
+  const [dreamList, setDreamList] = useState([]);
 
   useEffect(() => {
     if (deletedId) {
@@ -201,7 +58,14 @@ function DreamList() {
       },
     ];
 
-    setDreamList(mockData);
+    const deleteId = location.state?.deletedId;
+
+    if (deletedId) {
+      setDreamList(mockData.filter(d => d.id !== deletedId));
+      navigate("/dreamlist", { replace: true });
+    } else {
+      setDreamList(mockData);
+    }
   }, []);
 
   const toggleFavorite = id => {
@@ -232,34 +96,35 @@ function DreamList() {
 
   return (
     <Container>
-      <EmojiCategoryWrap>
+      <Title title="꿈 이야기 목록" />
+      <List.EmojiCategoryWrap>
         <BackButton to="/" />
         {emojiCategories.map((categorylist, index) => (
-          <EmojiCategoryItem
+          <List.EmojiCategoryItem
             key={index}
             onClick={() => setSelectedCategory(categorylist)}
             isActive={selectedCategory === categorylist}
           >
             {categorylist}
-          </EmojiCategoryItem>
+          </List.EmojiCategoryItem>
         ))}
-      </EmojiCategoryWrap>
+      </List.EmojiCategoryWrap>
       {filteredDreams.length > 0 && (
-        <DreamListWrap>
+        <List.ListWrap>
           {filteredDreams.map(dream => (
-            <DreamListItem
+            <List.ListItem
               key={dream.id}
               onClick={() =>
                 navigate(`/dreamdetail/${dream.id}`, { state: dream })
               }
             >
-              <DreamListItemUser>
-                <DreamListItemUserPhoto>
+              <List.ListItemUser>
+                <List.ListItemUserPhoto>
                   <img src={dream.photo} alt="유저이미지" />
-                </DreamListItemUserPhoto>
-                <DreamListItemUserName>{dream.name}</DreamListItemUserName>
-                <DreamListItemTime>{dream.time}</DreamListItemTime>
-                <DreamListItemFavorites
+                </List.ListItemUserPhoto>
+                <List.ListItemUserName>{dream.name}</List.ListItemUserName>
+                <List.ListItemTime>{dream.time}</List.ListItemTime>
+                <List.ListItemFavorites
                   onClick={e => {
                     e.stopPropagation();
                     toggleFavorite(dream.id);
@@ -273,14 +138,14 @@ function DreamList() {
                     }
                     alt={dream.isFavorite ? "즐겨찾기 취소" : "즐겨찾기"}
                   />
-                </DreamListItemFavorites>
-              </DreamListItemUser>
-              <DreamListItemTitle>
+                </List.ListItemFavorites>
+              </List.ListItemUser>
+              <List.ListItemTitle>
                 {dream.title}
-                <DreamListItemCategory>#{dream.category}</DreamListItemCategory>
-              </DreamListItemTitle>
-              <DreamListItemDetail>{dream.detail}</DreamListItemDetail>
-              <DreamListItemDelete
+                <List.ListItemCategory>#{dream.category}</List.ListItemCategory>
+              </List.ListItemTitle>
+              <List.ListItemDetail>{dream.detail}</List.ListItemDetail>
+              <List.ListItemDelete
                 onClick={e => {
                   e.stopPropagation();
                   const confirmResult =
@@ -294,10 +159,10 @@ function DreamList() {
                 }}
               >
                 <img src="/images/delete_icon.png" alt="삭제" />
-              </DreamListItemDelete>
-            </DreamListItem>
+              </List.ListItemDelete>
+            </List.ListItem>
           ))}
-        </DreamListWrap>
+        </List.ListWrap>
       )}
     </Container>
   );
