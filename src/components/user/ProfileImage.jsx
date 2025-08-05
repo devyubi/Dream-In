@@ -1,5 +1,5 @@
 // src/components/user/ProfileImage.jsx
-import React, { useState } from "react";
+import { useState } from "react";
 
 /* eslint-disable react/prop-types */
 const ProfileImage = ({

@@ -1,12 +1,11 @@
 /* 공통 설정 */
 .profile-page {
   font-family: "tj400", sans-serif;
-  background: linear-gradient(180deg, #ffe0e9 0%, #f5e3ff 100%);
   min-height: 100vh;
   color: #3a3a74;
   display: flex;
-  justify-content: center; /* 수평 정렬 */
-  align-items: center; /* 수직 정렬 (선택사항) */
+  justify-content: center;
+  align-items: center;
   padding: 40px 20px;
   box-sizing: border-box;
 }
@@ -24,6 +23,7 @@
   box-shadow: 0 8px 24px rgba(157, 119, 202, 0.15);
   overflow: hidden;
   padding: 30px 0;
+  margin: 0 50px;
 }
 
 /* 프로필 정보 섹션 */
@@ -68,8 +68,8 @@
   bottom: -4px;
   background: linear-gradient(135deg, #c77dff, #9d4edd);
   border-radius: 50%;
-  padding: 6px;
-  font-size: 12px;
+  padding: 6px 11px;
+  font-size: 15px;
   color: white;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
@@ -152,11 +152,11 @@
 
 /* 파괴적 작업 스타일 */
 .menu-item.destructive {
-  background-color: #ffe5ec;
-  color: #b33a5c;
+  background-color: rgb(255, 168, 168);
+  /* color: #ff0048; */
 }
 .menu-item.destructive:hover {
-  background-color: #ffd6e3;
+  background-color: #ff6060;
 }
 .menu-item.destructive .menu-icon,
 .menu-item.destructive .menu-arrow {

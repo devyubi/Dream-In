@@ -1,0 +1,387 @@
+/* src/components/auth/SignupForm.module.css */
+
+.signupForm {
+  width: 100%;
+  max-width: 400px;
+  background: rgba(55, 65, 81, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(107, 114, 128, 0.3);
+}
+
+.formGroup {
+  margin-bottom: 24px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #d1d5db;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputWrapper input,
+.inputWrapper select {
+  width: 100%;
+  padding: 16px 20px;
+  padding-right: 48px;
+  border: 2px solid #4b5563;
+  border-radius: 16px;
+  font-size: 14px;
+  background: rgba(31, 41, 55, 0.8);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  outline: none;
+  color: #f3f4f6;
+}
+
+.inputWrapper input:focus,
+.inputWrapper select:focus {
+  background: rgba(31, 41, 55, 0.95);
+  border-color: #ef4444;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3);
+  transform: translateY(-1px);
+}
+
+.inputWrapper input.error,
+.inputWrapper select.error {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3);
+}
+
+.inputWrapper input.success {
+  border-color: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);
+}
+
+.inputWrapper input:disabled,
+.inputWrapper select:disabled {
+  background-color: rgba(17, 24, 39, 0.5);
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+.inputWrapper input::placeholder {
+  color: #6b7280;
+  opacity: 0.8;
+}
+
+.inputIcon {
+  position: absolute;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+  opacity: 0.6;
+  color: #9ca3af;
+}
+
+.passwordToggle {
+  pointer-events: auto;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  opacity: 0.6;
+  color: #9ca3af;
+}
+
+.passwordToggle:hover:not(:disabled) {
+  background-color: rgba(239, 68, 68, 0.1);
+  opacity: 1;
+  color: #ef4444;
+}
+
+.passwordToggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.3;
+}
+
+.inputSvg {
+  width: 20px;
+  height: 20px;
+}
+
+.nicknameInputWrapper {
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.nicknameInputWrapper input {
+  flex: 1;
+  padding-right: 20px;
+}
+
+.checkButton {
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+  color: white;
+  border: none;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  min-width: 100px;
+}
+
+.checkButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(107, 114, 128, 0.4);
+}
+
+.checkButton:disabled {
+  background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+  opacity: 0.5;
+}
+
+.errorText {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  color: #ef4444;
+  font-weight: 500;
+  margin-left: 4px;
+}
+
+.successText {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  color: #10b981;
+  font-weight: 500;
+  margin-left: 4px;
+}
+
+.profileImageWrapper {
+  position: relative;
+}
+
+.imagePreview {
+  position: relative;
+  margin-bottom: 16px;
+  display: inline-block;
+}
+
+.previewImage {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid rgba(107, 114, 128, 0.5);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.removeImage {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.removeImage:hover:not(:disabled) {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  transform: scale(1.1);
+}
+
+.removeImage:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  transform: none;
+}
+
+.fileInfo {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  color: #9ca3af;
+  margin-left: 4px;
+  opacity: 0.8;
+}
+
+.signupButton {
+  width: 100%;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+  color: white;
+  border: none;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.signupButton::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.signupButton:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+.signupButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(75, 85, 99, 0.4);
+}
+
+.signupButton:disabled {
+  background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+  opacity: 0.5;
+}
+
+/* 생년월일과 성별을 한 줄에 배치 */
+.dateGenderWrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.dateGenderWrapper .formGroup {
+  margin-bottom: 0;
+}
+
+/* 마케팅 동의 체크박스 스타일 */
+.marketingAgreement {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(31, 41, 55, 0.3);
+  border-radius: 12px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(75, 85, 99, 0.3);
+}
+
+.agreementCheckbox {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #6b7280;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  background: rgba(31, 41, 55, 0.5);
+  cursor: pointer;
+}
+
+.agreementCheckbox.checked {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  border-color: #ef4444;
+  transform: scale(1.05);
+}
+
+.agreementCheckbox.checked::after {
+  content: "✓";
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.agreementText {
+  font-size: 14px;
+  color: #d1d5db;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 480px) {
+  .signupForm {
+    max-width: 100%;
+    padding: 24px;
+    border-radius: 20px;
+  }
+
+  .formGroup {
+    margin-bottom: 20px;
+  }
+
+  .inputWrapper input,
+  .inputWrapper select {
+    padding: 14px 18px;
+    padding-right: 44px;
+    font-size: 16px; /* iOS에서 줌 방지 */
+  }
+
+  .nicknameInputWrapper {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .nicknameInputWrapper input {
+    padding-right: 20px;
+  }
+
+  .checkButton {
+    width: 100%;
+    min-width: auto;
+    padding: 14px 20px;
+  }
+
+  .signupButton {
+    padding: 14px 20px;
+    font-size: 15px;
+  }
+
+  .dateGenderWrapper {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .dateGenderWrapper .formGroup {
+    margin-bottom: 20px;
+  }
+}

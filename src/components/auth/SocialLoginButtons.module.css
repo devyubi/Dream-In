@@ -1,0 +1,136 @@
+/* src/components/auth/SocialLoginButtons.module.css */
+
+.socialLoginButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  margin: 0;
+}
+
+.socialLoginButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 16px 24px;
+  border: none;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.socialLoginButton::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.socialLoginButton:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+.socialLoginButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.kakaoLogin {
+  background: #fee500;
+  color: #3c1e1e;
+  border: 1px solid rgba(60, 30, 30, 0.1);
+}
+
+.kakaoLogin:hover:not(:disabled) {
+  background: #ffd700;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(254, 229, 0, 0.4);
+}
+
+.googleLogin {
+  background: rgba(31, 41, 55, 0.95);
+  color: #f3f4f6;
+  border: 1px solid rgba(107, 114, 128, 0.3);
+}
+
+.googleLogin:hover:not(:disabled) {
+  background: rgba(55, 65, 81, 1);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(31, 41, 55, 0.5);
+}
+
+.socialIcon {
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.socialText {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+/* Kakao 아이콘 스타일링 */
+.kakaoIcon {
+  background: #3c1e1e;
+  color: #fee500;
+  border-radius: 6px;
+  padding: 2px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* Google 아이콘 스타일링 */
+.googleIcon {
+  background: linear-gradient(
+    135deg,
+    #4285f4 0%,
+    #34a853 25%,
+    #fbbc05 50%,
+    #ea4335 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+@media (max-width: 480px) {
+  .socialLoginButton {
+    padding: 14px 20px;
+    font-size: 15px;
+  }
+
+  .socialIcon {
+    font-size: 18px;
+    width: 20px;
+    height: 20px;
+  }
+
+  .socialText {
+    font-size: 15px;
+  }
+}
