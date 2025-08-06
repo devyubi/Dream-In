@@ -31,7 +31,6 @@ function App() {
           <Route path="/login" element={<LoginPage />}></Route>
           <Route path="/auth/callback" element={<AuthCallbackPage />} />
           <Route path="/signup" element={<SignupPage />}></Route>
-          <Route path="/support" element={<Support />}></Route>
           <Route path="/profile" element={<Profile />}></Route>
           <Route path="/profile/edit" element={<ProfileEditPage />}></Route>
           <Route path="/dreamwrite" element={<DreamWritePage />}></Route>
