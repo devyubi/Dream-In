@@ -47,7 +47,7 @@ const emotionDiaryApi = [
     pk: 0,
     title: "우울",
     text: "굉장하게 우울함",
-    day: "2025-07-04",
+    day: "2025-08-04",
   },
   {
     pk: 1,
@@ -73,38 +73,53 @@ function EmotionDiaryPage() {
   const [date, setDate] = useState(new Date());
   const [text, setText] = useState("");
   const [error, setError] = useState("");
-  const [mockData] = useState(emotionDiaryApi);
+  const [allData, setAllData] = useState(emotionDiaryApi);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const selectedDate = date.toISOString().split("T")[0];
-    const diary = mockData.find(item => item.day === selectedDate);
+    const selectedDate = date.toLocaleDateString("sv-SE");
+    const diary = allData.find(item => item.day === selectedDate);
     if (diary) {
       setText(diary.text);
     } else {
       setText("");
     }
-  }, [date]);
+  }, [date, allData]);
 
   const handlePost = () => {
     setError("");
-    if (!text) {
+    if (!text.trim()) {
       setError("감정일기를 입력해주세요.");
       return;
     }
+    const selectedDate = date.toLocaleDateString("sv-SE");
+    const diaryIndex = allData.findIndex(item => item.day === selectedDate);
+    let updateData = [...allData];
 
-    navigate("/", {
-      state: {
-        date: date.toISOString().split("T")[0],
-        diary: text,
-      },
-    });
+    if (diaryIndex !== -1) {
+      updateData[diaryIndex] = {
+        ...updateData[diaryIndex],
+        text,
+      };
+      alert("수정되었습니다");
+    } else {
+      updateData.push({
+        pk: allData.length,
+        title: "",
+        text,
+        day: selectedDate,
+      });
+      alert("저장되었습니다");
+    }
+
+    setAllData(updateData);
+    navigate("/emotionlist");
   };
 
   const weekName = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
   const formatShortWeekday = (locale, date) => {
-    const idx = date.getDay();
-    return weekName[idx];
+    // const idx = date.getDay();
+    return weekName[date.getDay()];
   };
 
   return (
@@ -112,7 +127,7 @@ function EmotionDiaryPage() {
       <BackButton to="/" />
       <Top>
         <Title>감정일기</Title>
-        <SubTitle>오늘의 기분을 기록해보세요.</SubTitle>
+        <SubTitle>오늘의 기분을 기록해 보세요</SubTitle>
       </Top>
 
       <CalendarWrap>
@@ -121,24 +136,49 @@ function EmotionDiaryPage() {
           value={date}
           locale="us-US"
           calendarType="gregory"
+          formatShortWeekday={formatShortWeekday}
+          tileClassName={({ date, view }) => {
+            if (view === "month") {
+              const dateStr = date.toLocaleDateString("sv-SE"); // YYYY-MM-DD
+              const hasDiary = allData.some(
+                item => item.day === dateStr && item.text.trim() !== "",
+              );
+              if (hasDiary) {
+                return "diary-date"; // 이 클래스가 붙음
+              }
+            }
+            return null;
+          }}
+          tileContent={({ date, view }) => {
+            if (view === "month") {
+              const dateStr = date.toLocaleDateString("sv-SE");
+              const hasDiary = allData.some(
+                item => item.day === dateStr && item.text.trim() !== "",
+              );
+              if (hasDiary) {
+                return <span>📌</span>;
+              }
+            }
+            return null;
+          }}
         />
       </CalendarWrap>
 
       <DiarySection>
-        <Label>{date.toLocaleDateString()}의 감정일기</Label>
+        <Label>{date.toLocaleDateString()} 의 감정일기</Label>
         <TextArea
           value={text}
           onChange={e => {
             setText(e.target.value);
             if (error) setError("");
           }}
-          placeholder="오늘의 기분이나 사건을 적어보세요."
+          placeholder="오늘의 기분을 자유롭게 적어보세요!"
           maxLength={1000}
           error={error}
         />
       </DiarySection>
 
-      <PostButton onClick={handlePost}>일기 저장하기</PostButton>
+      <PostButton onClick={handlePost}>저장하기</PostButton>
     </Container>
   );
 }

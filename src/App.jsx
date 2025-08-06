@@ -15,6 +15,10 @@ import ProfileEditPage from "./pages/ProfileEditPage";
 import SignupPage from "./pages/SignupPage";
 import SleepRecordPage from "./pages/SleepRecordPage";
 import TestPage from "./pages/TestPage";
+import EmotionList from "./pages/EmotionList";
+import DreamEdit from "./pages/DreamEdit";
+import EmotionDetail from "./pages/EmotionDetail";
+import EmotionEdit from "./pages/EmotionEdit";
 
 function App() {
   return (
@@ -31,7 +35,11 @@ function App() {
           <Route path="/dreamwrite" element={<DreamWritePage />}></Route>
           <Route path="/dreamlist" element={<DreamList />}></Route>
           <Route path="/dreamdetail/:id" element={<DreamDetail />}></Route>
+          <Route path="/dreamedit" element={<DreamEdit />}></Route>
           <Route path="/emotionwrite" element={<EmotionWritePage />}></Route>
+          <Route path="/emotionlist" element={<EmotionList />}></Route>
+          <Route path="/emotiondetail" element={<EmotionDetail />}></Route>
+          <Route path="/emotionedit" element={<EmotionEdit />}></Route>
           <Route path="/sleeprecord" element={<SleepRecordPage />}></Route>
           <Route path="/aidreamsresult" element={<AIDreamResultPage />}></Route>
           {/* 테스트페이지입니다-병근 */}

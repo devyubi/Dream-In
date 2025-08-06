@@ -6,29 +6,12 @@ import PostButton from "../components/common/PostButton";
 import TextArea from "../components/common/TextArea";
 import InputErrorMessage from "../components/common/InputErrorMessage";
 import { useNavigate } from "react-router-dom";
+import Title from "../components/common/Title";
 
 // 전역(window) 자리
-const Top = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  gap: 10px;
-  border-top: 1px solid #544783;
-  padding-top: 20px;
-`;
-const Title = styled.h1`
-  margin: 0;
-  color: #25254d;
-`;
-const SubTitle = styled.h2`
-  margin: 0;
-  color: #493d78;
-  font-size: 14px;
-`;
 const DreamTitleWrap = styled.div`
   position: relative;
-  padding-top: 30px;
+  padding-top: 20px;
   padding-left: 25px;
   padding-right: 25px;
   height: 120px;
@@ -53,14 +36,14 @@ const DreamTitleTextNum = styled.span`
   font-family: "tj400";
   position: absolute;
   text-align: right;
-  top: 130px;
+  top: 115px;
   right: 50px;
   /* 입력 글자수가 최대 글자수가 되면 글자수에 경고 표시 */
   color: ${({ isMax }) => (isMax ? "red" : "#493d78")};
   font-weight: ${({ isMax }) => (isMax ? "700" : "400")};
 `;
 const DreamEmojiWrap = styled.div`
-  padding: 60px 20px 0px 20px;
+  padding: 40px 20px 0px 20px;
   min-height: 500px;
 `;
 const DreamEmojiTitle = styled.h2`
@@ -168,10 +151,10 @@ function DreamWritePage() {
   return (
     <Container>
       <BackButton to="/" />
-      <Top>
-        <Title>꿈 이야기 기록하기</Title>
-        <SubTitle>어젯 밤 꾼 꿈을 아름다운 이야기로 남겨주세요.</SubTitle>
-      </Top>
+      <Title
+        title="꿈 이야기 기록하기"
+        subtitle="어젯 밤 꾼 꿈을 아름다운 이야기로 남겨주세요."
+      />
       <DreamTitleWrap>
         <DreamTitle>꿈 제목</DreamTitle>
         <DreamTitleText
