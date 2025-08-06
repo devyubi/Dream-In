@@ -12,8 +12,8 @@ function DreamDetail() {
   const [loading, setLoading] = useState(false);
 
   const handleAiRequest = async e => {
-    console.log("꿈 내용:", dream.story);
-    console.log("바튼");
+    // console.log("꿈 내용:", dream.story);
+    // console.log("바튼");
     e.preventDefault(); // 새로고침 방지
 
     if (!dream?.story) {
