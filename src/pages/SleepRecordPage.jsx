@@ -6,8 +6,8 @@ import SleepTabBar from "../components/sleep/SleepTabBar";
 import "../css/sleep/sleeprecordpage.css";
 import SleepAnimatedSwitch from "../components/sleep/SleepAnimatedSwitch";
 
-function SleepRecordPage() {
-  const [activeTab, setActiveTab] = useState("record");
+function SleepRecordPage({ activeTab, setActiveTab }) {
+  // const [activeTab, setActiveTab] = useState("record");
 
   return (
     <Container>
