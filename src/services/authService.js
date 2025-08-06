@@ -1,5 +1,4 @@
-// src/services/authService.js - 토큰 기반 인증용 수정사항
-
+// src/services/authService.js
 import { supabase } from "../api/supabaseClient";
 
 export const AuthService = {
@@ -41,6 +40,48 @@ export const AuthService = {
         success: true,
         data: data,
       };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  // 구글 로그인
+  async signInWithGoogle() {
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          scopes: "profile email",
+        },
+      });
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  // 카카오 로그인
+  async signInWithKakao() {
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "kakao",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          scopes: "profile_nickname profile_image account_email",
+        },
+      });
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      return { success: true, data };
     } catch (error) {
       return { success: false, error: error.message };
     }
@@ -160,6 +201,12 @@ export const SessionService = {
     } catch (error) {
       return false;
     }
+  },
+
+  // 세션 유효성 검사 (새로 추가)
+  isSessionValid(session) {
+    if (!session?.access_token) return false;
+    return this.isTokenValid(session.access_token);
   },
 
   // 세션 만료 체크

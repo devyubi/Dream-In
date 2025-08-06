@@ -2,14 +2,15 @@
 import PropTypes from "prop-types";
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
-  useState,
-  useCallback,
   useRef,
+  useState,
 } from "react";
-import { AuthService, SessionService } from "../services/authService";
-import { UserService, FileUploadService } from "../services/userService";
+import { supabase } from "../api/supabaseClient";
+import { AuthService } from "../services/authService";
+import { FileUploadService, UserService } from "../services/userService";
 import { logError } from "../utils/errorHandler";
 
 const AuthContext = createContext({});
@@ -24,7 +25,7 @@ export const useAuth = () => {
 
 // 토큰 관리 유틸리티
 const TokenManager = {
-  // 토큰을 안전하게 저장 (HttpOnly 쿠키 시뮬레이션)
+  // 토큰을 안전하게 저장
   setTokens: (accessToken, refreshToken) => {
     if (accessToken) {
       // 메모리에 저장 (가장 안전)
@@ -132,7 +133,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
   const [session, setSession] = useState(null);
-  const [loading, setLoading] = useState(true); // 초기화 중
+  const [loading, setLoading] = useState(true);
   const [authLoading, setAuthLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -187,7 +188,8 @@ export const AuthProvider = ({ children }) => {
     if (
       window.location.pathname !== "/login" &&
       window.location.pathname !== "/" &&
-      !window.location.pathname.startsWith("/signup")
+      !window.location.pathname.startsWith("/signup") &&
+      !window.location.pathname.startsWith("/auth/callback")
     ) {
       alert("세션이 만료되었습니다. 다시 로그인해주세요.");
       window.location.href = "/login";
@@ -202,7 +204,7 @@ export const AuthProvider = ({ children }) => {
       try {
         const payload = JSON.parse(atob(token.split(".")[1]));
         const expiresIn = payload.exp * 1000 - Date.now();
-        const refreshTime = Math.max(expiresIn - 5 * 60 * 1000, 60000); // 5분 전 또는 1분 후
+        const refreshTime = Math.max(expiresIn - 5 * 60 * 1000, 60000);
 
         if (refreshTokenTimer.current) {
           clearTimeout(refreshTokenTimer.current);
@@ -265,13 +267,32 @@ export const AuthProvider = ({ children }) => {
           setProfile(savedProfile);
         }
 
-        // 토큰 기반 인증 상태 확인
-        const isValid = await checkAuthStatus();
+        // 현재 Supabase 세션 확인
+        const {
+          data: { session },
+          error,
+        } = await supabase.auth.getSession();
 
-        if (isValid && savedUser) {
-          // 토큰이 유효하고 사용자 데이터가 있으면 프로필 최신화
-          await loadUserProfile(savedUser);
-          setupTokenRefresh(TokenManager.getAccessToken());
+        if (session?.access_token) {
+          // Supabase 세션이 있으면 토큰 매니저에도 저장
+          TokenManager.setTokens(session.access_token, session.refresh_token);
+          setSession(session);
+          setIsAuthenticated(true);
+
+          if (session.user) {
+            setUser(session.user);
+            UserDataManager.setUserData(session.user, savedProfile);
+            await loadUserProfile(session.user);
+          }
+
+          setupTokenRefresh(session.access_token);
+        } else {
+          // Supabase 세션이 없으면 토큰 기반 인증 상태 확인
+          const isValid = await checkAuthStatus();
+
+          if (isValid && savedUser) {
+            await loadUserProfile(savedUser);
+          }
         }
       } catch (error) {
         logError("초기화 오류", error);
@@ -283,6 +304,63 @@ export const AuthProvider = ({ children }) => {
 
     initializeAuth();
   }, [checkAuthStatus, loadUserProfile, setupTokenRefresh, handleTokenExpired]);
+
+  // ===== Supabase Auth 상태 변경 리스너 =====
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      try {
+        if (event === "SIGNED_IN" && session?.access_token) {
+          // 소셜 로그인 성공
+          TokenManager.setTokens(session.access_token, session.refresh_token);
+          setSession(session);
+          setUser(session.user);
+          setIsAuthenticated(true);
+
+          UserDataManager.setUserData(session.user, null);
+
+          // 소셜 로그인 프로필 자동 생성
+          const provider = session.user.app_metadata?.provider;
+          if (provider === "google" || provider === "kakao") {
+            try {
+              const existingProfile = await UserService.getCurrentUserProfile();
+              if (!existingProfile.success || !existingProfile.profile) {
+                await UserService.createSocialUserProfile(session.user);
+              }
+            } catch (error) {
+              logError("createSocialUserProfile", error, {
+                provider,
+                userId: session.user.id,
+              });
+            }
+          }
+
+          await loadUserProfile(session.user);
+          setupTokenRefresh(session.access_token);
+        } else if (event === "SIGNED_OUT") {
+          TokenManager.clearTokens();
+          UserDataManager.clearUserData();
+          setSession(null);
+          setUser(null);
+          setProfile(null);
+          setIsAuthenticated(false);
+        } else if (event === "TOKEN_REFRESHED" && session?.access_token) {
+          TokenManager.setTokens(session.access_token, session.refresh_token);
+          setSession(session);
+          if (session.user) {
+            setUser(session.user);
+            UserDataManager.setUserData(session.user, profile);
+          }
+          setupTokenRefresh(session.access_token);
+        }
+      } catch (error) {
+        logError("onAuthStateChange", error, { event });
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [loadUserProfile, setupTokenRefresh, profile]);
 
   // ===== 주기적 토큰 검증 =====
   useEffect(() => {
@@ -324,20 +402,6 @@ export const AuthProvider = ({ children }) => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [isAuthenticated, checkAuthStatus]);
-
-  // ===== 브라우저 종료 시 정리 (선택사항) =====
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      // 브라우저 완전 종료 시에만 토큰 제거하려면 주석 해제
-      // TokenManager.clearTokens();
-      // UserDataManager.clearUserData();
-    };
-
-    // window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => {
-      // window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, []);
 
   // ===== 로그인 함수 =====
   const signIn = useCallback(
@@ -449,6 +513,9 @@ export const AuthProvider = ({ children }) => {
       if (token) {
         await AuthService.signOut(token);
       }
+
+      // Supabase 로그아웃도 함께 처리
+      await supabase.auth.signOut();
 
       // 로컬 상태 및 토큰 정리
       TokenManager.clearTokens();
@@ -589,6 +656,20 @@ export const AuthProvider = ({ children }) => {
     updatePassword,
     refreshProfile,
     checkNicknameDuplicate,
+
+    // 유틸리티 함수들
+    setUser: newUser => {
+      setUser(newUser);
+      if (newUser) {
+        UserDataManager.setUserData(newUser, profile);
+      }
+    },
+    setProfile: newProfile => {
+      setProfile(newProfile);
+      if (newProfile) {
+        UserDataManager.setUserData(user, newProfile);
+      }
+    },
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
