@@ -177,12 +177,7 @@ const LoginForm = ({
       {/* 소셜 로그인 */}
       {showSocialLogin && (
         <div className={styles.socialSection}>
-          <SocialLoginButtons
-            disabled={loading}
-            onError={error => {
-              console.error("Social login error:", error);
-            }}
-          />
+          <SocialLoginButtons disabled={loading} />
         </div>
       )}
     </div>

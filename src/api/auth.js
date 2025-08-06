@@ -44,7 +44,6 @@ export const getCurrentUserProfile = async () => {
       profile_updated_at: profile.updated_at,
     };
   } catch (error) {
-    console.error("getCurrentUserProfile 예외:", error);
     return null;
   }
 };
@@ -52,8 +51,6 @@ export const getCurrentUserProfile = async () => {
 // 소셜 로그인 사용자 프로필 자동 생성
 export const createSocialUserProfile = async user => {
   try {
-    console.log("=== 소셜 로그인 사용자 프로필 생성 ===");
-
     const userMetadata = user.user_metadata || {};
     const appMetadata = user.app_metadata || {};
 
@@ -91,14 +88,11 @@ export const createSocialUserProfile = async user => {
       .single();
 
     if (error) {
-      console.error("소셜 프로필 생성 실패:", error);
       return null;
     }
 
-    console.log("소셜 프로필 생성/업데이트 성공:", data);
     return data;
   } catch (error) {
-    console.error("소셜 프로필 생성 예외:", error);
     return null;
   }
 };
@@ -119,7 +113,6 @@ export const uploadProfileImage = async (file, userId) => {
       });
 
     if (error) {
-      console.error("이미지 업로드 실패:", error);
       throw error;
     }
 
@@ -133,7 +126,6 @@ export const uploadProfileImage = async (file, userId) => {
       path: filePath,
     };
   } catch (error) {
-    console.error("uploadProfileImage 실패:", error);
     return {
       success: false,
       error: error.message,
@@ -154,13 +146,11 @@ export const signInWithGoogle = async () => {
     });
 
     if (error) {
-      console.error("구글 로그인 에러:", error.message);
       return { success: false, error: error.message };
     }
 
     return { success: true, data };
   } catch (error) {
-    console.error("구글 로그인 예외:", error);
     return { success: false, error: error.message };
   }
 };
@@ -176,13 +166,11 @@ export const signInWithKakao = async () => {
     });
 
     if (error) {
-      console.error("카카오 로그인 에러:", error.message);
       return { success: false, error: error.message };
     }
 
     return { success: true, data };
   } catch (error) {
-    console.error("카카오 로그인 예외:", error);
     return { success: false, error: error.message };
   }
 };

@@ -88,8 +88,6 @@ export const AuthProvider = ({ children }) => {
       data: { subscription },
     } = AuthService.onAuthStateChange(async (event, session) => {
       try {
-        console.log("Auth 상태 변경:", event, session?.user?.email);
-
         if (
           event === "SIGNED_OUT" ||
           !session?.user ||
