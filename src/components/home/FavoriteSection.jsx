@@ -115,7 +115,7 @@ function FavoriteSection() {
           {user ? (
             <div className="user_info">
               <div className="user_top">
-                <Link to="/ProfileEditor">
+                <Link to="/profile/edit">
                   <img
                     className="user_profile_img"
                     src={profile?.profile_image_url || "/images/unknown.svg"}
