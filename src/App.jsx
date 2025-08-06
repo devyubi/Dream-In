@@ -19,6 +19,7 @@ import EmotionList from "./pages/EmotionList";
 import DreamEdit from "./pages/DreamEdit";
 import EmotionDetail from "./pages/EmotionDetail";
 import EmotionEdit from "./pages/EmotionEdit";
+import MadeIn from "./components/common/MadeIn";
 
 function App() {
   return (
