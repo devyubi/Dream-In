@@ -1,4 +1,3 @@
-import { useState } from "react";
 import "../../css/sleep/sleeptabbar.css";
 
 function SleepTabBar({ activeTab, setActiveTab }) {

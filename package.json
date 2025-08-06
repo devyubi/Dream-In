@@ -5,6 +5,8 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
+    "@nivo/core": "^0.99.0",
+    "@nivo/pie": "^0.99.0",
     "@supabase/supabase-js": "^2.53.0",
     "dayjs": "^1.11.13",
     "framer-motion": "^12.23.12",
