@@ -1,8 +1,13 @@
 .sleep-tab-bar {
   display: flex;
   justify-content: space-around;
-  background-color: #f1f1f1;
-  border-radius: 8px;
+  border-radius: 20px;
+  background: linear-gradient(
+    90deg,
+    rgba(230, 179, 247, 0.3) 0%,
+    rgba(211, 188, 232, 0.3) 53.37%,
+    rgba(194, 193, 238, 0.3) 100%
+  );
   margin: 20px;
   padding: 8px;
 }
@@ -20,9 +25,14 @@
 }
 
 .sleep-tab-button.active {
-  color: #fff;
-  background-color: #6c63ff;
-  border-radius: 8px;
+  color: var(--color-secondary-s-200, #493d78);
+  border-radius: 20px;
+  background: linear-gradient(
+    90deg,
+    rgba(230, 179, 247, 0.3) 0%,
+    rgba(211, 188, 232, 0.3) 53.37%,
+    rgba(194, 193, 238, 0.3) 100%
+  );
   font-weight: bold;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }

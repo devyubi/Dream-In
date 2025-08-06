@@ -1,5 +1,4 @@
 import { AnimatePresence, motion } from "framer-motion";
-import SleepRecord from "./SleepRecord";
 import SleepStats from "./SleepStats";
 
 function SleepAnimatedSwitch({ activeTab }) {

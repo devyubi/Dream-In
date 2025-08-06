@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { FaStar } from "react-icons/fa6";
 import "../../css/sleep/sleeprecord.css";
 
 const SleepRecord = () => {
@@ -20,7 +21,6 @@ const SleepRecord = () => {
               value={bedTime}
               onChange={e => setBedTime(e.target.value)}
             />
-            <span className="clock-icon">🕒</span>
           </div>
         </div>
 
@@ -33,8 +33,10 @@ const SleepRecord = () => {
               value={wakeTime}
               onChange={e => setWakeTime(e.target.value)}
             />
-            <span className="clock-icon">🕒</span>
           </div>
+        </div>
+        <div>
+          별<FaStar />
         </div>
       </div>
     </div>
