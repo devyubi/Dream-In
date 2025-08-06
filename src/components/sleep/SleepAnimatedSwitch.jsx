@@ -1,8 +1,33 @@
-function SleepAnimatedSwitch() {
+/* eslint-disable react/prop-types */
+import { AnimatePresence, motion } from "framer-motion";
+import SleepStats from "./SleepStats";
+
+function SleepAnimatedSwitch({ activeTab }) {
   return (
-    <div>
-      <h1>전환 애니메이션 처리 컴포넌트</h1>
-      SleepAnimatedSwitch
+    <div className="sleep-animated-switch">
+      <AnimatePresence mode="wait">
+        {activeTab === "record" ? (
+          <motion.div
+            key="record"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            transition={{ duration: 0.3 }}
+          >
+            {/* <SleepRecord /> */}
+          </motion.div>
+        ) : (
+          <motion.div
+            key="stats"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <SleepStats />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

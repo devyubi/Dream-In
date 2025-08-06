@@ -2,43 +2,26 @@
   font-family: "tj400";
 }
 
+:root {
+  --color-primary-p-100: #fcf3fb;
+  --background-dark-space: linear-gradient(
+    180deg,
+    #1e1b27 0%,
+    #25254d 19.71%,
+    #33336e 40.87%,
+    #3a3a74 60.98%,
+    #493d78 80.96%,
+    #544783 100%
+  );
+}
+
 .signup-page {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   position: relative;
   overflow-x: hidden;
-}
-
-/* 네비게이션 */
-.signup-nav {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  right: 20px;
-  display: flex;
-  justify-content: space-between;
-  z-index: 10;
-}
-
-.nav-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.nav-icon:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: scale(1.05);
 }
 
 /* 메인 컨테이너 */
@@ -67,7 +50,7 @@
   margin: 0 auto 20px;
   overflow: hidden;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--color-primary-p-100);
   backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
@@ -76,6 +59,7 @@
 
 .logo-placeholder {
   font-size: 40px;
+  color: #3a3a74;
 }
 
 .logo-image {
@@ -87,7 +71,7 @@
 .app-title {
   font-size: 28px;
   font-weight: 300;
-  color: #6b46c1;
+  color: #3a3a74;
   margin: 0 0 8px 0;
   font-style: italic;
   letter-spacing: 1px;
@@ -95,7 +79,7 @@
 
 .app-subtitle {
   font-size: 14px;
-  color: #8b5cf6;
+  color: #544783;
   margin: 0;
   opacity: 0.8;
 }
@@ -141,7 +125,7 @@
 .form-group label {
   display: block;
   margin-bottom: 8px;
-  color: #8b5cf6;
+  color: #544783;
   font-size: 14px;
   font-weight: 500;
 }
@@ -157,12 +141,12 @@
 .input-wrapper select {
   width: 100%;
   padding: 16px 50px 16px 16px;
-  border: 2px solid rgba(139, 92, 246, 0.2);
+  border: 2px solid rgba(84, 71, 131, 0.2);
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
   font-size: 16px;
-  color: #1f2937;
+  color: #3a3a74;
   transition: all 0.3s ease;
   box-sizing: border-box;
 }
@@ -170,9 +154,9 @@
 .input-wrapper input:focus,
 .input-wrapper select:focus {
   outline: none;
-  border-color: #8b5cf6;
+  border-color: #544783;
   background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+  box-shadow: 0 0 0 3px rgba(84, 71, 131, 0.1);
 }
 
 .input-wrapper input.error,
@@ -185,13 +169,13 @@
 }
 
 .input-wrapper input::placeholder {
-  color: #9ca3af;
+  color: #8f8f8f;
 }
 
 .input-icon {
   position: absolute;
   right: 16px;
-  color: #9ca3af;
+  color: #8f8f8f;
   font-size: 16px;
   cursor: pointer;
   background: none;
@@ -210,7 +194,7 @@
 }
 
 .input-icon:hover {
-  color: #6b5b95;
+  color: #544783;
 }
 
 .error-text {
@@ -241,8 +225,8 @@
 
 .check-button {
   padding: 16px 20px;
-  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
-  color: white;
+  background: var(--background-dark-space);
+  color: rgba(252, 243, 251, 1);
   border: none;
   border-radius: 16px;
   font-size: 14px;
@@ -254,7 +238,7 @@
 
 .check-button:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+  box-shadow: 0 4px 12px rgba(84, 71, 131, 0.3);
 }
 
 .check-button:disabled {
@@ -281,7 +265,7 @@
   height: 80px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid rgba(139, 92, 246, 0.3);
+  border: 3px solid rgba(84, 71, 131, 0.3);
 }
 
 .remove-image {
@@ -309,22 +293,23 @@
 
 .profile-image-wrapper input[type="file"] {
   padding: 12px 16px;
-  border: 2px dashed rgba(139, 92, 246, 0.3);
+  border: 2px dashed rgba(84, 71, 131, 0.3);
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.5);
   font-size: 14px;
   cursor: pointer;
   transition: all 0.3s ease;
+  color: #3a3a74;
 }
 
 .profile-image-wrapper input[type="file"]:hover {
-  border-color: #8b5cf6;
+  border-color: #544783;
   background: rgba(255, 255, 255, 0.7);
 }
 
 .file-info {
   font-size: 12px;
-  color: #6b7280;
+  color: #544783;
   margin-top: 4px;
 }
 
@@ -332,19 +317,8 @@
 .signup-button {
   width: 100%;
   padding: 16px;
-  background: var(
-    --background-dark-space,
-    linear-gradient(
-      180deg,
-      #1e1b27 0%,
-      #25254d 19.71%,
-      #33336e 40.87%,
-      #3a3a74 60.98%,
-      #493d78 80.96%,
-      #544783 100%
-    )
-  );
-  color: white;
+  background: var(--background-dark-space);
+  color: rgba(252, 243, 251, 1);
   border: none;
   border-radius: 16px;
   font-size: 16px;
@@ -352,12 +326,12 @@
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: 8px;
-  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.3);
+  box-shadow: 0 4px 16px rgba(84, 71, 131, 0.3);
 }
 
 .signup-button:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+  box-shadow: 0 6px 20px rgba(84, 71, 131, 0.4);
 }
 
 .signup-button:disabled {
@@ -369,12 +343,12 @@
 /* 로그인 섹션 */
 .login-section {
   text-align: center;
-  color: #6b5b95;
+  color: #544783;
   font-size: 14px;
 }
 
 .login-link {
-  color: #8b5cf6;
+  color: #3a3a74;
   text-decoration: none;
   font-weight: 600;
   margin-left: 8px;
@@ -382,6 +356,6 @@
 }
 
 .login-link:hover {
-  color: #7c3aed;
+  color: #8672d0;
   text-decoration: underline;
 }

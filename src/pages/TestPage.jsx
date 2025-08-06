@@ -1,872 +1,375 @@
 // src/pages/TestPage.jsx
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
+import { getCurrentUserProfile } from "../api/auth"; // 이 함수가 문제일 수 있음
 import { supabase } from "../api/supabaseClient";
-import { useNavigate } from "react-router-dom";
 
 const TestPage = () => {
-  const {
-    user,
-    profile,
-    signOut,
-    forceSignOut,
-    loading,
-    authLoading,
-    isAuthenticated,
-    refreshProfile, // 추가된 메서드
-  } = useAuth();
+  const { user, profile, loading, refreshProfile } = useAuth();
+  const [testResults, setTestResults] = useState({});
+  const [isTestRunning, setIsTestRunning] = useState(false);
 
-  const navigate = useNavigate();
-  const [sessionInfo, setSessionInfo] = useState(null);
-  const [lastUpdated, setLastUpdated] = useState(new Date());
+  // 디버깅용 로그
+  console.log("=== TestPage 렌더링 ===");
+  console.log("authContext:", useAuth());
+  console.log("loading 값:", useAuth()?.loading);
+  console.log("user 값:", useAuth()?.user);
 
-  // 실시간 세션 모니터링
-  useEffect(() => {
-    const updateSessionInfo = async () => {
-      try {
-        const {
-          data: { session },
-          error,
-        } = await supabase.auth.getSession();
-        setSessionInfo({ session, error });
-        setLastUpdated(new Date());
-      } catch (err) {
-        console.error("세션 정보 업데이트 실패:", err);
+  // 1. AuthContext에서 가져온 현재 상태 표시
+  const renderAuthStatus = () => (
+    <div
+      style={{
+        padding: "20px",
+        backgroundColor: "#f5f5f5",
+        marginBottom: "20px",
+        borderRadius: "8px",
+      }}
+    >
+      <h3>🔍 AuthContext 현재 상태</h3>
+      <p>
+        <strong>Loading:</strong> {loading ? "YES" : "NO"}
+      </p>
+      <p>
+        <strong>User:</strong> {user ? `${user.email} (${user.id})` : "null"}
+      </p>
+      <p>
+        <strong>Profile:</strong> {profile ? `${profile.nickname}` : "null"}
+      </p>
+      <p>
+        <strong>Profile Object:</strong>
+      </p>
+      <pre
+        style={{
+          fontSize: "12px",
+          backgroundColor: "#fff",
+          padding: "10px",
+          overflow: "auto",
+        }}
+      >
+        {profile ? JSON.stringify(profile, null, 2) : "null"}
+      </pre>
+    </div>
+  );
+
+  // 2. 직접 Supabase에서 프로필 조회 테스트
+  const testDirectSupabaseQuery = async () => {
+    console.log("=== 직접 Supabase 조회 테스트 ===");
+
+    try {
+      // 현재 세션 확인
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+
+      if (sessionError || !session?.user) {
+        return { success: false, error: "세션 없음" };
       }
-    };
 
-    // 초기 로드
-    updateSessionInfo();
+      console.log("현재 사용자 ID:", session.user.id);
 
-    // 5초마다 세션 상태 확인
-    const interval = setInterval(updateSessionInfo, 5000);
+      // 프로필 직접 조회
+      const { data: profiles, error: profileError } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("auth_user_id", session.user.id);
 
-    return () => clearInterval(interval);
-  }, []);
+      console.log("직접 조회 결과:", profiles);
+      console.log("직접 조회 에러:", profileError);
 
-  // 페이지 로드 시 맨 위로 스크롤 & body 스타일 설정
-  useEffect(() => {
-    window.scrollTo(0, 0);
+      if (profileError) {
+        return { success: false, error: profileError.message };
+      }
 
-    // body와 html의 스크롤 설정
-    document.body.style.overflow = "auto";
-    document.documentElement.style.overflow = "auto";
-    document.body.style.height = "auto";
-    document.documentElement.style.height = "auto";
-
-    // 컴포넌트 언마운트 시 원복
-    return () => {
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
-      document.body.style.height = "";
-      document.documentElement.style.height = "";
-    };
-  }, []);
-
-  const handleLogout = async () => {
-    console.log("로그아웃 시작...");
-
-    const result = await signOut();
-
-    if (result.success) {
-      console.log("✅ 로그아웃 성공!");
-      alert("로그아웃되었습니다.");
-      navigate("/login", { replace: true });
-    } else {
-      console.error("❌ 로그아웃 실패:", result.error);
-      alert("로그아웃 실패: " + result.error);
+      return {
+        success: true,
+        data: profiles?.[0] || null,
+        count: profiles?.length || 0,
+      };
+    } catch (error) {
+      console.error("직접 조회 예외:", error);
+      return { success: false, error: error.message };
     }
   };
 
-  const handleForceLogout = async () => {
-    console.log("🔥 강제 로그아웃 실행...");
-    await forceSignOut();
+  // 3. getCurrentUserProfile API 함수 테스트
+  const testGetCurrentUserProfileAPI = async () => {
+    console.log("=== getCurrentUserProfile API 테스트 ===");
+
+    try {
+      const result = await getCurrentUserProfile();
+      console.log("API 함수 결과:", result);
+
+      return {
+        success: !!result,
+        data: result,
+        error: result ? null : "API 함수가 null 반환",
+      };
+    } catch (error) {
+      console.error("API 함수 예외:", error);
+      return { success: false, error: error.message };
+    }
   };
 
-  const handleExportData = () => {
-    const exportData = {
-      timestamp: new Date().toISOString(),
-      auth_user: {
-        id: user?.id,
-        email: user?.email,
-        email_confirmed_at: user?.email_confirmed_at,
-        created_at: user?.created_at,
-        updated_at: user?.updated_at,
-        last_sign_in_at: user?.last_sign_in_at,
-        app_metadata: user?.app_metadata,
-        user_metadata: user?.user_metadata,
-      },
-      profile: profile,
-      auth_state: {
-        isAuthenticated,
-        loading,
-        authLoading,
-      },
-    };
+  // 4. 모든 테스트 실행
+  const runAllTests = async () => {
+    setIsTestRunning(true);
+    console.log("=== 모든 테스트 시작 ===");
 
-    const dataStr = JSON.stringify(exportData, null, 2);
-    const dataBlob = new Blob([dataStr], { type: "application/json" });
-    const url = URL.createObjectURL(dataBlob);
+    const results = {};
 
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `dream-in-user-data-${Date.now()}.json`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    // 테스트 1: 직접 Supabase 조회
+    results.directSupabase = await testDirectSupabaseQuery();
 
-    console.log("📁 사용자 데이터 내보내기 완료");
+    // 테스트 2: getCurrentUserProfile API
+    results.apiFunction = await testGetCurrentUserProfileAPI();
+
+    // 테스트 3: AuthContext refreshProfile
+    try {
+      await refreshProfile();
+      results.refreshProfile = {
+        success: true,
+        message: "refreshProfile 실행 완료",
+      };
+    } catch (error) {
+      results.refreshProfile = { success: false, error: error.message };
+    }
+
+    setTestResults(results);
+    setIsTestRunning(false);
+
+    console.log("=== 모든 테스트 완료 ===");
+    console.log("테스트 결과:", results);
   };
 
-  return (
-    <div style={styles.container}>
-      <div style={styles.scrollWrapper}>
-        <div style={styles.card}>
-          <h1 style={styles.title}>🧪 테스트 페이지</h1>
+  // 페이지 로드 시 자동으로 테스트 실행
+  useEffect(() => {
+    if (!loading && user) {
+      runAllTests();
+    }
+  }, [loading, user]);
 
-          {/* 인증 상태 표시 */}
-          <div style={styles.section}>
-            <h2>📊 현재 상태 (실시간)</h2>
-            <div style={styles.realTimeInfo}>
-              <p>
-                <strong>마지막 업데이트:</strong>{" "}
-                {lastUpdated.toLocaleTimeString("ko-KR")}
-              </p>
-            </div>
-            <div style={styles.statusGrid}>
-              <div style={styles.statusItem}>
-                <strong>로그인 상태:</strong>
-                <span style={isAuthenticated ? styles.success : styles.error}>
-                  {isAuthenticated ? "✅ 로그인됨" : "❌ 로그아웃됨"}
-                </span>
-              </div>
+  // 5. 테스트 결과 렌더링
+  const renderTestResults = () => {
+    if (Object.keys(testResults).length === 0) return null;
 
-              <div style={styles.statusItem}>
-                <strong>로딩 상태:</strong>
-                <span>{authLoading ? "⏳ 처리 중..." : "✅ 완료"}</span>
-              </div>
+    return (
+      <div
+        style={{
+          padding: "20px",
+          backgroundColor: "#fff3e0",
+          marginBottom: "20px",
+          borderRadius: "8px",
+        }}
+      >
+        <h3>🧪 테스트 결과</h3>
 
-              <div style={styles.statusItem}>
-                <strong>Supabase 세션:</strong>
-                <span
-                  style={
-                    sessionInfo?.session?.user ? styles.success : styles.error
-                  }
-                >
-                  {sessionInfo?.session?.user ? "✅ 활성" : "❌ 비활성"}
-                </span>
+        {/* 직접 Supabase 조회 결과 */}
+        <div style={{ marginBottom: "15px" }}>
+          <h4>1. 직접 Supabase 조회:</h4>
+          <div
+            style={{
+              padding: "10px",
+              backgroundColor: testResults.directSupabase?.success
+                ? "#e8f5e8"
+                : "#ffebee",
+              borderRadius: "4px",
+              fontSize: "14px",
+            }}
+          >
+            {testResults.directSupabase?.success ? (
+              <div>
+                <p>✅ 성공</p>
+                <p>프로필 개수: {testResults.directSupabase.count}</p>
+                <p>
+                  닉네임: {testResults.directSupabase.data?.nickname || "null"}
+                </p>
               </div>
-
-              <div style={styles.statusItem}>
-                <strong>세션 만료:</strong>
-                <span>
-                  {sessionInfo?.session?.expires_at
-                    ? new Date(
-                        sessionInfo.session.expires_at * 1000,
-                      ).toLocaleString("ko-KR")
-                    : "N/A"}
-                </span>
+            ) : (
+              <div>
+                <p>❌ 실패</p>
+                <p>에러: {testResults.directSupabase?.error}</p>
               </div>
-
-              <div style={styles.statusItem}>
-                <strong>액세스 토큰:</strong>
-                <span
-                  style={
-                    sessionInfo?.session?.access_token
-                      ? styles.success
-                      : styles.error
-                  }
-                >
-                  {sessionInfo?.session?.access_token
-                    ? `✅ ${sessionInfo.session.access_token.slice(0, 20)}...`
-                    : "❌ 없음"}
-                </span>
-              </div>
-
-              <div style={styles.statusItem}>
-                <strong>리프레시 토큰:</strong>
-                <span
-                  style={
-                    sessionInfo?.session?.refresh_token
-                      ? styles.success
-                      : styles.error
-                  }
-                >
-                  {sessionInfo?.session?.refresh_token
-                    ? `✅ ${sessionInfo.session.refresh_token.slice(0, 20)}...`
-                    : "❌ 없음"}
-                </span>
-              </div>
-            </div>
+            )}
           </div>
+        </div>
 
-          {/* 사용자 정보 */}
-          {isAuthenticated && (
-            <div style={styles.section}>
-              <h2>👤 회원가입 정보 전체보기</h2>
-
-              {/* 기본 인증 정보 */}
-              <div style={styles.infoSection}>
-                <h3>🔐 인증 정보 (auth.users)</h3>
-                <div style={styles.infoGrid}>
-                  <div style={styles.infoItem}>
-                    <strong>사용자 ID:</strong>
-                    <span>{user?.id || "N/A"}</span>
-                  </div>
-                  <div style={styles.infoItem}>
-                    <strong>이메일:</strong>
-                    <span>{user?.email || "N/A"}</span>
-                  </div>
-                  <div style={styles.infoItem}>
-                    <strong>이메일 인증:</strong>
-                    <span
-                      style={
-                        user?.email_confirmed_at ? styles.success : styles.error
-                      }
-                    >
-                      {user?.email_confirmed_at ? "✅ 인증완료" : "❌ 미인증"}
-                    </span>
-                  </div>
-                  <div style={styles.infoItem}>
-                    <strong>계정 생성일:</strong>
-                    <span>
-                      {user?.created_at
-                        ? new Date(user.created_at).toLocaleString("ko-KR")
-                        : "N/A"}
-                    </span>
-                  </div>
-                  <div style={styles.infoItem}>
-                    <strong>마지막 로그인:</strong>
-                    <span>
-                      {user?.last_sign_in_at
-                        ? new Date(user.last_sign_in_at).toLocaleString("ko-KR")
-                        : "N/A"}
-                    </span>
-                  </div>
-                  <div style={styles.infoItem}>
-                    <strong>인증 제공자:</strong>
-                    <span>{user?.app_metadata?.provider || "email"}</span>
-                  </div>
-                </div>
+        {/* API 함수 결과 */}
+        <div style={{ marginBottom: "15px" }}>
+          <h4>2. getCurrentUserProfile API:</h4>
+          <div
+            style={{
+              padding: "10px",
+              backgroundColor: testResults.apiFunction?.success
+                ? "#e8f5e8"
+                : "#ffebee",
+              borderRadius: "4px",
+              fontSize: "14px",
+            }}
+          >
+            {testResults.apiFunction?.success ? (
+              <div>
+                <p>✅ 성공</p>
+                <p>
+                  닉네임: {testResults.apiFunction.data?.nickname || "null"}
+                </p>
               </div>
-
-              {/* 프로필 정보 */}
-              <div style={styles.infoSection}>
-                <h3>📝 프로필 정보 (profiles 테이블)</h3>
-                {profile ? (
-                  <div style={styles.infoGrid}>
-                    <div style={styles.infoItem}>
-                      <strong>프로필 ID:</strong>
-                      <span>
-                        {profile.profile_id?.toString().slice(0, 8)}...
-                      </span>
-                    </div>
-                    <div style={styles.infoItem}>
-                      <strong>닉네임:</strong>
-                      <span>{profile.nickname || "N/A"}</span>
-                    </div>
-                    <div style={styles.infoItem}>
-                      <strong>생년월일:</strong>
-                      <span>
-                        {profile.birthdate
-                          ? new Date(profile.birthdate).toLocaleDateString(
-                              "ko-KR",
-                            )
-                          : "N/A"}
-                      </span>
-                    </div>
-                    <div style={styles.infoItem}>
-                      <strong>성별:</strong>
-                      <span>
-                        {profile.gender === "male"
-                          ? "👨 남성"
-                          : profile.gender === "female"
-                            ? "👩 여성"
-                            : profile.gender === "other"
-                              ? "🧑 기타"
-                              : "N/A"}
-                      </span>
-                    </div>
-                    <div style={styles.infoItem}>
-                      <strong>프로필 생성일:</strong>
-                      <span>
-                        {profile.profile_created_at
-                          ? new Date(profile.profile_created_at).toLocaleString(
-                              "ko-KR",
-                            )
-                          : "N/A"}
-                      </span>
-                    </div>
-                    <div style={styles.infoItem}>
-                      <strong>마지막 수정일:</strong>
-                      <span>
-                        {profile.profile_updated_at
-                          ? new Date(profile.profile_updated_at).toLocaleString(
-                              "ko-KR",
-                            )
-                          : "N/A"}
-                      </span>
-                    </div>
-                  </div>
-                ) : (
-                  <div style={styles.noData}>
-                    <p>프로필 정보가 없습니다.</p>
-                    <p>회원가입 시 프로필이 생성되지 않았을 수 있습니다.</p>
-                  </div>
-                )}
+            ) : (
+              <div>
+                <p>❌ 실패</p>
+                <p>에러: {testResults.apiFunction?.error}</p>
               </div>
-
-              {/* 프로필 이미지 */}
-              {profile?.profile_image_url && (
-                <div style={styles.infoSection}>
-                  <h3>📸 프로필 이미지</h3>
-                  <div style={styles.profileImageContainer}>
-                    <img
-                      src={profile.profile_image_url}
-                      alt="프로필 이미지"
-                      style={styles.profileImage}
-                      onError={e => {
-                        e.target.style.display = "none";
-                        e.target.nextSibling.style.display = "block";
-                      }}
-                    />
-                    <div style={{ ...styles.imageError, display: "none" }}>
-                      ❌ 이미지 로드 실패
-                    </div>
-                    <div style={styles.imageInfo}>
-                      <p>
-                        <strong>이미지 URL:</strong>
-                      </p>
-                      <p style={styles.urlText}>{profile.profile_image_url}</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* 나이 계산 */}
-              {profile?.birthdate && (
-                <div style={styles.infoSection}>
-                  <h3>📊 계산된 정보</h3>
-                  <div style={styles.infoGrid}>
-                    <div style={styles.infoItem}>
-                      <strong>나이:</strong>
-                      <span>
-                        {new Date().getFullYear() -
-                          new Date(profile.birthdate).getFullYear()}
-                        세
-                      </span>
-                    </div>
-                    <div style={styles.infoItem}>
-                      <strong>가입 경과일:</strong>
-                      <span>
-                        {Math.floor(
-                          (new Date() - new Date(profile.profile_created_at)) /
-                            (1000 * 60 * 60 * 24),
-                        )}
-                        일
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* 로그아웃 버튼들 */}
-          {isAuthenticated ? (
-            <div style={styles.section}>
-              <h2>🚪 로그아웃 테스트</h2>
-              <div style={styles.buttonGroup}>
-                <button
-                  onClick={handleLogout}
-                  disabled={authLoading}
-                  style={{ ...styles.button, ...styles.logoutButton }}
-                >
-                  {authLoading ? "⏳ 로그아웃 중..." : "🚪 확인 후 로그아웃"}
-                </button>
-
-                <button
-                  onClick={handleForceLogout}
-                  disabled={authLoading}
-                  style={{ ...styles.button, ...styles.quickLogoutButton }}
-                >
-                  🔥 강제 로그아웃
-                </button>
-
-                <button
-                  onClick={async () => {
-                    console.log("🔧 Supabase 직접 로그아웃...");
-                    try {
-                      const { error } = await supabase.auth.signOut();
-                      if (error) {
-                        console.error("직접 로그아웃 실패:", error);
-                      } else {
-                        console.log("✅ Supabase 직접 로그아웃 성공");
-                        window.location.reload();
-                      }
-                    } catch (err) {
-                      console.error("직접 로그아웃 오류:", err);
-                    }
-                  }}
-                  disabled={authLoading}
-                  style={{ ...styles.button, ...styles.debugButton }}
-                >
-                  🔧 Supabase 직접 로그아웃
-                </button>
-
-                <button
-                  onClick={handleExportData}
-                  style={{ ...styles.button, ...styles.navButton }}
-                >
-                  📁 데이터 내보내기 (JSON)
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div style={styles.section}>
-              <h2>🔐 로그인 필요</h2>
-              <p>로그아웃 상태입니다. 로그인해주세요.</p>
-              <button
-                onClick={() => navigate("/login")}
-                style={{ ...styles.button, ...styles.loginButton }}
-              >
-                🔑 로그인 페이지로
-              </button>
-            </div>
-          )}
-
-          {/* 개발자 도구 */}
-          <div style={styles.section}>
-            <h2>🛠️ 개발자 도구</h2>
-            <div style={styles.buttonGroup}>
-              <button
-                onClick={() => console.log("=== USER (auth.users) ===", user)}
-                style={{ ...styles.button, ...styles.debugButton }}
-              >
-                🔍 User 객체 출력
-              </button>
-
-              <button
-                onClick={() =>
-                  console.log("=== PROFILE (profiles) ===", profile)
-                }
-                style={{ ...styles.button, ...styles.debugButton }}
-              >
-                🔍 Profile 객체 출력
-              </button>
-
-              <button
-                onClick={async () => {
-                  console.log("=== SUPABASE 세션 정보 ===");
-                  const {
-                    data: { session },
-                    error,
-                  } = await supabase.auth.getSession();
-                  console.log("Session:", session);
-                  console.log("Error:", error);
-                  console.log("User from session:", session?.user);
-                }}
-                style={{ ...styles.button, ...styles.debugButton }}
-              >
-                🔍 Supabase 세션 출력
-              </button>
-
-              <button
-                onClick={async () => {
-                  console.log("=== DATABASE 직접 조회 ===");
-                  try {
-                    if (!user?.id) {
-                      console.error("❌ 사용자 ID가 없습니다:", user);
-                      return;
-                    }
-
-                    console.log("🔍 조회할 auth_user_id:", user.id);
-
-                    const { data, error } = await supabase
-                      .from("profiles")
-                      .select("*")
-                      .eq("auth_user_id", user.id);
-
-                    console.log("✅ DB 조회 결과:", data);
-                    console.log("❌ DB 조회 에러:", error);
-
-                    if (data && data.length === 0) {
-                      console.warn(
-                        "⚠️ profiles 테이블에 해당 사용자 데이터가 없습니다!",
-                      );
-                    }
-                  } catch (err) {
-                    console.error("❌ DB 조회 실패:", err);
-                  }
-                }}
-                style={{ ...styles.button, ...styles.debugButton }}
-              >
-                🔍 DB 직접 조회
-              </button>
-
-              <button
-                onClick={async () => {
-                  console.log("=== RLS 정책 테스트 ===");
-                  try {
-                    // 1. 현재 사용자 확인
-                    const {
-                      data: { user: currentUser },
-                    } = await supabase.auth.getUser();
-                    console.log("현재 인증된 사용자:", currentUser?.id);
-
-                    // 2. auth.uid() 확인을 위한 SQL 함수 호출
-                    const { data: uidData, error: uidError } =
-                      await supabase.rpc("get_current_user_id");
-                    console.log("현재 사용자 ID (RPC):", uidData);
-                    console.log("RPC 에러:", uidError);
-
-                    // 3. 전체 profiles 조회 시도 (RLS 적용)
-                    const { data: allProfiles, error: allError } =
-                      await supabase
-                        .from("profiles")
-                        .select("auth_user_id, nickname")
-                        .limit(5);
-                    console.log("전체 profiles 조회 (RLS 적용):", allProfiles);
-                    console.log("전체 profiles 에러:", allError);
-                  } catch (err) {
-                    console.error("❌ RLS 테스트 실패:", err);
-                  }
-                }}
-                style={{ ...styles.button, ...styles.debugButton }}
-              >
-                🔒 RLS 정책 테스트
-              </button>
-
-              <button
-                onClick={async () => {
-                  console.log("=== 프로필 강제 재로드 ===");
-                  try {
-                    await refreshProfile();
-                    console.log("✅ 프로필 재로드 완료");
-                  } catch (err) {
-                    console.error("❌ 프로필 재로드 실패:", err);
-                  }
-                }}
-                style={{ ...styles.button, ...styles.debugButton }}
-              >
-                🔄 프로필 강제 재로드
-              </button>
-
-              <button
-                onClick={() => {
-                  console.log("=== 전체 인증 상태 ===");
-                  console.log("User:", user);
-                  console.log("Profile:", profile);
-                  console.log("isAuthenticated:", isAuthenticated);
-                  console.log("loading:", loading);
-                  console.log("authLoading:", authLoading);
-                  console.log("sessionInfo:", sessionInfo);
-                  console.log("localStorage keys:", Object.keys(localStorage));
-                  console.log(
-                    "sessionStorage keys:",
-                    Object.keys(sessionStorage),
-                  );
-                }}
-                style={{ ...styles.button, ...styles.debugButton }}
-              >
-                📋 전체 상태 출력
-              </button>
-
-              <button
-                onClick={async () => {
-                  console.log("=== 프로필 이미지 테스트 ===");
-                  if (profile?.profile_image_url) {
-                    try {
-                      const response = await fetch(profile.profile_image_url);
-                      console.log(
-                        "이미지 URL 상태:",
-                        response.status,
-                        response.statusText,
-                      );
-                      console.log(
-                        "이미지 헤더:",
-                        Object.fromEntries(response.headers),
-                      );
-                    } catch (err) {
-                      console.error("이미지 URL 테스트 실패:", err);
-                    }
-                  } else {
-                    console.log("프로필 이미지 없음");
-                  }
-                }}
-                style={{ ...styles.button, ...styles.debugButton }}
-              >
-                📸 이미지 URL 테스트
-              </button>
-
-              <button
-                onClick={async () => {
-                  console.log("=== 수동 프로필 생성 테스트 ===");
-                  try {
-                    if (!user?.id) {
-                      console.error("❌ 로그인된 사용자가 없습니다");
-                      return;
-                    }
-
-                    const { data, error } = await supabase
-                      .from("profiles")
-                      .insert({
-                        auth_user_id: user.id,
-                        email: user.email,
-                        nickname: "테스트사용자",
-                        birthdate: null,
-                        gender: null,
-                        profile_image_url: null,
-                      })
-                      .select()
-                      .single();
-
-                    if (error) {
-                      console.error("❌ 프로필 생성 실패:", error);
-                    } else {
-                      console.log("✅ 프로필 생성 성공:", data);
-                      await refreshProfile(); // 프로필 새로고침
-                      alert("프로필이 생성되었습니다!");
-                    }
-                  } catch (err) {
-                    console.error("❌ 프로필 생성 오류:", err);
-                  }
-                }}
-                style={{ ...styles.button, ...styles.quickLogoutButton }}
-              >
-                👤 수동 프로필 생성
-              </button>
-            </div>
+            )}
           </div>
+        </div>
 
-          {/* 네비게이션 */}
-          <div style={{ ...styles.section, marginBottom: "60px" }}>
-            <h2>🧭 페이지 이동</h2>
-            <div style={styles.buttonGroup}>
-              <button
-                onClick={() => navigate("/login")}
-                style={{ ...styles.button, ...styles.navButton }}
-              >
-                📝 로그인 페이지
-              </button>
-
-              <button
-                onClick={() => navigate("/signup")}
-                style={{ ...styles.button, ...styles.navButton }}
-              >
-                ✍️ 회원가입 페이지
-              </button>
-
-              <button
-                onClick={() => navigate("/home")}
-                style={{ ...styles.button, ...styles.navButton }}
-              >
-                🏠 홈 페이지
-              </button>
-
-              <button
-                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                style={{ ...styles.button, ...styles.debugButton }}
-              >
-                ⬆️ 맨 위로
-              </button>
-            </div>
+        {/* RefreshProfile 결과 */}
+        <div>
+          <h4>3. RefreshProfile:</h4>
+          <div
+            style={{
+              padding: "10px",
+              backgroundColor: testResults.refreshProfile?.success
+                ? "#e8f5e8"
+                : "#ffebee",
+              borderRadius: "4px",
+              fontSize: "14px",
+            }}
+          >
+            {testResults.refreshProfile?.success ? (
+              <p>✅ {testResults.refreshProfile.message}</p>
+            ) : (
+              <div>
+                <p>❌ 실패</p>
+                <p>에러: {testResults.refreshProfile?.error}</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
+    );
+  };
+
+  if (loading) {
+    return (
+      <div style={{ padding: "40px", textAlign: "center" }}>
+        <h2>로딩 중...</h2>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div style={{ padding: "40px", textAlign: "center" }}>
+        <h2>로그인이 필요합니다</h2>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ maxWidth: "800px", margin: "0 auto", padding: "20px" }}>
+      <h1>🔧 AuthContext 문제 진단 페이지</h1>
+
+      {/* 현재 AuthContext 상태 */}
+      {renderAuthStatus()}
+
+      {/* 테스트 결과 */}
+      {renderTestResults()}
+
+      {/* 수동 테스트 버튼들 */}
+      <div
+        style={{
+          padding: "20px",
+          backgroundColor: "#e3f2fd",
+          borderRadius: "8px",
+        }}
+      >
+        <h3>🎮 수동 테스트</h3>
+        <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+          <button
+            onClick={runAllTests}
+            disabled={isTestRunning}
+            style={{ padding: "10px 20px", fontSize: "14px" }}
+          >
+            {isTestRunning ? "테스트 실행 중..." : "모든 테스트 다시 실행"}
+          </button>
+
+          <button
+            onClick={refreshProfile}
+            style={{ padding: "10px 20px", fontSize: "14px" }}
+          >
+            RefreshProfile 실행
+          </button>
+
+          <button
+            onClick={() => {
+              console.log("현재 AuthContext 상태:");
+              console.log("user:", user);
+              console.log("profile:", profile);
+              console.log("loading:", loading);
+            }}
+            style={{ padding: "10px 20px", fontSize: "14px" }}
+          >
+            콘솔에 상태 출력
+          </button>
+        </div>
+      </div>
+
+      {/* 진단 결과 요약 */}
+      {Object.keys(testResults).length > 0 && (
+        <div
+          style={{
+            padding: "20px",
+            backgroundColor: "#f3e5f5",
+            borderRadius: "8px",
+            marginTop: "20px",
+          }}
+        >
+          <h3>🎯 진단 결과 요약</h3>
+          {testResults.directSupabase?.success &&
+            !testResults.apiFunction?.success && (
+              <div style={{ color: "#d32f2f" }}>
+                <p>
+                  <strong>문제 발견:</strong> Supabase 직접 조회는 성공하지만
+                  getCurrentUserProfile API 함수가 실패합니다.
+                </p>
+                <p>
+                  <strong>해결방법:</strong> src/api/auth.js의
+                  getCurrentUserProfile 함수를 확인해야 합니다.
+                </p>
+              </div>
+            )}
+
+          {!testResults.directSupabase?.success && (
+            <div style={{ color: "#d32f2f" }}>
+              <p>
+                <strong>문제 발견:</strong> Supabase 직접 조회도 실패합니다.
+              </p>
+              <p>
+                <strong>해결방법:</strong> 데이터베이스 연결이나 권한 문제일
+                가능성이 높습니다.
+              </p>
+            </div>
+          )}
+
+          {testResults.directSupabase?.success &&
+            testResults.apiFunction?.success &&
+            !profile && (
+              <div style={{ color: "#d32f2f" }}>
+                <p>
+                  <strong>문제 발견:</strong> API는 정상이지만 AuthContext의
+                  상태 업데이트가 안 됩니다.
+                </p>
+                <p>
+                  <strong>해결방법:</strong> AuthContext의 loadUserProfile
+                  함수를 확인해야 합니다.
+                </p>
+              </div>
+            )}
+        </div>
+      )}
     </div>
   );
-};
-
-// 인라인 스타일
-const styles = {
-  container: {
-    minHeight: "100vh",
-    height: "auto",
-    backgroundColor: "#f5f5f5",
-    fontFamily: "Arial, sans-serif",
-    position: "relative",
-  },
-  scrollWrapper: {
-    padding: "20px",
-    paddingBottom: "120px",
-    minHeight: "calc(100vh - 40px)",
-    display: "flex",
-    flexDirection: "column",
-    boxSizing: "border-box",
-  },
-  card: {
-    maxWidth: "1200px",
-    width: "100%",
-    margin: "0 auto",
-    backgroundColor: "white",
-    borderRadius: "12px",
-    padding: "32px",
-    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-    flex: "1",
-    display: "flex",
-    flexDirection: "column",
-    position: "relative",
-  },
-  title: {
-    textAlign: "center",
-    color: "#333",
-    marginBottom: "32px",
-    fontSize: "32px",
-  },
-  section: {
-    marginBottom: "32px",
-    padding: "24px",
-    backgroundColor: "#f9f9f9",
-    borderRadius: "8px",
-    border: "1px solid #e0e0e0",
-    minHeight: "auto",
-  },
-  statusGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-    gap: "16px",
-    marginTop: "16px",
-  },
-  statusItem: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: "12px",
-    backgroundColor: "white",
-    borderRadius: "6px",
-    border: "1px solid #ddd",
-  },
-  success: {
-    color: "#4caf50",
-    fontWeight: "bold",
-  },
-  error: {
-    color: "#f44336",
-    fontWeight: "bold",
-  },
-  userInfo: {
-    backgroundColor: "white",
-    padding: "16px",
-    borderRadius: "6px",
-    border: "1px solid #ddd",
-    marginTop: "16px",
-  },
-  infoSection: {
-    backgroundColor: "white",
-    padding: "20px",
-    borderRadius: "8px",
-    border: "1px solid #ddd",
-    marginBottom: "20px",
-  },
-  infoGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-    gap: "12px",
-    marginTop: "12px",
-  },
-  infoItem: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: "8px 12px",
-    backgroundColor: "#f8f9fa",
-    borderRadius: "4px",
-    border: "1px solid #e9ecef",
-  },
-  profileImageContainer: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    gap: "16px",
-    marginTop: "16px",
-  },
-  profileImage: {
-    width: "120px",
-    height: "120px",
-    borderRadius: "50%",
-    objectFit: "cover",
-    border: "3px solid #ddd",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-  },
-  imageError: {
-    padding: "20px",
-    backgroundColor: "#fee",
-    border: "1px solid #fcc",
-    borderRadius: "4px",
-    color: "#c00",
-  },
-  imageInfo: {
-    width: "100%",
-    padding: "12px",
-    backgroundColor: "#f8f9fa",
-    borderRadius: "4px",
-    border: "1px solid #e9ecef",
-  },
-  urlText: {
-    fontSize: "12px",
-    color: "#666",
-    wordBreak: "break-all",
-    marginTop: "4px",
-    padding: "8px",
-    backgroundColor: "#fff",
-    border: "1px solid #ddd",
-    borderRadius: "4px",
-  },
-  noData: {
-    textAlign: "center",
-    color: "#666",
-    fontStyle: "italic",
-    padding: "20px",
-    backgroundColor: "#f8f9fa",
-    borderRadius: "4px",
-    marginTop: "12px",
-  },
-  buttonGroup: {
-    display: "flex",
-    gap: "12px",
-    flexWrap: "wrap",
-    marginTop: "16px",
-  },
-  button: {
-    padding: "12px 24px",
-    border: "none",
-    borderRadius: "6px",
-    cursor: "pointer",
-    fontSize: "14px",
-    fontWeight: "bold",
-    transition: "all 0.2s ease",
-    minWidth: "120px",
-  },
-  logoutButton: {
-    backgroundColor: "#ff9800",
-    color: "white",
-  },
-  quickLogoutButton: {
-    backgroundColor: "#f44336",
-    color: "white",
-  },
-  loginButton: {
-    backgroundColor: "#4caf50",
-    color: "white",
-  },
-  debugButton: {
-    backgroundColor: "#2196f3",
-    color: "white",
-  },
-  navButton: {
-    backgroundColor: "#9c27b0",
-    color: "white",
-  },
-  realTimeInfo: {
-    backgroundColor: "#e8f5e8",
-    padding: "8px 12px",
-    borderRadius: "4px",
-    marginBottom: "12px",
-    fontSize: "14px",
-    color: "#2e7d32",
-  },
 };
 
 export default TestPage;
