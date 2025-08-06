@@ -20,11 +20,17 @@ import DreamEdit from "./pages/DreamEdit";
 import EmotionDetail from "./pages/EmotionDetail";
 import EmotionEdit from "./pages/EmotionEdit";
 import Support from "./pages/Support";
+import Footer from "./components/common/Footer";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
+import ScrollToTop from "./components/common/ScrollToTop";
+
 function App() {
   return (
     <Router>
       <AuthProvider>
         <Header />
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<HomePage />}></Route>
           <Route path="/login" element={<LoginPage />}></Route>
@@ -43,12 +49,16 @@ function App() {
           <Route path="/emotionedit" element={<EmotionEdit />}></Route>
           <Route path="/sleeprecord" element={<SleepRecordPage />}></Route>
           <Route path="/aidreamsresult" element={<AIDreamResultPage />}></Route>
+          <Route path="/privacypolicy" element={<PrivacyPolicy />}></Route>
+          <Route path="/termsofservice" element={<TermsOfService />}></Route>
           {/* 테스트페이지입니다-병근 */}
           <Route path="/test" element={<TestPage />} />
         </Routes>
+        <Footer />
       </AuthProvider>
     </Router>
   );
 }
+
 // Routes 안에 추가
 export default App;

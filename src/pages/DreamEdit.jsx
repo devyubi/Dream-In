@@ -25,7 +25,7 @@ function DreamEdit() {
         state: {
           ...editDream,
           title: editTitle,
-          detail: editDetail,
+          story: editDetail,
         },
         replace: true,
       });
