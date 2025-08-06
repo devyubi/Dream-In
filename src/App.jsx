@@ -20,7 +20,6 @@ import DreamEdit from "./pages/DreamEdit";
 import EmotionDetail from "./pages/EmotionDetail";
 import EmotionEdit from "./pages/EmotionEdit";
 import Support from "./pages/Support";
-
 function App() {
   return (
     <Router>
@@ -51,6 +50,5 @@ function App() {
     </Router>
   );
 }
-
 // Routes 안에 추가
 export default App;

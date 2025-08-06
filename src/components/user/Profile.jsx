@@ -10,15 +10,24 @@ import "../../css/Profile.css";
 
 const Profile = () => {
   const navigate = useNavigate();
-  const { user, profile, signOut, authLoading } = useAuth();
+  const {
+    user,
+    profile,
+    signOut,
+    authLoading,
+    loading,
+    isAuthenticated,
+    isLoggedIn,
+  } = useAuth();
   const [isDarkMode, setIsDarkMode] = useState(false);
 
-  // 로그인하지 않은 사용자 리다이렉트
+  // 인증되지 않은 사용자 리다이렉트
   useEffect(() => {
-    if (!user) {
-      navigate("/login");
+    // 로딩이 완료되고 인증되지 않은 경우 리다이렉트
+    if (!loading && !isAuthenticated) {
+      navigate("/login", { replace: true });
     }
-  }, [user, navigate]);
+  }, [loading, isAuthenticated, navigate]);
 
   // 다크 모드 감지
   useEffect(() => {
@@ -88,33 +97,129 @@ const Profile = () => {
     navigate("/profile/edit");
   }, [navigate]);
 
-  // 로딩 상태
-  if (authLoading) {
+  // 초기 로딩 중
+  if (loading) {
     return (
       <Container className="profile-page loading">
-        <LoadingSpinner message="로딩 중..." />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: "400px",
+            flexDirection: "column",
+            gap: "1rem",
+          }}
+        >
+          <LoadingSpinner message="인증 상태를 확인하고 있습니다..." />
+        </div>
       </Container>
     );
   }
 
-  // 사용자 정보 없음
-  if (user && !profile) {
+  // 인증되지 않은 상태
+  if (!isAuthenticated) {
     return (
-      <Container className="profile-page no-profile">
-        <div className="error-state">
-          <h2>프로필을 찾을 수 없습니다</h2>
-          <p>회원정보가 없습니다. 관리자에게 문의하세요.</p>
+      <Container className="profile-page not-authenticated">
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: "400px",
+            flexDirection: "column",
+            gap: "1rem",
+            textAlign: "center",
+          }}
+        >
+          <h2 style={{ margin: 0, color: "#333" }}>인증이 필요합니다</h2>
+          <p style={{ margin: 0, color: "#666" }}>
+            로그인 페이지로 이동하고 있습니다...
+          </p>
+        </div>
+      </Container>
+    );
+  }
+
+  // Auth 작업 중
+  if (authLoading) {
+    return (
+      <Container className="profile-page loading">
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: "400px",
+            flexDirection: "column",
+            gap: "1rem",
+          }}
+        >
+          <LoadingSpinner message="처리 중..." />
+        </div>
+      </Container>
+    );
+  }
+
+  // 인증은 되었지만 사용자 정보가 없는 경우
+  if (!user) {
+    return (
+      <Container className="profile-page no-user">
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: "400px",
+            flexDirection: "column",
+            gap: "1rem",
+            textAlign: "center",
+          }}
+        >
+          <h2 style={{ margin: 0, color: "#333" }}>
+            사용자 정보를 불러올 수 없습니다
+          </h2>
+          <p style={{ margin: 0, color: "#666" }}>다시 로그인해주세요.</p>
           <button
-            className="retry-button"
-            onClick={() => window.location.reload()}
+            onClick={() => navigate("/login")}
+            style={{
+              padding: "0.5rem 1rem",
+              backgroundColor: "#007bff",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}
           >
-            다시 시도
+            로그인하러 가기
           </button>
         </div>
       </Container>
     );
   }
 
+  // 사용자 정보는 있지만 프로필이 아직 로드되지 않은 경우
+  if (!profile) {
+    return (
+      <Container className="profile-page profile-loading">
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: "400px",
+            flexDirection: "column",
+            gap: "1rem",
+          }}
+        >
+          <h2 style={{ margin: 0, color: "#333" }}>프로필을 불러오는 중...</h2>
+          <LoadingSpinner message="프로필 정보를 가져오고 있습니다." />
+        </div>
+      </Container>
+    );
+  }
+
+  // 정상적인 프로필 페이지 렌더링
   return (
     <Container className={`profile-page ${isDarkMode ? "dark-mode" : ""}`}>
       <main className="profile-main">
@@ -133,10 +238,10 @@ const Profile = () => {
 
             <div className="profile-details">
               <h1 className="profile-name">
-                {profile?.nickname ?? "사용자"} 님
+                {profile?.nickname ?? user?.email?.split("@")[0] ?? "사용자"} 님
               </h1>
               <p className="profile-email">
-                {profile?.email ?? "이메일 정보 없음"}
+                {profile?.email ?? user?.email ?? "이메일 정보 없음"}
               </p>
             </div>
           </section>
