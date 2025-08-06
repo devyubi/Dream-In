@@ -6,6 +6,7 @@ import {
   useEffect,
   useState,
   useCallback,
+  useRef,
 } from "react";
 import { AuthService, SessionService } from "../services/authService";
 import { UserService, FileUploadService } from "../services/userService";
@@ -21,154 +22,365 @@ export const useAuth = () => {
   return context;
 };
 
+// 토큰 관리 유틸리티
+const TokenManager = {
+  // 토큰을 안전하게 저장 (HttpOnly 쿠키 시뮬레이션)
+  setTokens: (accessToken, refreshToken) => {
+    if (accessToken) {
+      // 메모리에 저장 (가장 안전)
+      window._accessToken = accessToken;
+      // localStorage에는 암호화해서 저장 (브라우저 종료 시 유지)
+      localStorage.setItem(
+        "auth_session",
+        btoa(
+          JSON.stringify({
+            token: accessToken,
+            timestamp: Date.now(),
+            expires: Date.now() + 24 * 60 * 60 * 1000, // 24시간
+          }),
+        ),
+      );
+    }
+    if (refreshToken) {
+      localStorage.setItem("refresh_token", refreshToken);
+    }
+  },
+
+  // 토큰 가져오기
+  getAccessToken: () => {
+    // 메모리에서 먼저 확인
+    if (window._accessToken) {
+      return window._accessToken;
+    }
+
+    // localStorage에서 복원
+    try {
+      const session = localStorage.getItem("auth_session");
+      if (session) {
+        const decoded = JSON.parse(atob(session));
+        if (decoded.expires > Date.now()) {
+          window._accessToken = decoded.token;
+          return decoded.token;
+        } else {
+          // 만료된 토큰 제거
+          localStorage.removeItem("auth_session");
+        }
+      }
+    } catch (error) {
+      localStorage.removeItem("auth_session");
+    }
+    return null;
+  },
+
+  getRefreshToken: () => {
+    return localStorage.getItem("refresh_token");
+  },
+
+  // 토큰 삭제
+  clearTokens: () => {
+    window._accessToken = null;
+    localStorage.removeItem("auth_session");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("user_data");
+    localStorage.removeItem("profile_data");
+  },
+
+  // 토큰 유효성 검사
+  isTokenValid: token => {
+    if (!token) return false;
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      return payload.exp * 1000 > Date.now();
+    } catch {
+      return false;
+    }
+  },
+};
+
+// 사용자 데이터 관리
+const UserDataManager = {
+  setUserData: (user, profile) => {
+    if (user) {
+      localStorage.setItem("user_data", JSON.stringify(user));
+    }
+    if (profile) {
+      localStorage.setItem("profile_data", JSON.stringify(profile));
+    }
+  },
+
+  getUserData: () => {
+    try {
+      const userData = localStorage.getItem("user_data");
+      const profileData = localStorage.getItem("profile_data");
+      return {
+        user: userData ? JSON.parse(userData) : null,
+        profile: profileData ? JSON.parse(profileData) : null,
+      };
+    } catch {
+      return { user: null, profile: null };
+    }
+  },
+
+  clearUserData: () => {
+    localStorage.removeItem("user_data");
+    localStorage.removeItem("profile_data");
+  },
+};
+
 export const AuthProvider = ({ children }) => {
   // ===== 상태 관리 =====
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [authLoading, setAuthLoading] = useState(false);
   const [session, setSession] = useState(null);
+  const [loading, setLoading] = useState(true); // 초기화 중
+  const [authLoading, setAuthLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // 타이머 참조
+  const tokenCheckInterval = useRef(null);
+  const refreshTokenTimer = useRef(null);
+
+  // ===== 토큰 기반 인증 상태 확인 =====
+  const checkAuthStatus = useCallback(async () => {
+    const token = TokenManager.getAccessToken();
+
+    if (!token || !TokenManager.isTokenValid(token)) {
+      // 토큰이 없거나 만료됨
+      const refreshToken = TokenManager.getRefreshToken();
+      if (refreshToken) {
+        // 리프레시 토큰으로 재발급 시도
+        try {
+          const result = await AuthService.refreshToken(refreshToken);
+          if (result.success) {
+            TokenManager.setTokens(result.accessToken, result.refreshToken);
+            window._accessToken = result.accessToken;
+            setSession({ access_token: result.accessToken });
+            setIsAuthenticated(true);
+            return true;
+          }
+        } catch (error) {
+          logError("토큰 갱신 실패", error);
+        }
+      }
+
+      // 토큰 갱신 실패 시 로그아웃
+      handleTokenExpired();
+      return false;
+    }
+
+    // 유효한 토큰이 있음
+    setSession({ access_token: token });
+    setIsAuthenticated(true);
+    return true;
+  }, []);
+
+  // ===== 토큰 만료 처리 =====
+  const handleTokenExpired = useCallback(() => {
+    TokenManager.clearTokens();
+    UserDataManager.clearUserData();
+    setUser(null);
+    setProfile(null);
+    setSession(null);
+    setIsAuthenticated(false);
+
+    // 로그인 페이지로 리다이렉트
+    if (
+      window.location.pathname !== "/login" &&
+      window.location.pathname !== "/" &&
+      !window.location.pathname.startsWith("/signup")
+    ) {
+      alert("세션이 만료되었습니다. 다시 로그인해주세요.");
+      window.location.href = "/login";
+    }
+  }, []);
+
+  // ===== 자동 토큰 갱신 설정 =====
+  const setupTokenRefresh = useCallback(
+    token => {
+      if (!token || !TokenManager.isTokenValid(token)) return;
+
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        const expiresIn = payload.exp * 1000 - Date.now();
+        const refreshTime = Math.max(expiresIn - 5 * 60 * 1000, 60000); // 5분 전 또는 1분 후
+
+        if (refreshTokenTimer.current) {
+          clearTimeout(refreshTokenTimer.current);
+        }
+
+        refreshTokenTimer.current = setTimeout(async () => {
+          const refreshToken = TokenManager.getRefreshToken();
+          if (refreshToken) {
+            try {
+              const result = await AuthService.refreshToken(refreshToken);
+              if (result.success) {
+                TokenManager.setTokens(result.accessToken, result.refreshToken);
+                window._accessToken = result.accessToken;
+                setSession({ access_token: result.accessToken });
+                setupTokenRefresh(result.accessToken);
+              } else {
+                handleTokenExpired();
+              }
+            } catch (error) {
+              logError("자동 토큰 갱신 실패", error);
+              handleTokenExpired();
+            }
+          }
+        }, refreshTime);
+      } catch (error) {
+        logError("토큰 갱신 스케줄 설정 실패", error);
+      }
+    },
+    [handleTokenExpired],
+  );
 
   // ===== 프로필 로드 함수 =====
   const loadUserProfile = useCallback(async authUser => {
     try {
-      if (!authUser) {
-        setProfile(null);
-        return;
-      }
+      if (!authUser) return;
 
       const result = await UserService.getCurrentUserProfile();
-
       if (result.success && result.profile) {
         setProfile(result.profile);
-      } else {
-        setProfile(null);
+        UserDataManager.setUserData(authUser, result.profile);
       }
     } catch (error) {
       logError("loadUserProfile", error, { userId: authUser?.id });
-      setProfile(null);
     }
   }, []);
 
-  // ===== 초기 세션 확인 =====
+  // ===== 초기화 =====
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        const result = await AuthService.getCurrentSession();
+        setLoading(true);
 
-        if (
-          result.success &&
-          result.session?.user &&
-          result.session?.access_token
-        ) {
-          setSession(result.session);
-          setUser(result.session.user);
-          await loadUserProfile(result.session.user);
-        } else {
-          setSession(null);
-          setUser(null);
-          setProfile(null);
+        // 저장된 사용자 데이터 복원
+        const { user: savedUser, profile: savedProfile } =
+          UserDataManager.getUserData();
+        if (savedUser) {
+          setUser(savedUser);
+        }
+        if (savedProfile) {
+          setProfile(savedProfile);
+        }
+
+        // 토큰 기반 인증 상태 확인
+        const isValid = await checkAuthStatus();
+
+        if (isValid && savedUser) {
+          // 토큰이 유효하고 사용자 데이터가 있으면 프로필 최신화
+          await loadUserProfile(savedUser);
+          setupTokenRefresh(TokenManager.getAccessToken());
         }
       } catch (error) {
-        logError("initializeAuth", error);
-        setSession(null);
-        setUser(null);
-        setProfile(null);
+        logError("초기화 오류", error);
+        handleTokenExpired();
       } finally {
         setLoading(false);
       }
     };
 
     initializeAuth();
-  }, [loadUserProfile]);
+  }, [checkAuthStatus, loadUserProfile, setupTokenRefresh, handleTokenExpired]);
 
-  // ===== Auth 상태 변경 리스너 =====
+  // ===== 주기적 토큰 검증 =====
   useEffect(() => {
-    const {
-      data: { subscription },
-    } = AuthService.onAuthStateChange(async (event, session) => {
-      try {
-        if (
-          event === "SIGNED_OUT" ||
-          !session?.user ||
-          !session?.access_token
-        ) {
-          setSession(null);
-          setUser(null);
-          setProfile(null);
-        } else if (event === "SIGNED_IN") {
-          setSession(session);
-          setUser(session.user);
+    if (isAuthenticated) {
+      tokenCheckInterval.current = setInterval(
+        async () => {
+          await checkAuthStatus();
+        },
+        5 * 60 * 1000,
+      ); // 5분마다
 
-          // 소셜 로그인 사용자 프로필 자동 생성
-          const provider = session.user.app_metadata?.provider;
-          if (provider === "google" || provider === "kakao") {
-            try {
-              const existingProfile = await UserService.getCurrentUserProfile();
-              if (!existingProfile.success || !existingProfile.profile) {
-                await UserService.createSocialUserProfile(session.user);
-              }
-            } catch (error) {
-              logError("createSocialUserProfile", error, {
-                provider,
-                userId: session.user.id,
-              });
-            }
-          }
+      return () => {
+        if (tokenCheckInterval.current) {
+          clearInterval(tokenCheckInterval.current);
+        }
+      };
+    }
+  }, [isAuthenticated, checkAuthStatus]);
 
-          await loadUserProfile(session.user);
-        } else if (event === "TOKEN_REFRESHED") {
-          setSession(session);
-          setUser(session.user);
-          await loadUserProfile(session.user);
-        }
-
-        if (loading) {
-          setLoading(false);
-        }
-      } catch (error) {
-        logError("onAuthStateChange", error, { event });
-        if (loading) {
-          setLoading(false);
-        }
+  // ===== 페이지 포커스 시 토큰 검증 =====
+  useEffect(() => {
+    const handleFocus = async () => {
+      if (isAuthenticated) {
+        await checkAuthStatus();
       }
-    });
+    };
 
-    return () => subscription.unsubscribe();
-  }, [loading, loadUserProfile]);
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        handleFocus();
+      }
+    };
 
-  // ===== 자동 토큰 갱신 설정 =====
+    window.addEventListener("focus", handleFocus);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [isAuthenticated, checkAuthStatus]);
+
+  // ===== 브라우저 종료 시 정리 (선택사항) =====
   useEffect(() => {
-    if (!session) return;
+    const handleBeforeUnload = () => {
+      // 브라우저 완전 종료 시에만 토큰 제거하려면 주석 해제
+      // TokenManager.clearTokens();
+      // UserDataManager.clearUserData();
+    };
 
-    const cleanup = SessionService.setupAutoRefresh(newSession => {
-      setSession(newSession);
-      setUser(newSession.user);
-      loadUserProfile(newSession.user);
-    });
-
-    return cleanup;
-  }, [session, loadUserProfile]);
+    // window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      // window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
 
   // ===== 로그인 함수 =====
-  const signIn = useCallback(async (email, password) => {
-    setAuthLoading(true);
-    try {
-      const result = await AuthService.signIn(email, password);
-      return result;
-    } catch (error) {
-      logError("signIn", error, { email });
-      return { success: false, error: error.message };
-    } finally {
-      setAuthLoading(false);
-    }
-  }, []);
+  const signIn = useCallback(
+    async (email, password) => {
+      setAuthLoading(true);
+      try {
+        const result = await AuthService.signIn(email, password);
+
+        if (result.success && result.session?.access_token) {
+          // 토큰 저장
+          TokenManager.setTokens(
+            result.session.access_token,
+            result.session.refresh_token,
+          );
+
+          // 상태 업데이트
+          setSession(result.session);
+          setUser(result.session.user);
+          setIsAuthenticated(true);
+
+          // 사용자 데이터 저장
+          UserDataManager.setUserData(result.session.user, null);
+
+          // 프로필 로드 및 토큰 갱신 설정
+          await loadUserProfile(result.session.user);
+          setupTokenRefresh(result.session.access_token);
+        }
+
+        return result;
+      } catch (error) {
+        logError("signIn", error, { email });
+        return { success: false, error: error.message };
+      } finally {
+        setAuthLoading(false);
+      }
+    },
+    [loadUserProfile, setupTokenRefresh],
+  );
 
   // ===== 회원가입 함수 =====
   const signUp = useCallback(async userData => {
     setAuthLoading(true);
     try {
-      // 1. Supabase Auth 회원가입
       const authResult = await AuthService.signUp(
         userData.email,
         userData.password,
@@ -183,7 +395,6 @@ export const AuthProvider = ({ children }) => {
         throw new Error("회원가입 후 사용자 정보가 없습니다.");
       }
 
-      // 2. 프로필 이미지 업로드 (있다면)
       let profileImageUrl = null;
       if (userData.profileImage) {
         try {
@@ -196,11 +407,9 @@ export const AuthProvider = ({ children }) => {
           }
         } catch (error) {
           logError("profileImageUpload", error, { userId: authUser.id });
-          // 이미지 업로드 실패는 회원가입을 막지 않음
         }
       }
 
-      // 3. 프로필 정보 저장
       const profileResult = await UserService.createProfile({
         auth_user_id: authUser.id,
         email: userData.email,
@@ -235,21 +444,30 @@ export const AuthProvider = ({ children }) => {
   const signOut = useCallback(async () => {
     setAuthLoading(true);
     try {
-      const result = await AuthService.signOut("local");
-
-      if (result.success) {
-        // 상태 초기화
-        setSession(null);
-        setUser(null);
-        setProfile(null);
-
-        // 페이지 이동
-        setTimeout(() => {
-          window.location.href = "/";
-        }, 100);
+      // 서버에 로그아웃 요청
+      const token = TokenManager.getAccessToken();
+      if (token) {
+        await AuthService.signOut(token);
       }
 
-      return result;
+      // 로컬 상태 및 토큰 정리
+      TokenManager.clearTokens();
+      UserDataManager.clearUserData();
+
+      setSession(null);
+      setUser(null);
+      setProfile(null);
+      setIsAuthenticated(false);
+
+      // 타이머 정리
+      if (tokenCheckInterval.current) {
+        clearInterval(tokenCheckInterval.current);
+      }
+      if (refreshTokenTimer.current) {
+        clearTimeout(refreshTokenTimer.current);
+      }
+
+      return { success: true };
     } catch (error) {
       logError("signOut", error);
       return { success: false, error: error.message };
@@ -267,7 +485,6 @@ export const AuthProvider = ({ children }) => {
           throw new Error("로그인된 사용자가 없습니다.");
         }
 
-        // 프로필 이미지 업로드 (새 이미지가 있다면)
         let profileImageUrl = profileData.profileImageUrl;
         if (profileData.profileImage instanceof File) {
           const uploadResult = await FileUploadService.uploadProfileImage(
@@ -333,26 +550,10 @@ export const AuthProvider = ({ children }) => {
 
   // ===== 프로필 새로고침 함수 =====
   const refreshProfile = useCallback(async () => {
-    if (user) {
+    if (user && isAuthenticated) {
       await loadUserProfile(user);
     }
-  }, [user, loadUserProfile]);
-
-  // ===== 세션 새로고침 함수 =====
-  const refreshSession = useCallback(async () => {
-    try {
-      const result = await AuthService.refreshSession();
-      if (result.success) {
-        setSession(result.session);
-        setUser(result.user);
-        await loadUserProfile(result.user);
-      }
-      return result;
-    } catch (error) {
-      logError("refreshSession", error);
-      return { success: false, error: error.message };
-    }
-  }, [loadUserProfile]);
+  }, [user, isAuthenticated, loadUserProfile]);
 
   // ===== 닉네임 중복확인 함수 =====
   const checkNicknameDuplicate = useCallback(async nickname => {
@@ -366,11 +567,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // ===== 계산된 값들 =====
-  const isLoggedIn = !!user && !!session;
-  const isAuthenticated = isLoggedIn && SessionService.isSessionValid(session);
-  const sessionTimeLeft = session
-    ? SessionService.getTimeUntilExpiry(session)
-    : 0;
+  const isLoggedIn = isAuthenticated && !!user;
 
   // ===== Context Value =====
   const value = {
@@ -380,9 +577,8 @@ export const AuthProvider = ({ children }) => {
     session,
     loading,
     authLoading,
-    isLoggedIn,
     isAuthenticated,
-    sessionTimeLeft,
+    isLoggedIn,
 
     // 메서드
     signIn,
@@ -392,12 +588,7 @@ export const AuthProvider = ({ children }) => {
     resetPassword,
     updatePassword,
     refreshProfile,
-    refreshSession,
     checkNicknameDuplicate,
-
-    // 유틸리티
-    setUser,
-    loadUserProfile,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
