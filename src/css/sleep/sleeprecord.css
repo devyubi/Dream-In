@@ -1,5 +1,5 @@
 .sleep-record-container {
-  background: white;
+  background: var(--color-primary-p-100, #fcf3fb);
   padding: 2rem;
   border-radius: 1rem;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);

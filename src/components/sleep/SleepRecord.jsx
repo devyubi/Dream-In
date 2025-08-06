@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { FaStar } from "react-icons/fa6";
 import "../../css/sleep/sleeprecord.css";
 
 const SleepRecord = () => {
   const [bedTime, setBedTime] = useState("");
   const [wakeTime, setWakeTime] = useState("");
+  const [rating, setRating] = useState(0);
 
   return (
     <div className="sleep-record-container">
@@ -34,9 +34,6 @@ const SleepRecord = () => {
               onChange={e => setWakeTime(e.target.value)}
             />
           </div>
-        </div>
-        <div>
-          별<FaStar />
         </div>
       </div>
     </div>
