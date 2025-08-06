@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { getErrorMessage } from "../utils/errorHandler";
 import SignupForm from "../components/auth/SignupForm";
+import Container from "../components/common/Container";
 
 const SignupPage = () => {
   const navigate = useNavigate();
@@ -31,10 +32,9 @@ const SignupPage = () => {
         email: formData.email,
         password: formData.password,
         nickname: formData.nickname,
-        birthdate: formData.birthdate || null,
-        gender: formData.gender || null,
+        birthdate: formData.birthdate,
+        gender: formData.gender,
         profileImage: formData.profileImage,
-        marketingAgreed: formData.marketingAgreed || false,
       });
 
       if (result.success) {
@@ -103,55 +103,7 @@ const SignupPage = () => {
   }, [error]);
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background:
-          "linear-gradient(135deg, #E8D5FF 0%, #F0E6FF 50%, #E8D5FF 100%)",
-        display: "flex",
-        flexDirection: "column",
-        position: "relative",
-      }}
-    >
-      {/* 네비게이션 */}
-      <nav
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: "16px 20px",
-          background: "rgba(255, 255, 255, 0.1)",
-          backdropFilter: "blur(10px)",
-        }}
-      >
-        <button
-          style={{
-            background: "rgba(139, 92, 246, 0.2)",
-            border: "none",
-            color: "#8B5CF6",
-            fontSize: "18px",
-            fontWeight: "bold",
-            padding: "8px 12px",
-            borderRadius: "12px",
-            cursor: "pointer",
-            transition: "all 0.2s ease",
-          }}
-          onClick={() => navigate(-1)}
-          disabled={authLoading}
-          onMouseEnter={e => {
-            e.target.style.background = "rgba(139, 92, 246, 0.3)";
-            e.target.style.transform = "translateX(-2px)";
-          }}
-          onMouseLeave={e => {
-            e.target.style.background = "rgba(139, 92, 246, 0.2)";
-            e.target.style.transform = "translateX(0)";
-          }}
-        >
-          ←
-        </button>
-        <div></div>
-      </nav>
-
+    <Container>
       {/* 메인 컨테이너 */}
       <div
         style={{
@@ -302,7 +254,7 @@ const SignupPage = () => {
           </Link>
         </div>
       </div>
-    </div>
+    </Container>
   );
 };
 

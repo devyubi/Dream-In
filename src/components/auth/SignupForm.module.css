@@ -25,7 +25,7 @@
 }
 
 .formGroup {
-  margin-bottom: 24px;
+  margin: 24px 0;
 }
 
 .formGroup label {
@@ -139,6 +139,7 @@
 .nicknameInputWrapper input {
   flex: 1;
   padding-right: 20px;
+  border-radius: 16px;
 }
 
 .checkButton {
@@ -303,51 +304,6 @@
 
 .dateGenderWrapper .formGroup {
   margin-bottom: 0;
-}
-
-/* 마케팅 동의 체크박스 스타일 */
-.marketingAgreement {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 12px;
-  margin-bottom: 24px;
-  border: 1px solid rgba(84, 71, 131, 0.3);
-}
-
-.agreementCheckbox {
-  width: 20px;
-  height: 20px;
-  border: 2px solid rgba(84, 71, 131, 0.3);
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.5);
-  cursor: pointer;
-}
-
-.agreementCheckbox.checked {
-  background: var(--background-dark-space);
-  border-color: #544783;
-  transform: scale(1.05);
-}
-
-.agreementCheckbox.checked::after {
-  content: "✓";
-  color: white;
-  font-size: 12px;
-  font-weight: bold;
-}
-
-.agreementText {
-  font-size: 14px;
-  color: #544783;
-  cursor: pointer;
-  user-select: none;
 }
 
 /* 반응형 디자인 */

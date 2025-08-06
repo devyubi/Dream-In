@@ -12,7 +12,6 @@ const SignupForm = ({ onSubmit, onNicknameCheck, loading = false }) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [nicknameChecked, setNicknameChecked] = useState(false);
   const [nicknameCheckLoading, setNicknameCheckLoading] = useState(false);
-  const [marketingAgreed, setMarketingAgreed] = useState(false);
 
   const {
     values,
@@ -35,7 +34,7 @@ const SignupForm = ({ onSubmit, onNicknameCheck, loading = false }) => {
       profileImage: null,
     },
     validateSignupForm,
-    { validateOnBlur: true },
+    { validateOnBlur: true, validateOnChange: true },
   );
 
   const {
@@ -156,7 +155,6 @@ const SignupForm = ({ onSubmit, onNicknameCheck, loading = false }) => {
 
     const result = await onSubmit({
       ...formData,
-      marketingAgreed,
     });
     return result;
   });
@@ -349,10 +347,9 @@ const SignupForm = ({ onSubmit, onNicknameCheck, loading = false }) => {
                 onBlur={handleBlur}
                 disabled={loading}
               >
-                <option value="">Gender</option>
+                <option value="">성별</option>
                 <option value="male">남성</option>
                 <option value="female">여성</option>
-                <option value="other">기타</option>
               </select>
               <span className={styles.inputIcon}>
                 <svg
@@ -371,20 +368,6 @@ const SignupForm = ({ onSubmit, onNicknameCheck, loading = false }) => {
               </span>
             </div>
           </div>
-        </div>
-
-        {/* 마케팅 및 정보 제공에 동의합니다 */}
-        <div className={styles.marketingAgreement}>
-          <div
-            className={`${styles.agreementCheckbox} ${marketingAgreed ? styles.checked : ""}`}
-            onClick={() => setMarketingAgreed(!marketingAgreed)}
-          />
-          <span
-            className={styles.agreementText}
-            onClick={() => setMarketingAgreed(!marketingAgreed)}
-          >
-            마케팅 및 정보 제공에 동의합니다.
-          </span>
         </div>
 
         {/* 프로필 이미지 */}

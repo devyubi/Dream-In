@@ -11,10 +11,10 @@ import DreamWritePage from "./pages/DreamWritePage";
 import EmotionWritePage from "./pages/EmotionWritePage";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
+import ProfileEditPage from "./pages/ProfileEditPage";
 import SignupPage from "./pages/SignupPage";
 import SleepRecordPage from "./pages/SleepRecordPage";
 import TestPage from "./pages/TestPage";
-import ProfileImage from "./components/user/ProfileImage";
 
 function App() {
   return (
@@ -27,7 +27,7 @@ function App() {
           <Route path="/auth/callback" element={<AuthCallbackPage />} />
           <Route path="/signup" element={<SignupPage />}></Route>
           <Route path="/profile" element={<Profile />}></Route>
-          <Route path="/profile/edit" element={<ProfileImage />}></Route>
+          <Route path="/profile/edit" element={<ProfileEditPage />}></Route>
           <Route path="/dreamwrite" element={<DreamWritePage />}></Route>
           <Route path="/dreamlist" element={<DreamList />}></Route>
           <Route path="/dreamdetail/:id" element={<DreamDetail />}></Route>

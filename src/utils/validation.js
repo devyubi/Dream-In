@@ -160,11 +160,14 @@ export const validateProfileImage = file => {
  * @returns {object} { isValid: boolean, message: string }
  */
 export const validatePasswordConfirm = (password, confirmPassword) => {
-  if (!confirmPassword) {
+  const pw = password?.trim() || "";
+  const cpw = confirmPassword?.trim() || "";
+
+  if (!cpw) {
     return { isValid: false, message: "비밀번호 확인을 입력해주세요." };
   }
 
-  if (password !== confirmPassword) {
+  if (pw !== cpw) {
     return { isValid: false, message: "비밀번호가 일치하지 않습니다." };
   }
 
@@ -192,12 +195,10 @@ export const validateSignupForm = formData => {
   }
 
   // 비밀번호 확인 검사
-  const confirmPasswordValidation = validatePasswordConfirm(
-    formData.password,
-    formData.confirmPassword,
-  );
-  if (!confirmPasswordValidation.isValid) {
-    errors.confirmPassword = confirmPasswordValidation.message;
+  function validatePasswordConfirm(password, confirmPassword) {
+    if (!confirmPassword) return "비밀번호 확인은 필수입니다.";
+    if (password !== confirmPassword) return "비밀번호가 일치하지 않습니다.";
+    return ""; // ✅ 일치하면 에러 없다고 명시적으로 알려줌!
   }
 
   // 닉네임 검사
