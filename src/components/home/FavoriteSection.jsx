@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 const mockDreams = [
   {
@@ -32,10 +32,23 @@ function FavoriteSection() {
   const [dreams, setDreams] = useState(mockDreams);
   const navigate = useNavigate();
 
-  const bookmarkedDreams = dreams
-    .filter(d => d.isBookmarked)
-    .sort((a, b) => new Date(b.date) - new Date(a.date))
-    .slice(0, 2);
+  // 즐겨찾기 정렬 (useMemo로 최적화)
+  const bookmarkedDreams = useMemo(() => {
+    return dreams
+      .filter(d => d.isBookmarked)
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .slice(0, 2);
+  }, [dreams]);
+  // const bookmarkedDreams = dreams
+  //   .filter(d => d.isBookmarked)
+  //   .sort((a, b) => new Date(b.date) - new Date(a.date))
+  //   .slice(0, 2);
+
+  const handleBookmarkClick = (e, id, isBookmarked) => {
+    e.stopPropagation();
+    if (isBookmarked && !window.confirm("즐겨찾기를 해제하시겠습니까?")) return;
+    toggleBookmark(id);
+  };
 
   const toggleBookmark = id => {
     setDreams(prev =>
@@ -85,15 +98,9 @@ function FavoriteSection() {
                         : "/images/star.svg"
                     }
                     alt="즐겨찾기"
-                    onClick={e => {
-                      e.stopPropagation();
-                      if (dream.isBookmarked) {
-                        const confirmUnbookmark =
-                          window.confirm("즐겨찾기를 해제하시겠습니까?");
-                        if (!confirmUnbookmark) return;
-                      }
-                      toggleBookmark(dream.id);
-                    }}
+                    onClick={e =>
+                      handleBookmarkClick(e, dream.id, dream.isBookmarked)
+                    }
                     style={{ cursor: "pointer" }}
                   />
                 </div>
