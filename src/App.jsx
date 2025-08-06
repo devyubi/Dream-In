@@ -19,7 +19,7 @@ import EmotionList from "./pages/EmotionList";
 import DreamEdit from "./pages/DreamEdit";
 import EmotionDetail from "./pages/EmotionDetail";
 import EmotionEdit from "./pages/EmotionEdit";
-import MadeIn from "./components/common/MadeIn";
+import Support from "./pages/Support";
 
 function App() {
   return (
@@ -44,7 +44,6 @@ function App() {
           <Route path="/emotionedit" element={<EmotionEdit />}></Route>
           <Route path="/sleeprecord" element={<SleepRecordPage />}></Route>
           <Route path="/aidreamsresult" element={<AIDreamResultPage />}></Route>
-          <Route path="/support" element={<MadeIn />} />
           {/* 테스트페이지입니다-병근 */}
           <Route path="/test" element={<TestPage />} />
         </Routes>
