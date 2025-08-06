@@ -27,7 +27,7 @@ function DreamList() {
         time: "1시간 전",
         title: "하늘을 나는 꿈을 꾸었습니다.",
         category: "행복한",
-        detail:
+        story:
           "하늘을 아이언맨처럼 빠르게 날았습니다. I'm ironman. 하늘을 아이언맨처럼 빠르게 날았습니다. I'm ironman. 하늘을 아이언맨처럼 빠르게 날았습니다. I'm ironman. 하늘을 아이언맨처럼 빠르게 날았습니다. I'm ironman. 하늘을 아이언맨처럼 빠르게 날았습니다. I'm ironman. 하늘을 아이언맨처럼 빠르게 날았습니다. I'm ironman. 하늘을 아이언맨처럼 빠르게 날았습니다. I'm ironman. 하늘을 아이언맨처럼 빠르게 날았습니다. I'm ironman.",
         photo: "/images/photo1.png",
         isFavorite: false,
@@ -38,7 +38,7 @@ function DreamList() {
         time: "1시간 전",
         title: "하늘에서 아이언맨이 날고 있는 것을 보는 꿈을 꾸었습니다.",
         category: "신기한",
-        detail:
+        story:
           "하늘을 올려다 보았을 때 아이언맨처럼 빠른 사람이 날고 있었어요. He is ironman.",
         photo: "/images/photo2.png",
         isFavorite: false,
@@ -50,7 +50,7 @@ function DreamList() {
         title:
           "하늘에서 아이언맨이 날고 있는 것을 보는 사람을 보는 꿈을 꾸었습니다.",
         category: "몽환적",
-        detail:
+        story:
           "하늘을 나르는 아이언맨을 보고 있는 사람을 보는 꿈을 꾸었어요. He is man.",
         photo: "/images/photo3.png",
         isFavorite: false,
@@ -141,7 +141,7 @@ function DreamList() {
                 {dream.title}
                 <List.ListItemCategory>#{dream.category}</List.ListItemCategory>
               </List.ListItemTitle>
-              <List.ListItemDetail>{dream.detail}</List.ListItemDetail>
+              <List.ListItemDetail>{dream.story}</List.ListItemDetail>
               <List.ListItemDelete
                 onClick={e => {
                   e.stopPropagation();

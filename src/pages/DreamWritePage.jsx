@@ -50,7 +50,7 @@ function DreamWritePage() {
     if (!isValid) return;
 
     // 정상 입력 시 연결된 페이지 이동
-    navigate("/dreamdetail", {
+    navigate("/dreamdetail/${id}", {
       state: {
         title: titleTextCount,
         emotion: selectEmoji,
@@ -58,6 +58,21 @@ function DreamWritePage() {
       },
     });
   };
+
+  const emojiList = [
+    { id: "shine", text: "빛나는", icon: "/images/shine_icon.png" },
+    { id: "happy", text: "행복한", icon: "/images/happy_icon.png" },
+    { id: "dreamy", text: "몽환적", icon: "/images/dreamy_icon.png" },
+    { id: "shy", text: "부끄러움", icon: "/images/shy_icon.png" },
+    { id: "weird", text: "신기한", icon: "/images/weird_icon.png" },
+    {
+      id: "prenatal",
+      text: "태몽",
+      icon: "/images/prenatal_dream_icon.png",
+    },
+    { id: "scared", text: "무서운", icon: "/images/scared_icon.png" },
+    { id: "etc", text: "기타", icon: "/images/etc_icon.png" },
+  ];
 
   return (
     <Container>
@@ -88,86 +103,19 @@ function DreamWritePage() {
       <DreamWrite.DreamEmojiWrap>
         <DreamWrite.DreamEmojiTitle>Dream-Emoji</DreamWrite.DreamEmojiTitle>
         <DreamWrite.DreamEmojiBox error={!!emojiError}>
-          <DreamWrite.DreamEmojiList
-            onClick={() => {
-              setSelectEmoji("shine");
-              if (emojiError) setEmojiError("");
-            }}
-            isSelected={selectEmoji === "shine"}
-          >
-            <img src="/images/shine_icon.png" alt="shine" />
-            빛나는
-          </DreamWrite.DreamEmojiList>
-          <DreamWrite.DreamEmojiList
-            onClick={() => {
-              setSelectEmoji("happy");
-              if (emojiError) setEmojiError("");
-            }}
-            isSelected={selectEmoji === "happy"}
-          >
-            <img src="/images/happy_icon.png" alt="happy" />
-            행복한
-          </DreamWrite.DreamEmojiList>
-          <DreamWrite.DreamEmojiList
-            onClick={() => {
-              setSelectEmoji("dreamy");
-              if (emojiError) setEmojiError("");
-            }}
-            isSelected={selectEmoji === "dreamy"}
-          >
-            <img src="/images/dreamy_icon.png" alt="dreamy" />
-            몽환적
-          </DreamWrite.DreamEmojiList>
-          <DreamWrite.DreamEmojiList
-            onClick={() => {
-              setSelectEmoji("shy");
-              if (emojiError) setEmojiError("");
-            }}
-            isSelected={selectEmoji === "shy"}
-          >
-            <img src="/images/shy_icon.png" alt="shy" />
-            부끄러움
-          </DreamWrite.DreamEmojiList>
-          <DreamWrite.DreamEmojiList
-            onClick={() => {
-              setSelectEmoji("weird");
-              if (emojiError) setEmojiError("");
-            }}
-            isSelected={selectEmoji === "weird"}
-          >
-            <img src="/images/weird_icon.png" alt="weird" />
-            신기한
-          </DreamWrite.DreamEmojiList>
-          <DreamWrite.DreamEmojiList
-            onClick={() => {
-              setSelectEmoji("prenatal");
-              if (emojiError) setEmojiError("");
-            }}
-            isSelected={selectEmoji === "prenatal"}
-          >
-            <img src="/images/prenatal_dream_icon.png" alt="prenatal_dream" />
-            태몽
-          </DreamWrite.DreamEmojiList>
-          <DreamWrite.DreamEmojiList
-            onClick={() => {
-              setSelectEmoji("scared");
-              if (emojiError) setEmojiError("");
-            }}
-            isSelected={selectEmoji === "scared"}
-          >
-            <img src="/images/scared_icon.png" alt="scared" />
-            무서운
-          </DreamWrite.DreamEmojiList>
-          <DreamWrite.DreamEmojiList
-            onClick={() => {
-              setSelectEmoji("etc");
-              if (emojiError) setEmojiError("");
-            }}
-            isSelected={selectEmoji === "etc"}
-          >
-            <img src="/images/etc_icon.png" alt="etc" />
-            기타
-          </DreamWrite.DreamEmojiList>
+          {emojiList.map(emoji => (
+            <DreamWrite.DreamEmojiList
+              key={emoji.id}
+              onClick={() => {
+                setSelectEmoji(emoji.id);
+                if (emojiError) setEmojiError("");
+              }}
+              isSelected={selectEmoji === emoji.id}
+            >
+              <img src={emoji.icon} alt={emoji.id} />
+              {emoji.text}
+            </DreamWrite.DreamEmojiList>
+          ))}
         </DreamWrite.DreamEmojiBox>
         {/* 에러 메세지 */}
         {emojiError && <InputErrorMessage message={emojiError} />}
