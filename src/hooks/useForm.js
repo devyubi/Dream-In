@@ -247,7 +247,6 @@ export const useForm = (
 
           return result;
         } catch (error) {
-          console.error("Form submission error:", error);
           return {
             success: false,
             error: error.message || "제출 중 오류가 발생했습니다.",

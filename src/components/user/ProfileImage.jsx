@@ -34,8 +34,6 @@ const ProfileImage = ({
       return;
     }
 
-    console.log("📸 이미지 선택:", file.name);
-
     // 파일을 미리보기용으로 읽기
     const fileReader = new FileReader();
     fileReader.onload = e => {
