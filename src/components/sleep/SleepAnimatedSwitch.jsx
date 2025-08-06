@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { AnimatePresence, motion } from "framer-motion";
 import SleepRecord from "./SleepRecord";
 import SleepStats from "./SleepStats";
