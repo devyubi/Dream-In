@@ -1,10 +1,9 @@
-import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import BackButton from "../components/common/BackButton";
 import Container from "../components/common/Container";
-import { List } from "./List.styles";
 import Title from "../components/common/Title";
+import { List } from "./List.styles";
 
 function DreamList() {
   const navigate = useNavigate();
@@ -57,8 +56,6 @@ function DreamList() {
         isFavorite: false,
       },
     ];
-
-    const deleteId = location.state?.deletedId;
 
     if (deletedId) {
       setDreamList(mockData.filter(d => d.id !== deletedId));

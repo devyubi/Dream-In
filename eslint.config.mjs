@@ -27,6 +27,7 @@ export default defineConfig([
       "no-var": "warn",
       "react/react-in-jsx-scope": "off",
       "no-unused-vars": "off",
+      "react/prop-types": "off",
     },
     settings: {
       react: {

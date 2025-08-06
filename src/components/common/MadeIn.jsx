@@ -4,6 +4,7 @@ const MadeInWrap = styled.div`
   background-color: #fcf3fb;
   padding: 20px;
   margin: 0;
+  border-radius: 16px;
 `;
 const MadeInTitle = styled.h1`
   color: #25254d;

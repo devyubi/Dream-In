@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import styled from "@emotion/styled";
 
 // 컨테이너 컴포넌트 emotion
