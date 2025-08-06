@@ -1,15 +1,22 @@
+import { useState } from "react";
 import BackButton from "../components/common/BackButton";
 import Container from "../components/common/Container";
-import "../css/sleeprecordpage.css";
+import SleepRecord from "../components/sleep/SleepRecord";
+import SleepTabBar from "../components/sleep/SleepTabBar";
+import "../css/sleep/sleeprecordpage.css";
+import SleepAnimatedSwitch from "../components/sleep/SleepAnimatedSwitch";
 
 function SleepRecordPage() {
+  const [activeTab, setActiveTab] = useState("record");
+
   return (
     <Container>
       <BackButton to="/" />
       <div className="sleep_record">
         <div className="sleep_record_wrap">
-          <h1>수면기록</h1>
-          <h3>어젯밤 수면 패턴을 기록해보세요</h3>
+          <SleepTabBar activeTab={activeTab} setActiveTab={setActiveTab} />
+          <SleepAnimatedSwitch activeTab={activeTab} />
+          <SleepRecord />
         </div>
       </div>
     </Container>

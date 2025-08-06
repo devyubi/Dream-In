@@ -1,8 +1,21 @@
-function SleepTabBar() {
+import "../../css/sleep/sleeptabbar.css";
+
+function SleepTabBar({ activeTab, setActiveTab }) {
   return (
-    <div>
-      <h1>상단 탭 컴포넌트</h1>
-      SleepTabBar
+    <div className="sleep-tab-bar">
+      <button
+        className={`sleep-tab-button ${activeTab === "record" ? "active" : ""}`}
+        onClick={() => setActiveTab("record")}
+      >
+        수면 기록
+      </button>
+
+      <button
+        className={`sleep-tab-button ${activeTab === "stats" ? "active" : ""}`}
+        onClick={() => setActiveTab("stats")}
+      >
+        통계 및 히스토리
+      </button>
     </div>
   );
 }
