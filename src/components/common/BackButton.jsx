@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 /** @jsxImportSource @emotion/react */
 import styled from "@emotion/styled";
 import { useThemeContext } from "../../contexts/ThemeContext";

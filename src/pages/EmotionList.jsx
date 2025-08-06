@@ -3,11 +3,14 @@ import BackButton from "../components/common/BackButton";
 import Container from "../components/common/Container";
 import Title from "../components/common/Title";
 import { List } from "./List.styles";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function EmotionList() {
+  const location = useLocation();
   const [emotionList, setEmotionList] = useState([]);
   const navigate = useNavigate();
+
+  const deleteId = location.state?.deleteId;
 
   useEffect(() => {
     const mockData = [
@@ -42,32 +45,75 @@ function EmotionList() {
         isFavorite: false,
       },
     ];
-    setEmotionList(mockData);
+
+    if (deleteId) {
+      setEmotionList(mockData.filter(d => d.id !== deleteId));
+      navigate("/emotionlist", { replace: true });
+    } else {
+      setEmotionList(mockData);
+    }
   }, []);
+
+  const toggleFavorite = id => {
+    setEmotionList(prevList =>
+      prevList.map(emotion =>
+        emotion.id === id
+          ? { ...emotion, isFavorite: !emotion.isFavorite }
+          : emotion,
+      ),
+    );
+  };
 
   return (
     <Container>
-      <Title title="감정일기 목록" />
       <BackButton to="/" />
+      <Title title="감정일기 목록" />
       <List.ListWrap>
-        {emotionList.map(item => (
+        {emotionList.map(emotion => (
           <List.ListItem
-            key={item.id}
-            onClick={() => navigate(`/emotiondetail/${item.id}`)}
+            key={emotion.id}
+            onClick={() =>
+              navigate(`/emotiondetail/${emotion.id}`, { state: emotion })
+            }
           >
             <List.ListItemUser>
               <List.ListItemUserPhoto>
-                <img src={item.photo} alt="유저이미지" />
+                <img src={emotion.photo} alt="유저이미지" />
               </List.ListItemUserPhoto>
-              <List.ListItemUserName>{item.name}</List.ListItemUserName>
-              <List.ListItemTime>{item.time}</List.ListItemTime>
-              <List.ListItemFavorites>
-                <img src="/images/star.svg" alt="즐겨찾기" />
+              <List.ListItemUserName>{emotion.name}</List.ListItemUserName>
+              <List.ListItemTime>{emotion.time}</List.ListItemTime>
+              <List.ListItemFavorites
+                onClick={e => {
+                  e.stopPropagation();
+                  toggleFavorite(emotion.id);
+                }}
+              >
+                <img
+                  src={
+                    emotion.isFavorite
+                      ? "/images/fullstar.svg"
+                      : "/images/star.svg"
+                  }
+                  alt={emotion.isFavorite ? "즐겨찾기 취소" : "즐겨찾기"}
+                />
               </List.ListItemFavorites>
             </List.ListItemUser>
-            <List.ListItemTitle>{item.title}</List.ListItemTitle>
-            <List.ListItemDetail>{item.detail}</List.ListItemDetail>
-            <List.ListItemDelete>
+            <List.ListItemTitle>{emotion.title}</List.ListItemTitle>
+            <List.ListItemDetail>{emotion.detail}</List.ListItemDetail>
+            <List.ListItemDelete
+              onClick={e => {
+                e.stopPropagation();
+                const confirmResult = window.confirm(
+                  "이 감정일기를 정말 삭제하시겠습니까?",
+                );
+                if (confirmResult) {
+                  setEmotionList(prevList =>
+                    prevList.filter(d => d.id !== emotion.id),
+                  );
+                  alert("꿈이 삭제되었습니다.");
+                }
+              }}
+            >
               <img src="/images/delete_icon.png" alt="삭제" />
             </List.ListItemDelete>
           </List.ListItem>
