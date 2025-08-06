@@ -11,12 +11,12 @@ export const useProfileImageUpload = () => {
       console.log("🚀 업로드 시작:", { fileName: file.name, userId });
 
       const fileExt = file.name.split(".").pop();
-      const fileName = `${userId}-${Date.now()}.${fileExt}`; // 타임스탬프 추가로 캐시 문제 해결
+      const fileName = `${userId}-${Date.now()}.${fileExt}`;
       const filePath = `profiles/${fileName}`;
 
-      // 🔼 1. 업로드
+      // 업로드
       const { data, error } = await supabase.storage
-        .from("profile-images") // auth.js와 동일한 버킷 이름
+        .from("profile-images")
         .upload(filePath, file, {
           cacheControl: "3600",
           upsert: true,
@@ -29,7 +29,7 @@ export const useProfileImageUpload = () => {
 
       console.log("📤 업로드 성공:", data);
 
-      // 🔗 2. public URL 가져오기
+      // public URL 가져오기
       const { data: publicUrlData } = supabase.storage
         .from("profile-images")
         .getPublicUrl(filePath);
@@ -42,14 +42,14 @@ export const useProfileImageUpload = () => {
 
       console.log("🔗 생성된 URL:", publicUrl);
 
-      // 📝 3. profile 테이블 업데이트
+      // profile 테이블 업데이트
       const { error: updateError } = await supabase
         .from("profiles")
         .update({
           profile_image_url: publicUrl,
           updated_at: new Date().toISOString(),
         })
-        .eq("auth_user_id", userId); // auth_user_id로 수정!
+        .eq("auth_user_id", userId);
 
       if (updateError) {
         console.error("프로필 업데이트 실패:", updateError);
@@ -64,5 +64,31 @@ export const useProfileImageUpload = () => {
     }
   };
 
-  return { uploadProfileImage };
+  const deleteProfileImage = async userId => {
+    try {
+      console.log("🗑️ 프로필 이미지 삭제 시작:", userId);
+
+      // DB에서 프로필 이미지 URL 제거
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update({
+          profile_image_url: null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("auth_user_id", userId);
+
+      if (updateError) {
+        console.error("프로필 이미지 삭제 실패:", updateError);
+        return { success: false, error: updateError.message };
+      }
+
+      console.log("✅ 프로필 이미지 삭제 완료");
+      return { success: true };
+    } catch (error) {
+      console.error("deleteProfileImage 예외:", error);
+      return { success: false, error: error.message };
+    }
+  };
+
+  return { uploadProfileImage, deleteProfileImage };
 };
