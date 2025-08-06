@@ -21,7 +21,7 @@ function DreamEdit() {
     const confirmEdit = window.confirm("정말 수정하시겠습니까?");
     if (confirmEdit) {
       alert("정상적으로 수정되었습니다.");
-      navigate("/dreamdetail/${dream.id}", {
+      navigate(`/dreamdetail/${id}`, {
         state: {
           ...editDream,
           title: editTitle,
@@ -40,9 +40,7 @@ function DreamEdit() {
         <Detail.DetailTop>
           <Detail.DetailTitleWrap>
             <Detail.DetailTitle>꿈 수정하기</Detail.DetailTitle>
-            <Detail.DetailSubTitle>
-              지난 꿈을 다시 수정하세요.
-            </Detail.DetailSubTitle>
+            <Detail.DetailSubTitle>지난 꿈을 수정하세요.</Detail.DetailSubTitle>
           </Detail.DetailTitleWrap>
         </Detail.DetailTop>
         <Detail.DetailName
