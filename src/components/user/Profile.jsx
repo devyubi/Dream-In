@@ -6,6 +6,7 @@ import ProfileImage from "./ProfileImage";
 import UserMenu from "./UserMenu";
 import LoadingSpinner from "../common/LoadingSpinner";
 import Container from "../common/Container";
+import PasswordChangeModal from "./PasswordChangeModal";
 import "../../css/Profile.css";
 
 // 소셜 로그인 사용자 확인 함수
@@ -31,6 +32,7 @@ const Profile = () => {
     isLoggedIn,
   } = useAuth();
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
   // 인증되지 않은 사용자 리다이렉트
   useEffect(() => {
@@ -63,6 +65,15 @@ const Profile = () => {
     }
   }, [signOut, navigate]);
 
+  // 비밀번호 모달 핸들러
+  const openPasswordModal = useCallback(() => {
+    setIsPasswordModalOpen(true);
+  }, []);
+
+  const closePasswordModal = useCallback(() => {
+    setIsPasswordModalOpen(false);
+  }, []);
+
   // 메뉴 아이템 정의
   const menuItems = useMemo(() => {
     const baseItems = [
@@ -76,14 +87,14 @@ const Profile = () => {
       },
     ];
 
-    // 비밀번호 변경 메뉴 (일반 회원가입 사용자만)
+    // 비밀번호 변경 메뉴 (일반 회원가입 사용자만) - 모달로 변경
     const passwordItem = {
       id: "password",
       className: "change-password",
       icon: <img src="/images/change_password.svg" alt="Change Password" />,
       title: "비밀번호 변경",
       description: "보안을 위해 정기적으로 변경하세요",
-      onClick: () => navigate("/password/change"),
+      onClick: openPasswordModal, // 페이지 이동 대신 모달 열기
     };
 
     const bottomItems = [
@@ -112,7 +123,7 @@ const Profile = () => {
       ...(user && !isSocialLoginUser(user) ? [passwordItem] : []),
       ...bottomItems,
     ];
-  }, [navigate, handleSignOut, user]);
+  }, [navigate, handleSignOut, user, openPasswordModal]);
 
   // 프로필 이미지 클릭 핸들러
   const handleProfileImageClick = useCallback(() => {
@@ -287,6 +298,12 @@ const Profile = () => {
           </section>
         </div>
       </main>
+
+      {/* 비밀번호 변경 모달 */}
+      <PasswordChangeModal
+        isOpen={isPasswordModalOpen}
+        onClose={closePasswordModal}
+      />
     </Container>
   );
 };
