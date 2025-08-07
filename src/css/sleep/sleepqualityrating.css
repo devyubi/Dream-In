@@ -1,13 +1,15 @@
 .sleep-quality-rating {
-  margin-top: 24px;
+  margin-top: 32px;
 }
 
 .sleep-quality-label {
+  margin: 25px;
   font-size: 20px;
   font-weight: bold;
 }
 
 .rating-boxes {
+  margin: 25px;
   display: flex;
   justify-content: space-between;
   gap: 10px;
@@ -17,7 +19,7 @@
 .rating-box {
   flex: 1;
   min-width: 80px;
-  padding: 35px;
+  padding: 40px;
   border-radius: 12px;
   text-align: center;
   cursor: pointer;
