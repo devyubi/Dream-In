@@ -1,6 +1,70 @@
-.chart-section {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 30px;
+.sleep-entry-card {
+  background: var(--color-primary-p-100, #fcf3fb);
+  border-radius: 16px;
+  padding: 16px 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
 }
 
+.sleep-entry-header {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 15px;
+}
+
+.sleep-entry-stars {
+  display: flex;
+  color: gold;
+  font-size: 15px;
+}
+
+.sleep-entry-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+.sleep-entry-info div {
+  text-align: center;
+  flex: 1;
+}
+.sleep-entry-card div strong {
+  color: var(--color-secondary-s-100, #544783);
+}
+
+.sleep-entry-info div span {
+  display: block;
+  margin-top: 4px;
+  font-weight: bold;
+  font-size: 16px;
+  color: var(--color-secondary-s-200, #493d78);
+}
+
+.sleep-entry-memo {
+  background-color: white;
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 14px;
+  color: #444;
+  display: flex;
+  flex-direction: column;
+}
+
+.sleep-memo-title {
+  padding-bottom: 3px;
+  display: flex;
+  flex-direction: flex-start;
+  color: var(--color-secondary-s-100, #544783);
+}
+.sleep-memo {
+  display: flex;
+  flex-direction: flex-start;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
