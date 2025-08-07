@@ -2,7 +2,6 @@
 import { signInWithGoogle, signInWithKakao } from "../../api/auth";
 import styles from "./SocialLoginButtons.module.css";
 
-// eslint-disable-next-line react/prop-types
 const SocialLoginButtons = ({ disabled = false, onError = null }) => {
   const handleGoogleLogin = async () => {
     try {

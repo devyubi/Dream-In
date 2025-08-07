@@ -30,9 +30,7 @@ const LoadingSpinner = ({
     <div className={containerClass} role="status" aria-live="polite">
       <div
         className={`spinner ${sizeClasses[size]} ${variantClasses[variant]}`}
-      >
-        <div className="spinner-circle"></div>
-      </div>
+      ></div>
       {message && (
         <p className="loading-message" aria-label={`로딩 중: ${message}`}>
           {message}

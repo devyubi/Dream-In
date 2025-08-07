@@ -161,7 +161,7 @@ export const signInWithKakao = async () => {
       provider: "kakao",
       options: {
         scopes: "profile_nickname profile_image account_email",
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || window.location.origin}/auth/callback`,
       },
     });
 
@@ -227,5 +227,209 @@ export const checkNicknameDuplicate = async nickname => {
     };
   } catch (error) {
     return { isDuplicate: false, error: error.message };
+  }
+};
+export const getUserLoginType = user => {
+  if (!user) return null;
+
+  const socialProviders = user.identities?.filter(
+    identity => identity.provider !== "email",
+  );
+
+  return socialProviders && socialProviders.length > 0 ? "social" : "email";
+};
+
+export const isSocialLoginUser = user => {
+  return getUserLoginType(user) === "social";
+};
+// src/api/auth.js에 추가할 함수들
+
+/**
+ * 비밀번호 변경 함수
+ */
+export const changePassword = async (currentPassword, newPassword) => {
+  try {
+    // 1. 현재 사용자 확인
+    const { data: user, error: userError } = await supabase.auth.getUser();
+
+    if (userError || !user?.user) {
+      return {
+        success: false,
+        error: "로그인이 필요합니다.",
+      };
+    }
+
+    // 2. 현재 비밀번호로 재인증
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: user.user.email,
+      password: currentPassword,
+    });
+
+    if (signInError) {
+      return {
+        success: false,
+        error: "현재 비밀번호가 올바르지 않습니다.",
+      };
+    }
+
+    // 3. 새 비밀번호로 업데이트
+    const { error: updateError } = await supabase.auth.updateUser({
+      password: newPassword,
+    });
+
+    if (updateError) {
+      return {
+        success: false,
+        error: updateError.message,
+      };
+    }
+
+    return {
+      success: true,
+      message: "비밀번호가 성공적으로 변경되었습니다.",
+    };
+  } catch (error) {
+    console.error("비밀번호 변경 중 오류:", error);
+    return {
+      success: false,
+      error: "비밀번호 변경 중 오류가 발생했습니다.",
+    };
+  }
+};
+
+/**
+ * 아이디(이메일) 찾기 함수
+ * @param {string} nickname - 사용자 닉네임
+ * @param {string} birthdate - 생년월일 (YYYY-MM-DD 형식)
+ * @returns {Object} 성공/실패 결과
+ */
+export const findUserEmail = async (nickname, birthdate) => {
+  try {
+    // 프로필 테이블에서 닉네임과 생년월일이 일치하는 사용자 조회
+    const { data, error } = await supabase
+      .from("profiles") // 프로필 테이블명 확인 필요
+      .select("email, nickname, birthdate, created_at")
+      .eq("nickname", nickname)
+      .eq("birthdate", birthdate)
+      .single(); // 단일 결과만 반환
+
+    if (error) {
+      if (error.code === "PGRST116") {
+        // 데이터를 찾을 수 없는 경우
+        return {
+          success: false,
+          error: "입력하신 정보와 일치하는 계정을 찾을 수 없습니다.",
+        };
+      }
+
+      console.error("아이디 찾기 에러:", error);
+      return {
+        success: false,
+        error: "아이디 찾기 중 오류가 발생했습니다.",
+      };
+    }
+
+    if (!data) {
+      return {
+        success: false,
+        error: "입력하신 정보와 일치하는 계정을 찾을 수 없습니다.",
+      };
+    }
+
+    // 이메일 마스킹 처리 (선택사항 - 보안을 위해)
+    const maskedEmail = maskEmail(data.email);
+
+    return {
+      success: true,
+      data: {
+        email: data.email, // 또는 maskedEmail 사용
+        maskedEmail: maskedEmail,
+        nickname: data.nickname,
+        joinDate: data.created_at,
+      },
+    };
+  } catch (error) {
+    console.error("아이디 찾기 중 예외 발생:", error);
+    return {
+      success: false,
+      error: "아이디 찾기 중 오류가 발생했습니다.",
+    };
+  }
+};
+
+/**
+ * 이메일 마스킹 함수 (보안을 위해 일부 문자를 * 처리)
+ * @param {string} email - 원본 이메일
+ * @returns {string} 마스킹된 이메일
+ */
+const maskEmail = email => {
+  if (!email) return "";
+
+  const [localPart, domain] = email.split("@");
+
+  if (!localPart || !domain) return email;
+
+  // 로컬 파트 마스킹 (앞 2자리와 뒤 1자리만 보여주기)
+  let maskedLocal;
+  if (localPart.length <= 3) {
+    maskedLocal = localPart[0] + "*".repeat(localPart.length - 1);
+  } else {
+    maskedLocal =
+      localPart.slice(0, 2) +
+      "*".repeat(localPart.length - 3) +
+      localPart.slice(-1);
+  }
+
+  return `${maskedLocal}@${domain}`;
+};
+
+/**
+ * 여러 계정이 있을 수 있는 경우를 위한 함수
+ * @param {string} nickname - 사용자 닉네임
+ * @param {string} birthdate - 생년월일
+ * @returns {Object} 성공/실패 결과 (복수 결과 가능)
+ */
+export const findUserEmails = async (nickname, birthdate) => {
+  try {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("email, nickname, birthdate, created_at")
+      .eq("nickname", nickname)
+      .eq("birthdate", birthdate);
+
+    if (error) {
+      console.error("아이디 찾기 에러:", error);
+      return {
+        success: false,
+        error: "아이디 찾기 중 오류가 발생했습니다.",
+      };
+    }
+
+    if (!data || data.length === 0) {
+      return {
+        success: false,
+        error: "입력하신 정보와 일치하는 계정을 찾을 수 없습니다.",
+      };
+    }
+
+    // 여러 계정 처리
+    const accounts = data.map(account => ({
+      email: account.email,
+      maskedEmail: maskEmail(account.email),
+      nickname: account.nickname,
+      joinDate: account.created_at,
+    }));
+
+    return {
+      success: true,
+      data: accounts,
+      count: accounts.length,
+    };
+  } catch (error) {
+    console.error("아이디 찾기 중 예외 발생:", error);
+    return {
+      success: false,
+      error: "아이디 찾기 중 오류가 발생했습니다.",
+    };
   }
 };

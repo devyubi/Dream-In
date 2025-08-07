@@ -31,21 +31,23 @@ export function RecordSection() {
   return (
     <section className="main_record">
       <div className="main_record_wrap">
-        {recordItems.map((item, i) => (
-          <Link
-            to={isLoggedIn ? item.path : "/login"}
-            className="record_box"
-            key={i}
-          >
-            <div className="record_title">
-              <img src={item.icon} alt={item.label} />
-              <span>
-                <strong>{item.label}</strong>
-              </span>
-              <span>{item.desc}</span>
-            </div>
-          </Link>
-        ))}
+        <div className="hoverbtn">
+          {recordItems.map((item, i) => (
+            <Link
+              to={isLoggedIn ? item.path : "/login"}
+              className="record_box"
+              key={i}
+            >
+              <div className="record_title">
+                <img src={item.icon} alt={item.label} />
+                <span>
+                  <strong>{item.label}</strong>
+                </span>
+                <span>{item.desc}</span>
+              </div>
+            </Link>
+          ))}
+        </div>
       </div>
     </section>
   );
