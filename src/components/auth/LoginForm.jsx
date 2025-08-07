@@ -6,6 +6,7 @@ import { validateLoginForm } from "../../utils/validation";
 import styles from "./LoginForm.module.css";
 import SocialLoginButtons from "./SocialLoginButtons";
 import PasswordResetModal from "./PasswordResetModal";
+import { Link } from "react-router-dom";
 
 const LoginForm = ({
   onSubmit,
@@ -165,7 +166,7 @@ const LoginForm = ({
       </form>
 
       {/* 이메일/비밀번호 찾기 링크 */}
-      {showPasswordReset && (
+      {/* {showPasswordReset && (
         <div className={styles.loginLinks}>
           <button
             type="button"
@@ -176,7 +177,21 @@ const LoginForm = ({
             비밀번호 찾기
           </button>
         </div>
-      )}
+      )} */}
+      <Link
+        to="/find-password"
+        className={styles.linkButton}
+        style={{
+          cursor: "pointer",
+          textAlign: "center",
+          justifyContent: "center",
+          display: "flex",
+          marginTop: "10px",
+          textDecoration: "none",
+        }}
+      >
+        비밀번호 찾기
+      </Link>
 
       {/* 소셜 로그인 */}
       {showSocialLogin && (
