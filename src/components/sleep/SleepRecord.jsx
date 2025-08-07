@@ -1,11 +1,7 @@
 import { useState } from "react";
 import "../../css/sleep/sleeprecord.css";
 
-const SleepRecord = () => {
-  const [bedTime, setBedTime] = useState("");
-  const [wakeTime, setWakeTime] = useState("");
-  const [rating, setRating] = useState(0);
-
+const SleepRecord = ({ bedTime, setBedTime, wakeTime, setWakeTime }) => {
   return (
     <div className="sleep-record-container">
       <h2 className="sleep-record-title">오늘의 수면 기록</h2>
