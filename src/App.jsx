@@ -24,6 +24,7 @@ import Footer from "./components/common/Footer";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import ScrollToTop from "./components/common/ScrollToTop";
+import FavoriteList from "./pages/FavoriteList";
 import FindPasswordPage from "./pages/FindPasswordPage";
 
 function App() {
@@ -41,16 +42,21 @@ function App() {
           <Route path="/support" element={<Support />}></Route>
           <Route path="/profile" element={<Profile />}></Route>
           <Route path="/profile/edit" element={<ProfileEditPage />}></Route>
+
           <Route path="/dreamwrite" element={<DreamWritePage />}></Route>
           <Route path="/dreamlist" element={<DreamList />}></Route>
           <Route path="/dreamdetail/:id" element={<DreamDetail />}></Route>
           <Route path="/dreamedit" element={<DreamEdit />}></Route>
+
           <Route path="/emotionwrite" element={<EmotionWritePage />}></Route>
           <Route path="/emotionlist" element={<EmotionList />}></Route>
           <Route path="/emotiondetail/:id" element={<EmotionDetail />}></Route>
           <Route path="/emotionedit" element={<EmotionEdit />}></Route>
+
+          <Route path="/favorites" element={<FavoriteList />}></Route>
+
           <Route path="/sleeprecord" element={<SleepRecordPage />}></Route>
-          <Route path="/aidreamsresult" element={<AIDreamResultPage />}></Route>
+
           <Route path="/privacypolicy" element={<PrivacyPolicy />}></Route>
           <Route path="/termsofservice" element={<TermsOfService />}></Route>
           {/* 테스트페이지입니다-병근 */}

@@ -130,8 +130,8 @@ function DreamList() {
                   <img
                     src={
                       dream.isFavorite
-                        ? "/images/fullstar.svg"
-                        : "/images/star.svg"
+                        ? "/images/fill_star.png"
+                        : "/images/empty_star.png"
                     }
                     alt={dream.isFavorite ? "즐겨찾기 취소" : "즐겨찾기"}
                   />
