@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import BackButton from "../components/common/BackButton";
 import Container from "../components/common/Container";
+import QuantumSpinner from "../components/common/QuantumSpinner";
 import Title from "../components/common/Title";
 import { Detail } from "./Detail.styles";
 
@@ -54,7 +55,8 @@ function DreamDetail() {
           // JSON.stringify: JSON 글자로 변환
           body: JSON.stringify({
             // ChatGPT 엔진 종류
-            model: "gpt-4o",
+            // model: "gpt-4o",
+            model: "gpt-3.5-turbo",
             // 필요한 프롬프트 전달
             messages: [
               {
@@ -144,11 +146,20 @@ function DreamDetail() {
             삭제하기
           </Detail.DetailBttuon>
         </Detail.DetailButtonWrap>
-        {(loading || aiResult) && (
+        {/* {(loading || aiResult) && (
           <Detail.DetailAiResult
             readOnly
             value={loading ? "해몽 분석 중입니다..." : aiResult}
           ></Detail.DetailAiResult>
+        )} */}
+
+        {loading && (
+          <div>
+            <QuantumSpinner></QuantumSpinner>
+          </div>
+        )}
+        {!loading && aiResult && (
+          <Detail.DetailAiResult readonly value={aiResult} />
         )}
       </Detail.DetailWrap>
     </Container>
