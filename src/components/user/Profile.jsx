@@ -8,6 +8,17 @@ import LoadingSpinner from "../common/LoadingSpinner";
 import Container from "../common/Container";
 import "../../css/Profile.css";
 
+// 소셜 로그인 사용자 확인 함수
+const isSocialLoginUser = user => {
+  if (!user) return false;
+
+  const socialProviders = user.identities?.filter(
+    identity => identity.provider !== "email",
+  );
+
+  return socialProviders && socialProviders.length > 0;
+};
+
 const Profile = () => {
   const navigate = useNavigate();
   const {
@@ -53,8 +64,8 @@ const Profile = () => {
   }, [signOut, navigate]);
 
   // 메뉴 아이템 정의
-  const menuItems = useMemo(
-    () => [
+  const menuItems = useMemo(() => {
+    const baseItems = [
       {
         id: "profile-edit",
         className: "profile-edit",
@@ -63,14 +74,19 @@ const Profile = () => {
         description: "개인정보 및 프로필 사진 변경",
         onClick: () => navigate("/profile/edit"),
       },
-      {
-        id: "password",
-        className: "change-password",
-        icon: <img src="/images/change_password.svg" alt="Change Password" />,
-        title: "비밀번호 변경",
-        description: "보안을 위해 정기적으로 변경하세요",
-        onClick: () => navigate("/password/change"),
-      },
+    ];
+
+    // 비밀번호 변경 메뉴 (일반 회원가입 사용자만)
+    const passwordItem = {
+      id: "password",
+      className: "change-password",
+      icon: <img src="/images/change_password.svg" alt="Change Password" />,
+      title: "비밀번호 변경",
+      description: "보안을 위해 정기적으로 변경하세요",
+      onClick: () => navigate("/password/change"),
+    };
+
+    const bottomItems = [
       {
         id: "notification",
         className: "notification-settings",
@@ -88,9 +104,15 @@ const Profile = () => {
         onClick: () => navigate("/account/delete"),
         isDestructive: true,
       },
-    ],
-    [navigate, handleSignOut],
-  );
+    ];
+
+    // 소셜 로그인 사용자가 아닌 경우에만 비밀번호 변경 메뉴 추가
+    return [
+      ...baseItems,
+      ...(user && !isSocialLoginUser(user) ? [passwordItem] : []),
+      ...bottomItems,
+    ];
+  }, [navigate, handleSignOut, user]);
 
   // 프로필 이미지 클릭 핸들러
   const handleProfileImageClick = useCallback(() => {
@@ -219,7 +241,6 @@ const Profile = () => {
     );
   }
 
-  // 정상적인 프로필 페이지 렌더링
   return (
     <Container className={`profile-page ${isDarkMode ? "dark-mode" : ""}`}>
       <main className="profile-main">
@@ -243,6 +264,19 @@ const Profile = () => {
               <p className="profile-email">
                 {profile?.email ?? user?.email ?? "이메일 정보 없음"}
               </p>
+              {/* 소셜 로그인 사용자 표시 */}
+              {user && isSocialLoginUser(user) && (
+                <p
+                  className="social-login-badge"
+                  style={{
+                    fontSize: "0.8rem",
+                    color: "#666",
+                    marginTop: "0.25rem",
+                  }}
+                >
+                  소셜 로그인 계정
+                </p>
+              )}
             </div>
           </section>
 

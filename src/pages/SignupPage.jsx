@@ -152,11 +152,8 @@ const SignupPage = () => {
           <h1
             style={{
               fontSize: "28px",
-              fontWeight: "bold",
-              color: "#8B5CF6",
               margin: "0 0 8px 0",
               textShadow: "0 2px 4px rgba(139, 92, 246, 0.1)",
-              fontFamily: "'Inter', sans-serif",
             }}
           >
             Dream-In
@@ -164,9 +161,7 @@ const SignupPage = () => {
           <p
             style={{
               fontSize: "14px",
-              color: "rgba(139, 92, 246, 0.8)",
               margin: "0",
-              fontWeight: "300",
             }}
           >
             꿈을 기록하고 나를 이해하는 여정

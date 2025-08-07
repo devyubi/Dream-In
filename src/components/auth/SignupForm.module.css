@@ -1,18 +1,5 @@
 /* src/components/auth/SignupForm.module.css */
 
-:root {
-  --color-primary-p-100: #fcf3fb;
-  --background-dark-space: linear-gradient(
-    180deg,
-    #1e1b27 0%,
-    #25254d 19.71%,
-    #33336e 40.87%,
-    #3a3a74 60.98%,
-    #493d78 80.96%,
-    #544783 100%
-  );
-}
-
 .signupForm {
   width: 100%;
   max-width: 400px;
