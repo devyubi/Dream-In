@@ -24,6 +24,7 @@ import Footer from "./components/common/Footer";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import ScrollToTop from "./components/common/ScrollToTop";
+import FindPasswordPage from "./pages/FindPasswordPage";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
           <Route path="/login" element={<LoginPage />}></Route>
           <Route path="/auth/callback" element={<AuthCallbackPage />} />
           <Route path="/signup" element={<SignupPage />}></Route>
+          <Route path="/find-password" element={<FindPasswordPage />} />
           <Route path="/support" element={<Support />}></Route>
           <Route path="/profile" element={<Profile />}></Route>
           <Route path="/profile/edit" element={<ProfileEditPage />}></Route>
