@@ -54,7 +54,7 @@ function DreamWritePage() {
       state: {
         title: titleTextCount,
         emotion: selectEmoji,
-        story: storyTextCount,
+        detail: storyTextCount,
       },
     });
   };

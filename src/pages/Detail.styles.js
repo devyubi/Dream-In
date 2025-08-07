@@ -120,6 +120,13 @@ export const DetailBttuon = styled.button`
     box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.15);
   }
 `;
+export const DetailAiResultWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+export const DetailAiResultTitle = styled.h2`
+  margin-left: 35px;
+`;
 export const DetailAiResult = styled.textarea`
   margin: 0 30px;
   font-family: "tj400";
@@ -133,7 +140,7 @@ export const DetailAiResult = styled.textarea`
     rgba(211, 188, 232, 0.3),
     rgba(194, 193, 238, 0.3)
   );
-  min-height: 200px;
+  min-height: 350px;
   resize: none;
   /* 스크롤바 */
   &::-webkit-scrollbar {

@@ -3,22 +3,21 @@ import { useNavigate } from "react-router-dom";
 
 const FooterWrap = styled.div`
   position: relative;
-  max-width: 1280px;
+  width: 100%;
   display: flex;
   align-items: center;
   flex-direction: column;
-  margin: 0 20%;
+  margin: 0;
   padding-top: 10px;
-  gap: 20px;
   background-color: rgba(236, 195, 230, 0.3);
-  border-top: 1px solid #cdcdce;
+  border-top: 1px solid #c2c2c2;
 `;
 const FooterTopWrap = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
-  margin: 0;
+  width: 70%;
+  margin: 0 0 15px 50px;
   padding-left: 10%;
 `;
 const FooterTopInfo = styled.div`
@@ -31,8 +30,9 @@ const FooterTopDreamIn = styled.div`
 `;
 const FooterTopInfoLogo = styled.div`
   overflow: hidden;
+  padding-left: 15%;
   margin: 0;
-  height: 70px;
+  height: 50px;
   img {
     object-fit: cover;
     width: 100%;
@@ -43,72 +43,73 @@ const FooterTopInfoTitle = styled.h2`
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  font-size: 25px;
+  font-size: 18px;
   color: #25254d;
   margin: 0;
 `;
 const FooterTopInfoDetail = styled.h3`
-  font-size: 16px;
+  font-size: 13px;
   color: #493d78;
   margin: 0;
-  line-height: 30px;
+  line-height: 20px;
 `;
 const FooterTopInfoSocialList = styled.ul`
   display: flex;
   justify-content: start;
   align-items: center;
-  gap: 35px;
-  padding-top: 20px;
+  gap: 25px;
+  padding-top: 10px;
   margin: 0;
 `;
 const FooterTopInfoSocialItem = styled.li`
   border: 1px solid #acacac;
   border-radius: 50%;
-  width: 35px;
-  height: 35px;
+  width: 30px;
+  height: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: rgba(252, 243, 251, 0.3);
   cursor: pointer;
   img {
-    width: 23px;
-    height: 23px;
+    width: 70%;
+    height: 70%;
     color: #493d78;
   }
 `;
 const FooterTopContactList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 15px;
   margin: 0;
-  padding-right: 25%;
+  padding-right: 38%;
+  padding-left: 10px;
 `;
 const FooterTopContactTitle = styled.h2`
-  font-size: 20px;
+  font-size: 15px;
   color: #493d78;
-  margin: 0;
+  margin: 20px 0 0 0;
 `;
 const FooterTopContactWrap = styled.address`
   color: #493d78;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 15px;
 `;
 const FooterTopContactEmail = styled.a`
-  font-size: 16px;
+  font-size: 12px;
   font-weight: 500;
   color: #493d78;
   margin: 0;
 `;
 const FooterTopContactTel = styled.a`
-  font-size: 16px;
+  font-size: 12px;
   font-weight: 500;
   color: #493d78;
   margin: 0;
 `;
 const FooterTopContactAddr = styled.p`
-  font-size: 16px;
+  font-size: 12px;
   font-weight: 500;
   color: #493d78;
   margin: 0;
@@ -117,8 +118,9 @@ const FooterBottomWrap = styled.div`
   color: #493d78;
   display: flex;
   justify-content: space-between;
-  width: 100%;
-  padding: 20px 10% 0 10%;
+  align-items: center;
+  width: 50%;
+  padding: 15px 0 15px 50px;
   border-top: 1px solid #a8a8a8;
 `;
 const FooterBottomLegal = styled.div`
@@ -129,26 +131,32 @@ const FooterBottomLegal = styled.div`
 `;
 const FooterBottomPrivacy = styled.a`
   margin: 0;
-  font-size: 16px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
 `;
 const FooterBottomTerms = styled.a`
   margin: 0;
-  font-size: 16px;
+  font-size: 13px;
   font-weight: 500;
+  padding-right: 10px;
   cursor: pointer;
 `;
 const FooterBottomCompany = styled.p`
   margin: 0;
-  font-size: 16px;
+  font-size: 13px;
+  padding: 0 50px 0 10px;
 `;
 const FooterBottomCopy = styled.p`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin: 0;
-  font-size: 14px;
+  font-size: 12px;
   color: #8f8f8f;
-  padding: 20px 23%;
+  padding: 10px;
   border-top: 1px solid #a8a8a8;
+  width: 50%;
 `;
 
 function Footer() {
@@ -192,7 +200,7 @@ function Footer() {
           </FooterTopInfoSocialList>
         </FooterTopInfo>
         <FooterTopContactList>
-          <FooterTopContactTitle>연락처</FooterTopContactTitle>
+          <FooterTopContactTitle>고객센터 정보</FooterTopContactTitle>
           <FooterTopContactWrap>
             <FooterTopContactEmail href="mailto:support@dream-in.co.kr">
               support@dream-in.co.kr

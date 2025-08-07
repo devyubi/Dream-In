@@ -3,8 +3,8 @@ import { createContext, useContext, useState } from "react";
 const FavoriteContext = createContext();
 
 export const FavoritesProvider = ({ children }) => {
-  const [favoriteDreams, setFavoriteDreams] = useState();
-  const [favoriteEmotions, setFavoriteEmotions] = useState();
+  const [favoriteDreams, setFavoriteDreams] = useState([]);
+  const [favoriteEmotions, setFavoriteEmotions] = useState([]);
 
   const toggleDreamFavorite = item => {
     setFavoriteDreams(prev => {

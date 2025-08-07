@@ -31,6 +31,7 @@ export const EmojiCategoryItem = styled.li`
     box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.15);
   }
 `;
+
 export const ListWrap = styled.ul`
   display: flex;
   flex-direction: column;
