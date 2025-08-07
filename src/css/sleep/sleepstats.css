@@ -8,40 +8,82 @@
   margin-bottom: 10px;
 }
 
-.chart-wrapper {
-  height: 300px;
+.chart-section {
   width: 100%;
-  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   margin-bottom: 30px;
+  gap: 10px;
 }
 
-.history-title {
-  font-size: 20px;
-  margin-bottom: 10px;
+.pie-chart-wrapper {
+  flex: 1;
+  height: 300px;
+  min-width: 300px;
+  max-width: 500px;
+  position: relative;
 }
 
-.history-list {
+.pie-chart-left {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+.labels-right {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  max-height: 300px;
-  overflow-y: auto;
+  align-items: flex-start;
+  gap: 12px;
 }
 
-.history-card {
-  border: 1px solid #ccc;
-  border-radius: 12px;
-  padding: 12px;
-  background-color: #f9f9f9;
-  text-align: left;
+.label-item {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 500;
+  gap: 10px;
+}
+.label-item svg {
+  gap: 10px;
+  filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.2));
+}
+.label-item span {
+  min-width: 70px;
 }
 
-.empty-message {
-  color: #999;
+.rating-label-list {
+  display: flex;
+  flex-direction: column-reverse; /* 매우 좋음이 위로 */
+  justify-content: center;
+  align-items: flex-start;
+  gap: 10px;
 }
 
-/* 별 모양 아이콘 */
+.rating-label-item {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 500;
+  gap: 8px;
+}
+
+/* 원 색상 */
+.color-circle {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* 별 아이콘 */
 .star-icon {
   color: #ffd700;
-  margin-right: 2px;
+}
+
+/* 별 아이콘 */
+.label-item svg {
+  color: #ffd700;
+  margin-left: 6px;
 }

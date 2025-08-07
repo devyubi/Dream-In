@@ -1,0 +1,32 @@
+.weekly-summary {
+  padding: 16px;
+  background: var(--color-primary-p-100, #fcf3fb);
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  text-align: center;
+}
+
+.stat-card {
+  background-color: white;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.stat-value {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 4px;
+  color: #333;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #777;
+}
