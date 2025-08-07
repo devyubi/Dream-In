@@ -8,9 +8,10 @@
   margin-bottom: 10px;
 }
 
-.chart-section {
-  display: flex;
-  justify-content: center;
+.chart-wrapper {
+  height: 300px;
+  width: 100%;
+  position: relative;
   margin-bottom: 30px;
 }
 
@@ -37,4 +38,10 @@
 
 .empty-message {
   color: #999;
+}
+
+/* 별 모양 아이콘 */
+.star-icon {
+  color: #ffd700;
+  margin-right: 2px;
 }

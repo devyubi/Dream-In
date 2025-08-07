@@ -3,11 +3,12 @@ import BackButton from "../components/common/BackButton";
 import Container from "../components/common/Container";
 import SleepTabBar from "../components/sleep/SleepTabBar";
 import SleepAnimatedSwitch from "../components/sleep/SleepAnimatedSwitch";
-import "../css/sleep/sleeprecordpage.css";
 
 function SleepRecordPage() {
   const [activeTab, setActiveTab] = useState("record");
   const [rating, setRating] = useState(0);
+  const [bedTime, setBedTime] = useState("");
+  const [wakeTime, setWakeTime] = useState("");
 
   return (
     <Container>
@@ -23,6 +24,10 @@ function SleepRecordPage() {
             setActiveTab={setActiveTab}
             rating={rating}
             setRating={setRating}
+            bedTime={bedTime}
+            setBedTime={setBedTime}
+            wakeTime={wakeTime}
+            setWakeTime={setWakeTime}
           />
         </div>
       </div>

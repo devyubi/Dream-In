@@ -1,14 +1,19 @@
 import { FaStar } from "react-icons/fa6";
+import { FaRegStar } from "react-icons/fa";
 import "../../css/sleep/sleepqualityrating.css";
 import { useState } from "react";
 import PostButton from "../common/PostButton";
 import TextArea from "../common/TextArea";
 
-function SleepQualityRating({ rating, setRating, onSaveComplete }) {
+function SleepQualityRating({
+  rating,
+  setRating,
+  onSaveComplete,
+  bedTime,
+  wakeTime,
+}) {
   const [text, setText] = useState("");
   const [error, setError] = useState("");
-  const [bedTime, setBedTime] = useState("");
-  const [wakeTime, setWakeTime] = useState("");
 
   // 수면 메모 + 평가 저장 핸들러
   const handlePost = () => {
@@ -30,11 +35,13 @@ function SleepQualityRating({ rating, setRating, onSaveComplete }) {
       return;
     }
 
-    // 저장할 객체 구조 정의
+    // 저장할 객체
     const savedData = {
       day: new Date().toLocaleDateString("sv-SE"), // 'YYYY-MM-DD'
       rating, // 수면 질 평가 값
       text, // 수면 메모
+      bedTime,
+      wakeTime,
     };
 
     // 로컬스토리지에 저장 (기존 항목에 추가)

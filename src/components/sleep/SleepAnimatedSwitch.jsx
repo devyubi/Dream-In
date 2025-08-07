@@ -3,7 +3,16 @@ import SleepStats from "./SleepStats";
 import SleepRecord from "./SleepRecord";
 import SleepQualityRating from "./SleepQualityRating";
 
-function SleepAnimatedSwitch({ activeTab, setActiveTab, rating, setRating }) {
+function SleepAnimatedSwitch({
+  activeTab,
+  setActiveTab,
+  rating,
+  setRating,
+  bedTime,
+  setBedTime,
+  wakeTime,
+  setWakeTime,
+}) {
   return (
     <div className="sleep-animated-switch">
       <AnimatePresence mode="wait">
@@ -15,11 +24,22 @@ function SleepAnimatedSwitch({ activeTab, setActiveTab, rating, setRating }) {
             exit={{ opacity: 0, x: 20 }}
             transition={{ duration: 0.3 }}
           >
-            <SleepRecord />
+            <SleepRecord
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              rating={rating}
+              setRating={setRating}
+              bedTime={bedTime}
+              setBedTime={setBedTime}
+              wakeTime={wakeTime}
+              setWakeTime={setWakeTime}
+            />
             <SleepQualityRating
               rating={rating}
               setRating={setRating}
               onSaveComplete={() => setActiveTab("stats")}
+              bedTime={bedTime}
+              wakeTime={wakeTime}
             />
           </motion.div>
         )}
