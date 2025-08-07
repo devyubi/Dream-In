@@ -161,7 +161,7 @@ export const signInWithKakao = async () => {
       provider: "kakao",
       options: {
         scopes: "profile_nickname profile_image account_email",
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || window.location.origin}/auth/callback`,
       },
     });
 
@@ -228,4 +228,17 @@ export const checkNicknameDuplicate = async nickname => {
   } catch (error) {
     return { isDuplicate: false, error: error.message };
   }
+};
+export const getUserLoginType = user => {
+  if (!user) return null;
+
+  const socialProviders = user.identities?.filter(
+    identity => identity.provider !== "email",
+  );
+
+  return socialProviders && socialProviders.length > 0 ? "social" : "email";
+};
+
+export const isSocialLoginUser = user => {
+  return getUserLoginType(user) === "social";
 };
