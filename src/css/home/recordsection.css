@@ -1,9 +1,8 @@
 .main_record {
   display: flex;
   gap: 10px;
-  min-width: 0;
   justify-content: center;
-  padding: 20px;
+  padding: 30px 20px;
   align-items: center;
   height: 100%;
 }
@@ -11,6 +10,8 @@
 .main_record_wrap {
   display: flex;
   gap: 30px;
+  width: 100%;
+  max-width: 900px;
 }
 
 .overlay {
@@ -33,6 +34,13 @@
   text-decoration: none;
   border-radius: 20px;
   background: var(--color-primary-p-100, #fcf3fb);
+  transition: all 0.2s ease;
+}
+.hoverbtn {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
 }
 
 .record_box:hover {

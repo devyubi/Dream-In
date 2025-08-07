@@ -44,13 +44,15 @@ export function StatsSection() {
 
           <div className="total">
             {iconSet.map(([icon, num, text, path], i) => (
-              <Link to={path} className="mytotal" key={i}>
-                <img src={icon} alt={text} />
-                <span>
-                  <h3>{num}</h3>
-                </span>
-                <span>{text}</span>
-              </Link>
+              <div key={i} className="hoverBt">
+                <Link to={path} className="mytotal">
+                  <img src={icon} alt={text} />
+                  <span>
+                    <h3>{num}</h3>
+                  </span>
+                  <span>{text}</span>
+                </Link>
+              </div>
             ))}
           </div>
         </div>
