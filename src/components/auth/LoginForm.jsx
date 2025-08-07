@@ -1,10 +1,11 @@
 // src/components/auth/LoginForm.jsx
-import { useState } from "react";
 import PropTypes from "prop-types";
+import { useState } from "react";
 import { useForm } from "../../hooks/useForm";
 import { validateLoginForm } from "../../utils/validation";
-import SocialLoginButtons from "./SocialLoginButtons";
 import styles from "./LoginForm.module.css";
+import SocialLoginButtons from "./SocialLoginButtons";
+import PasswordResetModal from "./PasswordResetModal";
 
 const LoginForm = ({
   onSubmit,
@@ -16,6 +17,8 @@ const LoginForm = ({
 }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] =
+    useState(false); // 누락된 state 추가
 
   const {
     values,
@@ -31,6 +34,15 @@ const LoginForm = ({
 
   const emailState = getFieldState("email");
   const passwordState = getFieldState("password");
+
+  // 비밀번호 찾기 모달 핸들러 (누락된 함수 추가)
+  const openResetPasswordModal = () => {
+    setIsResetPasswordModalOpen(true);
+  };
+
+  const closeResetPasswordModal = () => {
+    setIsResetPasswordModalOpen(false);
+  };
 
   const handleFormSubmit = handleSubmit(async formData => {
     const result = await onSubmit({
@@ -150,29 +162,21 @@ const LoginForm = ({
         >
           {loading ? "로그인 중..." : "로그인"}
         </button>
-
-        {/* 비밀번호 찾기 링크 */}
-        {showPasswordReset && (
-          <div className={styles.loginLinks}>
-            <button
-              type="button"
-              className={styles.linkButton}
-              onClick={() => onPasswordReset && onPasswordReset(values.email)}
-              disabled={loading}
-            >
-              아이디 찾기
-            </button>
-            <button
-              type="button"
-              className={styles.linkButton}
-              onClick={() => onPasswordReset && onPasswordReset(values.email)}
-              disabled={loading}
-            >
-              비밀번호 찾기
-            </button>
-          </div>
-        )}
       </form>
+
+      {/* 이메일/비밀번호 찾기 링크 */}
+      {showPasswordReset && (
+        <div className={styles.loginLinks}>
+          <button
+            type="button"
+            className={styles.linkButton}
+            onClick={openResetPasswordModal}
+            disabled={loading}
+          >
+            비밀번호 찾기
+          </button>
+        </div>
+      )}
 
       {/* 소셜 로그인 */}
       {showSocialLogin && (
@@ -180,6 +184,13 @@ const LoginForm = ({
           <SocialLoginButtons disabled={loading} />
         </div>
       )}
+
+      {/* 비밀번호 찾기 모달 */}
+      <PasswordResetModal
+        isOpen={isResetPasswordModalOpen}
+        onClose={closeResetPasswordModal}
+        prefillEmail={values.email} // 입력된 이메일이 있다면 미리 채우기
+      />
     </div>
   );
 };
