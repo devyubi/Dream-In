@@ -247,14 +247,10 @@ export const isSocialLoginUser = user => {
 };
 
 // ===== 비밀번호 변경 함수(정리 버전) =====
-// 중복 호출 제거, 에러/경고 로그를 console.log로 통일
 export const changePassword = async (currentPassword, newPassword) => {
   try {
-    console.log("=== 비밀번호 변경 시작 ===");
-
     const { data: sessionData } = await supabase.auth.getSession();
     if (!sessionData?.session) {
-      console.log("로그인 상태가 아닙니다.");
       return { success: false, error: "로그인이 필요합니다." };
     }
 
@@ -264,17 +260,14 @@ export const changePassword = async (currentPassword, newPassword) => {
     });
 
     if (error) {
-      console.log("비밀번호 변경 실패:", error);
       return { success: false, error: error.message };
     }
 
-    console.log("비밀번호 변경 성공:", data);
     return {
       success: true,
       message: "비밀번호가 성공적으로 변경되었습니다.",
     };
   } catch (error) {
-    console.log("비밀번호 변경 중 예외 발생:", error);
     return {
       success: false,
       error: "비밀번호 변경 중 오류가 발생했습니다.",

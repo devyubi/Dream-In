@@ -69,11 +69,11 @@ const ProfileEditPage = () => {
         );
         navigate("/profile");
       } else {
-        console.log("저장 실패:", result.error);
+        ("저장 실패:", result.error);
         alert("저장에 실패했습니다: " + result.error);
       }
     } catch (e) {
-      console.log("저장 중 오류:", e);
+      ("저장 중 오류:", e);
       alert("저장 중 오류가 발생했습니다.");
     } finally {
       setSaving(false);

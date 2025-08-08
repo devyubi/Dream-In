@@ -28,7 +28,7 @@ const loadProfileCache = () => {
     const raw = localStorage.getItem(PROFILE_CACHE_KEY);
     return raw ? JSON.parse(raw) : null;
   } catch (e) {
-    console.log("loadProfileCache:", e);
+    // console.log("loadProfileCache:", e);
     return null;
   }
 };
@@ -41,7 +41,7 @@ const saveProfileCache = profile => {
       localStorage.removeItem(PROFILE_CACHE_KEY);
     }
   } catch (e) {
-    console.log("saveProfileCache:", e);
+    // console.log("saveProfileCache:", e);
   }
 };
 
@@ -53,7 +53,7 @@ const purgeLegacyStorage = () => {
     localStorage.removeItem("user_data");
     localStorage.removeItem("profile_data");
   } catch (e) {
-    console.log("purgeLegacyStorage:", e);
+    // console.log("purgeLegacyStorage:", e);
   }
 };
 
@@ -65,7 +65,7 @@ const makeAvatarUrl = (path, updatedAt) => {
     const ver = encodeURIComponent(updatedAt || Date.now());
     return `${data.publicUrl}?v=${ver}`;
   } catch (e) {
-    console.log("makeAvatarUrl:", e);
+    // console.log("makeAvatarUrl:", e);
     return null;
   }
 };
@@ -94,7 +94,7 @@ export const AuthProvider = ({ children }) => {
         .maybeSingle();
 
       if (error) {
-        console.log("fetchProfileOnce error:", error);
+        // console.log("fetchProfileOnce error:", error);
         return null;
       }
 
@@ -106,7 +106,7 @@ export const AuthProvider = ({ children }) => {
 
       return null;
     } catch (e) {
-      console.log("fetchProfileOnce exception:", e);
+      // console.log("fetchProfileOnce exception:", e);
       return null;
     }
   }, []);
@@ -121,7 +121,6 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     let mounted = true;
     (async () => {
-      console.log("=== bootstrap start ===");
       setLoading(true);
       purgeLegacyStorage();
 
@@ -150,14 +149,11 @@ export const AuthProvider = ({ children }) => {
         }
       } catch (e) {
         if (!mounted) return;
-        console.log("bootstrap exception:", e);
+        // console.log("bootstrap exception:", e);
       } finally {
         // ✅ 세션 확인만 끝났으면 무조건 loading=false
         if (mounted) {
           setLoading(false);
-          console.log(
-            "=== bootstrap done (session checked, loading=false) ===",
-          );
         }
       }
     })();
@@ -170,7 +166,7 @@ export const AuthProvider = ({ children }) => {
   // ---- Auth 이벤트: 최소 로직 (로그아웃/로그인 시 캐시 정합성 유지) ----
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange(async (event, s) => {
-      console.log("onAuthStateChange:", event, !!s, s?.user?.email);
+      // console.log("onAuthStateChange:", event, !!s, s?.user?.email);
 
       if (event === "SIGNED_OUT") {
         setSession(null);
@@ -205,7 +201,7 @@ export const AuthProvider = ({ children }) => {
           password,
         });
         if (error) {
-          console.log("signIn:", error);
+          // console.log("signIn:", error);
           return { success: false, error: error.message };
         }
 
@@ -236,7 +232,7 @@ export const AuthProvider = ({ children }) => {
         password: userData.password,
       });
       if (error) {
-        console.log("signUp:", error);
+        // console.log("signUp:", error);
         return { success: false, error: error.message };
       }
 
@@ -291,11 +287,10 @@ export const AuthProvider = ({ children }) => {
   // ---- 로그아웃 ----
   const signOut = useCallback(async () => {
     setAuthLoading(true);
-    console.log("=== signOut ===");
     try {
       const { error } = await supabase.auth.signOut();
       if (error) {
-        console.log("supabase.signOut:", error);
+        // console.log("supabase.signOut:", error);
       }
       setSession(null);
       setUser(null);
@@ -303,7 +298,7 @@ export const AuthProvider = ({ children }) => {
       saveProfileCache(null);
       return { success: true };
     } catch (e) {
-      console.log("signOut exception:", e);
+      // console.log("signOut exception:", e);
       return { success: false, error: String(e?.message || e) };
     } finally {
       setAuthLoading(false);
@@ -358,13 +353,13 @@ export const AuthProvider = ({ children }) => {
         password: newPassword,
       });
       if (error) {
-        console.log("updatePassword:", error);
+        // console.log("updatePassword:", error);
         return { success: false, error: error.message };
       }
-      console.log("updatePassword ok:", data);
+
       return { success: true };
     } catch (e) {
-      console.log("updatePassword exception:", e);
+      // console.log("updatePassword exception:", e);
       return { success: false, error: String(e?.message || e) };
     }
   }, []);
@@ -381,17 +376,6 @@ export const AuthProvider = ({ children }) => {
       setAuthLoading(false);
     }
   }, []);
-
-  // ---- 디버깅 로그 ----
-  useEffect(() => {
-    console.log("Auth State:", {
-      loading,
-      isAuthenticated,
-      user: user?.email,
-      profileNickname: profile?.nickname,
-      hasSession: !!session,
-    });
-  }, [loading, isAuthenticated, user, profile, session]);
 
   // 외부에서 수동 새로고침이 필요할 때
   const reloadProfile = useCallback(async () => {

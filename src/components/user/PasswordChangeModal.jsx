@@ -61,21 +61,21 @@ const PasswordChangeModal = ({ isOpen, onClose }) => {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    console.log("폼 제출 시작");
+    ("폼 제출 시작");
 
     const errors = validateForm();
     if (Object.keys(errors).length > 0) {
-      console.log("유효성 검사 실패:", errors);
+      ("유효성 검사 실패:", errors);
       setValidationErrors(errors);
       return;
     }
 
-    console.log("비밀번호 변경 요청 시작");
+    ("비밀번호 변경 요청 시작");
     const result = await handlePasswordChange(
       formData.currentPassword,
       formData.newPassword,
     );
-    console.log("비밀번호 변경 결과:", result);
+    ("비밀번호 변경 결과:", result);
 
     if (result?.success) {
       alert("비밀번호가 변경되었습니다.");

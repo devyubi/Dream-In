@@ -10,10 +10,10 @@ const TestPage = () => {
   const [isTestRunning, setIsTestRunning] = useState(false);
 
   // 디버깅용 로그
-  console.log("=== TestPage 렌더링 ===");
-  console.log("authContext:", useAuth());
-  console.log("loading 값:", useAuth()?.loading);
-  console.log("user 값:", useAuth()?.user);
+  ("=== TestPage 렌더링 ===");
+  ("authContext:", useAuth());
+  ("loading 값:", useAuth()?.loading);
+  ("user 값:", useAuth()?.user);
 
   // 1. AuthContext에서 가져온 현재 상태 표시
   const renderAuthStatus = () => (
@@ -53,7 +53,7 @@ const TestPage = () => {
 
   // 2. 직접 Supabase에서 프로필 조회 테스트
   const testDirectSupabaseQuery = async () => {
-    console.log("=== 직접 Supabase 조회 테스트 ===");
+    ("=== 직접 Supabase 조회 테스트 ===");
 
     try {
       // 현재 세션 확인
@@ -66,7 +66,7 @@ const TestPage = () => {
         return { success: false, error: "세션 없음" };
       }
 
-      console.log("현재 사용자 ID:", session.user.id);
+      ("현재 사용자 ID:", session.user.id);
 
       // 프로필 직접 조회
       const { data: profiles, error: profileError } = await supabase
@@ -74,8 +74,8 @@ const TestPage = () => {
         .select("*")
         .eq("auth_user_id", session.user.id);
 
-      console.log("직접 조회 결과:", profiles);
-      console.log("직접 조회 에러:", profileError);
+      ("직접 조회 결과:", profiles);
+      ("직접 조회 에러:", profileError);
 
       if (profileError) {
         return { success: false, error: profileError.message };
@@ -94,11 +94,11 @@ const TestPage = () => {
 
   // 3. getCurrentUserProfile API 함수 테스트
   const testGetCurrentUserProfileAPI = async () => {
-    console.log("=== getCurrentUserProfile API 테스트 ===");
+    ("=== getCurrentUserProfile API 테스트 ===");
 
     try {
       const result = await getCurrentUserProfile();
-      console.log("API 함수 결과:", result);
+      ("API 함수 결과:", result);
 
       return {
         success: !!result,
@@ -114,7 +114,7 @@ const TestPage = () => {
   // 4. 모든 테스트 실행
   const runAllTests = async () => {
     setIsTestRunning(true);
-    console.log("=== 모든 테스트 시작 ===");
+    ("=== 모든 테스트 시작 ===");
 
     const results = {};
 
@@ -138,8 +138,8 @@ const TestPage = () => {
     setTestResults(results);
     setIsTestRunning(false);
 
-    console.log("=== 모든 테스트 완료 ===");
-    console.log("테스트 결과:", results);
+    ("=== 모든 테스트 완료 ===");
+    ("테스트 결과:", results);
   };
 
   // 페이지 로드 시 자동으로 테스트 실행
@@ -303,10 +303,10 @@ const TestPage = () => {
 
           <button
             onClick={() => {
-              console.log("현재 AuthContext 상태:");
-              console.log("user:", user);
-              console.log("profile:", profile);
-              console.log("loading:", loading);
+              ("현재 AuthContext 상태:");
+              ("user:", user);
+              ("profile:", profile);
+              ("loading:", loading);
             }}
             style={{ padding: "10px 20px", fontSize: "14px" }}
           >
