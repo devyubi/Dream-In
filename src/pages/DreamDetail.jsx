@@ -165,11 +165,7 @@ function DreamDetail() {
         {!loading && aiResult && (
           <DetailAiResultWrap>
             <DetailAiResultTitle>꿈 해몽 결과</DetailAiResultTitle>
-            <Detail.DetailAiResult
-              title="꿈 해몽 결과"
-              readonly
-              value={aiResult}
-            />
+            <Detail.DetailAiResult readonly value={aiResult} />
           </DetailAiResultWrap>
         )}
       </Detail.DetailWrap>

@@ -11,7 +11,7 @@ function EmotionList() {
   const [emotionList, setEmotionList] = useState([]);
   const navigate = useNavigate();
 
-  const { isFavoriteEmotions, toggleEmotionFavorite } = useFavorites();
+  const { favoriteEmotions, toggleEmotionFavorite } = useFavorites();
 
   const deleteId = location.state?.deleteId;
 
@@ -57,15 +57,15 @@ function EmotionList() {
     }
   }, [deleteId, navigate]);
 
-  const toggleFavorite = id => {
-    setEmotionList(prevList =>
-      prevList.map(emotion =>
-        emotion.id === id
-          ? { ...emotion, isFavorite: !emotion.isFavorite }
-          : emotion,
-      ),
-    );
-  };
+  // const toggleFavorite = id => {
+  //   setEmotionList(prevList =>
+  //     prevList.map(emotion =>
+  //       emotion.id === id
+  //         ? { ...emotion, isFavorite: !emotion.isFavorite }
+  //         : emotion,
+  //     ),
+  //   );
+  // };
 
   return (
     <Container>
@@ -73,7 +73,7 @@ function EmotionList() {
       <Title title="감정일기 목록" />
       <List.ListWrap>
         {emotionList.map(emotion => {
-          const isFavorite = isFavoriteEmotions?.some(f => f.id === emotion.id);
+          const isFavorite = favoriteEmotions?.some(f => f.id === emotion.id);
 
           return (
             <List.ListItem
@@ -89,18 +89,14 @@ function EmotionList() {
                 <List.ListItemUserName>{emotion.name}</List.ListItemUserName>
                 <List.ListItemTime>{emotion.time}</List.ListItemTime>
                 <List.ListItemFavorites
-                // onClick={e => {
-                //   e.stopPropagation();
-                //   toggleEmotionFavorite(emotion);
-                //   setEmotionFavorite(prev =>
-                //     prev.map(item => item.id === emotion.id ? {...item, isFavorite: !item.isFavorite})
-                //   )
-
-                // }}
+                  onClick={e => {
+                    e.stopPropagation();
+                    toggleEmotionFavorite(emotion);
+                  }}
                 >
                   <img
                     src={
-                      isFavorite
+                      favoriteEmotions?.some(f => f.id === emotion.id)
                         ? "/images/fill_star.png"
                         : "/images/empty_star.png"
                     }

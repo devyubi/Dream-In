@@ -9,7 +9,13 @@ import { useNavigate } from "react-router-dom";
 function FavoriteList() {
   const [selectedCategory, setSelectedCategory] = useState("전체");
   const listCategories = ["전체", "꿈 이야기", "감정일기"];
-  const { favoriteDreams, favoriteEmotions } = useFavorites();
+  const {
+    favoriteDreams,
+    favoriteEmotions,
+    toggleDreamFavorite,
+    toggleEmotionFavorite,
+  } = useFavorites();
+
   const navigate = useNavigate();
 
   // 두 리스트 병합
@@ -25,6 +31,23 @@ function FavoriteList() {
     if (selectedCategory === "감정일기") return item.type === "emotion";
     return false;
   });
+
+  const handleToggleFavorite = item => {
+    if (item.type === "dream") {
+      toggleDreamFavorite(item);
+    } else if (item.type === "emotion") {
+      toggleEmotionFavorite(item);
+    }
+  };
+
+  const handleDeleteFavorite = (e, item) => {
+    e.stopPropagation();
+    const confirmResult = window.confirm("즐겨찾기에서 삭제하시겠습니까?");
+    if (confirmResult) {
+      handleToggleFavorite(item);
+      alert("즐겨찾기에서 삭제되었습니다.");
+    }
+  };
 
   return (
     <Container>
@@ -43,7 +66,15 @@ function FavoriteList() {
       </List.EmojiCategoryWrap>
       <List.ListWrap>
         {filteredFavorites.length === 0 ? (
-          <p style={{ padding: "1rem" }}>즐겨찾기한 항목이 없습니다.</p>
+          <p
+            style={{
+              paddingTop: "70px",
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            즐겨찾기한 항목이 없습니다.
+          </p>
         ) : (
           filteredFavorites.map(item => (
             <List.ListItem
@@ -63,13 +94,20 @@ function FavoriteList() {
                 </List.ListItemUserPhoto>
                 <List.ListItemUserName>{item.name}</List.ListItemUserName>
                 <List.ListItemTime>{item.time}</List.ListItemTime>
-                <List.ListItemFavorites>
-                  <img src="/images/fill_star.png" alt="즐겨찾기" />
+                <List.ListItemFavorites
+                  onClick={e => {
+                    e.stopPropagation();
+                    handleToggleFavorite(item);
+                  }}
+                >
+                  <img src="/images/fill_star.png" alt="즐겨찾기 취소" />
                 </List.ListItemFavorites>
               </List.ListItemUser>
-              <List.ListItemTitle></List.ListItemTitle>
-              <List.ListItemDetail></List.ListItemDetail>
-              <List.ListItemDelete></List.ListItemDelete>
+              <List.ListItemTitle>{item.title}</List.ListItemTitle>
+              <List.ListItemDetail>{item.detail}</List.ListItemDetail>
+              <List.ListItemDelete
+                onClick={e => handleDeleteFavorite(e, item)}
+              ></List.ListItemDelete>
             </List.ListItem>
           ))
         )}

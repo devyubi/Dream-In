@@ -5,13 +5,13 @@ import { Link } from "react-router-dom";
 
 // 2. styled.button으로 스타일링된 버튼 만들기
 // 라이트모드용 버튼
-const BackLight = styled.button`
+const BackLight = styled(Link)`
   padding: 5px 20px;
   border: 1px solid #e2e2e2;
   border-radius: 24px;
   margin-bottom: 15px;
   background-color: #fcf3fb;
-  display: flex;
+  display: inline-flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
@@ -26,12 +26,12 @@ const BackLight = styled.button`
 `;
 
 // 다크모드용 버튼
-const BackDark = styled.button`
+const BackDark = styled(Link)`
   padding: 2px 17px;
   border: 1px solid #dbdbdb;
   border-radius: 24px;
   margin-bottom: 15px;
-  display: flex;
+  display: inline-flex;
   justify-content: center;
   align-items: center;
   background: linear-gradient(
@@ -79,11 +79,9 @@ function BackButton({ to, onClick }) {
 
   // 실제 반영
   return (
-    <Link to={to}>
-      <BackButton onClick={onClick}>
-        <img src={iconSrc} alt="뒤로가기" />
-      </BackButton>
-    </Link>
+    <BackButton to={to} onClick={onClick}>
+      <img src={iconSrc} alt="뒤로가기" />
+    </BackButton>
   );
 }
 

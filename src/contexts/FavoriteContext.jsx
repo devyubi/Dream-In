@@ -19,6 +19,16 @@ export const FavoritesProvider = ({ children }) => {
     });
   };
 
+  // const toggleEmotionFavorite = emotion => {
+  //   setFavoriteEmotions(prev => {
+  //     if (prev.some(f => f.id === emotion.id)) {
+  //       return prev.filter(f => f.id !== emotion.id);
+  //     } else {
+  //       return [...prev, emotion];
+  //     }
+  //   });
+  // };
+
   return (
     <FavoriteContext.Provider
       value={{

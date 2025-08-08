@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 
 export const DetailWrap = styled.div`
   width: 100%;
-  height: 100vh;
+  height: auto;
   background: linear-gradient(
     to right,
     rgba(230, 179, 247, 0.3),
@@ -123,14 +123,16 @@ export const DetailBttuon = styled.button`
 export const DetailAiResultWrap = styled.div`
   display: flex;
   flex-direction: column;
+  height: auto;
 `;
 export const DetailAiResultTitle = styled.h2`
   margin-left: 35px;
 `;
 export const DetailAiResult = styled.textarea`
-  margin: 0 30px;
+  margin: 0 30px 30px 30px;
   font-family: "tj400";
   font-size: 16px;
+  height: 300px;
   padding: 15px 10px;
   border: 1px solid #c8c8c8;
   border-radius: 16px;
