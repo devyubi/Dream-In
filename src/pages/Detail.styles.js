@@ -12,6 +12,7 @@ export const DetailWrap = styled.div`
   border-radius: 24px;
   display: flex;
   flex-direction: column;
+  padding-bottom: 30px;
 `;
 export const DetailTop = styled.div`
   display: flex;
