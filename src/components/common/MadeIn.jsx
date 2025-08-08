@@ -95,7 +95,7 @@ function MadeIn() {
         </MadeInPerson>
         <MadeInPerson>
           <MadeInPersonPhoto>
-            <img src="images/photo2.png" alt="2" />
+            <img src="images/face.png" alt="2" />
           </MadeInPersonPhoto>
           <MadeInPersonName>송병근</MadeInPersonName>
           <MadeInPersonRole>회원 인증, Database 연동 등</MadeInPersonRole>
