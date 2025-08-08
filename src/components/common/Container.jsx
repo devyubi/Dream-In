@@ -5,6 +5,7 @@ const ContainerDiv = styled.div`
   font-family: "tj400";
   position: relative;
   max-width: 1280px;
+  min-height: 100vh;
   margin: 0 20%;
   padding: 20px;
   background-color: rgba(252, 243, 251, 0.3);

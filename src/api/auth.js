@@ -229,6 +229,7 @@ export const checkNicknameDuplicate = async nickname => {
     return { isDuplicate: false, error: error.message };
   }
 };
+
 export const getUserLoginType = user => {
   if (!user) return null;
 
@@ -389,6 +390,7 @@ const maskEmail = email => {
  * @param {string} birthdate - 생년월일
  * @returns {Object} 성공/실패 결과 (복수 결과 가능)
  */
+
 export const findUserEmails = async (nickname, birthdate) => {
   try {
     const { data, error } = await supabase

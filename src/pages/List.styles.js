@@ -4,6 +4,7 @@ export const EmojiCategoryWrap = styled.ul`
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
   left: 50%;
   width: calc(100%);
   margin: 0 0px 30px 0px;
@@ -15,8 +16,11 @@ export const EmojiCategoryWrap = styled.ul`
 export const EmojiCategoryItem = styled.li`
   border: 1px solid #e7e7e7;
   padding: 15px 30px;
+  width: auto;
   border-radius: 24px;
   cursor: pointer;
+  white-space: nowrap;
+  transform: translateY(-5px);
 
   background-color: ${({ isActive }) => (isActive ? "#fad4e8" : "transparent")};
   box-shadow: ${({ isActive }) =>
@@ -27,6 +31,7 @@ export const EmojiCategoryItem = styled.li`
     box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.15);
   }
 `;
+
 export const ListWrap = styled.ul`
   display: flex;
   flex-direction: column;

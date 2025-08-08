@@ -2,8 +2,13 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import BackButton from "../components/common/BackButton";
 import Container from "../components/common/Container";
+import QuantumSpinner from "../components/common/QuantumSpinner";
 import Title from "../components/common/Title";
-import { Detail } from "./Detail.styles";
+import {
+  Detail,
+  DetailAiResultTitle,
+  DetailAiResultWrap,
+} from "./Detail.styles";
 
 function DreamDetail() {
   const navigate = useNavigate();
@@ -12,11 +17,11 @@ function DreamDetail() {
   const [loading, setLoading] = useState(false);
 
   const handleAiRequest = async e => {
-    // console.log("꿈 내용:", dream.story);
+    // console.log("꿈 내용:", dream.detail);
     // console.log("바튼");
     e.preventDefault(); // 새로고침 방지
 
-    if (!dream?.story) {
+    if (!dream?.detail) {
       alert("꿈 이야기가 없습니다.");
       return; // 꿈 이야기 없으면 문구 및 함수 종료
     }
@@ -54,7 +59,8 @@ function DreamDetail() {
           // JSON.stringify: JSON 글자로 변환
           body: JSON.stringify({
             // ChatGPT 엔진 종류
-            model: "gpt-4o",
+            // model: "gpt-4o",
+            model: "gpt-3.5-turbo",
             // 필요한 프롬프트 전달
             messages: [
               {
@@ -64,7 +70,7 @@ function DreamDetail() {
               },
               {
                 role: "user", //사용자 입력내용을 작성
-                content: dream.story,
+                content: dream.detail,
               },
             ],
           }),
@@ -124,7 +130,7 @@ function DreamDetail() {
         ></Detail.DetailName>
         <Detail.DetailText
           readOnly
-          value={dream?.story || ""}
+          value={dream?.detail || ""}
         ></Detail.DetailText>
         <Detail.DetailButtonWrap>
           <Detail.DetailBttuon
@@ -133,7 +139,7 @@ function DreamDetail() {
                 state: {
                   id: dream?.id,
                   title: dream?.title,
-                  detail: dream?.story,
+                  detail: dream?.detail,
                 },
               })
             }
@@ -144,11 +150,23 @@ function DreamDetail() {
             삭제하기
           </Detail.DetailBttuon>
         </Detail.DetailButtonWrap>
-        {(loading || aiResult) && (
+        {/* {(loading || aiResult) && (
           <Detail.DetailAiResult
             readOnly
             value={loading ? "해몽 분석 중입니다..." : aiResult}
           ></Detail.DetailAiResult>
+        )} */}
+
+        {loading && (
+          <div>
+            <QuantumSpinner></QuantumSpinner>
+          </div>
+        )}
+        {!loading && aiResult && (
+          <DetailAiResultWrap>
+            <DetailAiResultTitle>꿈 해몽 결과</DetailAiResultTitle>
+            <Detail.DetailAiResult readonly value={aiResult} />
+          </DetailAiResultWrap>
         )}
       </Detail.DetailWrap>
     </Container>
