@@ -1,32 +1,30 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import Footer from "./components/common/Footer";
 import Header from "./components/common/Header";
+import ScrollToTop from "./components/common/ScrollToTop";
 import Profile from "./components/user/Profile";
 import { AuthProvider } from "./contexts/AuthContext";
+import { FavoritesProvider } from "./contexts/FavoriteContext";
 import "./index.css";
-import AIDreamResultPage from "./pages/AIDreamResultPage";
 import AuthCallbackPage from "./pages/AuthCallbackPage";
 import DreamDetail from "./pages/DreamDetail";
+import DreamEdit from "./pages/DreamEdit";
 import DreamList from "./pages/DreamList";
 import DreamWritePage from "./pages/DreamWritePage";
+import EmotionDetail from "./pages/EmotionDetail";
+import EmotionEdit from "./pages/EmotionEdit";
+import EmotionList from "./pages/EmotionList";
 import EmotionWritePage from "./pages/EmotionWritePage";
+import FavoriteList from "./pages/FavoriteList";
+import FindPasswordPage from "./pages/FindPasswordPage";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ProfileEditPage from "./pages/ProfileEditPage";
 import SignupPage from "./pages/SignupPage";
 import SleepRecordPage from "./pages/SleepRecordPage";
-import TestPage from "./pages/TestPage";
-import EmotionList from "./pages/EmotionList";
-import DreamEdit from "./pages/DreamEdit";
-import EmotionDetail from "./pages/EmotionDetail";
-import EmotionEdit from "./pages/EmotionEdit";
 import Support from "./pages/Support";
-import Footer from "./components/common/Footer";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
-import ScrollToTop from "./components/common/ScrollToTop";
-import FavoriteList from "./pages/FavoriteList";
-import FindPasswordPage from "./pages/FindPasswordPage";
-import { FavoritesProvider } from "./contexts/FavoriteContext";
 
 function App() {
   return (
@@ -64,8 +62,6 @@ function App() {
 
             <Route path="/privacypolicy" element={<PrivacyPolicy />}></Route>
             <Route path="/termsofservice" element={<TermsOfService />}></Route>
-            {/* 테스트페이지입니다-병근 */}
-            <Route path="/test" element={<TestPage />} />
           </Routes>
         </FavoritesProvider>
         <Footer />

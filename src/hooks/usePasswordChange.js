@@ -22,37 +22,30 @@ export const usePasswordChange = () => {
     try {
       if (!user?.email) {
         const msg = "로그인이 필요합니다.";
-        msg;
         setError(msg);
         return { success: false, error: msg };
       }
 
       if (isSocialUser(user)) {
         const msg = "소셜 로그인 계정은 비밀번호를 변경할 수 없습니다.";
-        msg;
         setError(msg);
         return { success: false, error: msg };
       }
 
-      ("재인증 시도:", user.email);
       const { error: reauthError } = await supabase.auth.signInWithPassword({
         email: user.email,
         password: currentPassword,
       });
       if (reauthError) {
-        ("재인증 실패:", reauthError);
         const msg = reauthError.message || "현재 비밀번호가 올바르지 않습니다.";
         setError(msg);
         return { success: false, error: msg };
       }
-      ("재인증 성공");
 
-      ("비밀번호 업데이트 시도...");
       const { data: updateData, error: updateError } =
         await supabase.auth.updateUser({ password: newPassword });
 
       if (updateError) {
-        ("비밀번호 업데이트 실패:", updateError);
         const msg =
           updateError.message ||
           "비밀번호 변경에 실패했습니다. 잠시 후 다시 시도해주세요.";
@@ -60,11 +53,10 @@ export const usePasswordChange = () => {
         return { success: false, error: msg };
       }
 
-      ("비밀번호 업데이트 성공:", updateData);
       try {
         await supabase.auth.refreshSession();
       } catch (e) {
-        ("refreshSession 오류(무시):", e);
+        // console.log("refreshSession 오류(무시):", e);
       }
 
       setSuccess(true);
@@ -73,13 +65,13 @@ export const usePasswordChange = () => {
         message: "비밀번호가 성공적으로 변경되었습니다.",
       };
     } catch (err) {
-      ("비밀번호 변경 중 예외:", err);
+      // console.log("비밀번호 변경 중 예외:", err);
       const msg = "비밀번호 변경 중 오류가 발생했습니다.";
       setError(msg);
       return { success: false, error: msg };
     } finally {
       setIsLoading(false);
-      ("=== usePasswordChange 완료 ===");
+      // console.log("=== usePasswordChange 완료 ===");
     }
   };
 
