@@ -12,7 +12,7 @@ const AuthCallbackPage = () => {
         const { data, error } = await supabase.auth.getSession();
 
         if (error) {
-          console.error("인증 콜백 에러:", error);
+          console.log("인증 콜백 에러:", error);
           navigate("/login");
         } else if (data.session) {
           navigate("/");
@@ -20,7 +20,7 @@ const AuthCallbackPage = () => {
           navigate("/login");
         }
       } catch (error) {
-        console.error("콜백 처리 중 오류:", error);
+        console.log("콜백 처리 중 오류:", error);
         navigate("/login");
       }
     };
