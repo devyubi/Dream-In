@@ -144,7 +144,7 @@ function EmotionDiaryPage() {
                 item => item.day === dateStr && item.text.trim() !== "",
               );
               if (hasDiary) {
-                return "diary-date"; // 이 클래스가 붙음
+                return "diary-date";
               }
             }
             return null;

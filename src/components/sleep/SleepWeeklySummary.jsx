@@ -5,6 +5,7 @@ function SleepWeeklySummary({ records = [] }) {
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(now.getDate() - 6);
 
+  // r : recentRecords의 각 항목(수면 기록 객체).
   const recentRecords = records.filter(r => {
     const date = new Date(r.day);
     return date >= sevenDaysAgo && date <= now;
@@ -15,6 +16,8 @@ function SleepWeeklySummary({ records = [] }) {
     (recentRecords.length || 1);
 
   const averageSleepMinutes =
+    // reduce : 배열의 모든 데이터를 하나의 값으로 합친다
+    // sum : ( 분 단위로 ) 계산한 총 수면시간 합계
     recentRecords.reduce((sum, r) => {
       const [bedH, bedM] = r.bedTime.split(":").map(Number);
       const [wakeH, wakeM] = r.wakeTime.split(":").map(Number);
@@ -22,12 +25,13 @@ function SleepWeeklySummary({ records = [] }) {
       let end = wakeH * 60 + wakeM;
       if (end <= start) end += 24 * 60;
       return sum + (end - start);
+      // 마지막 0은 합계의 초기값
     }, 0) / (recentRecords.length || 1);
 
   const avgHours = Math.floor(averageSleepMinutes / 60);
   const avgMins = Math.round(averageSleepMinutes % 60);
-
-  const averageEfficiency = "85%"; // 추후 개선 가능
+  // 아래 코드는 추후 개선하겠습니다. (실제 계산 로직 반영 안되었음)
+  const averageEfficiency = "85%"; // averageEfficiency : 수면 효율을 나타내는 변수
 
   return (
     <div className="weekly-summary">
@@ -42,6 +46,7 @@ function SleepWeeklySummary({ records = [] }) {
             <div className="stat-label">평균 수면 시간</div>
           </div>
           <div className="stat-card">
+            {/* averageRating.toFixed(1) : 평균 별점 값. 소수점 한 자리까지 반올림해서 문자열로 변환함 */}
             <div className="stat-value">{averageRating.toFixed(1)} / 5</div>
             <div className="stat-label">평균 수면 질</div>
           </div>
