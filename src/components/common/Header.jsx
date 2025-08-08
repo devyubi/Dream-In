@@ -24,20 +24,15 @@ function Header() {
 
   // 로그인 또는 로그아웃 버튼 클릭 시 동작
   const handleAuthClick = async () => {
+    // 로그아웃
     if (isLoggedIn) {
-      // 로그아웃
-      localStorage.clear();
-      sessionStorage.clear();
       setUser(null);
       // 로그아웃 처리
       try {
         await signOut();
-        localStorage.clear(); // 저장된 토큰 및 사용자 정보 제거 (로컬스토리지에서 제거)
-        sessionStorage.clear();
-        setUser(null);
         navigate("/");
       } catch (error) {
-        // console.error("또오류났냐")
+        console.error("ERROR");
       }
     } else {
       navigate("/login");

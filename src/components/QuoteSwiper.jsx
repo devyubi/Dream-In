@@ -1,9 +1,8 @@
-import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
-import "./../css/quoteswiper.css";
-import { useEffect, useState } from "react";
 import { Autoplay, Pagination } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "./../css/quoteswiper.css";
 
 const slideData = [
   {
@@ -36,12 +35,6 @@ const slideData = [
 ];
 
 function QuoteSwiper() {
-  const [data, setData] = useState([]);
-
-  useEffect(() => {
-    setData(slideData);
-  }, []);
-
   return (
     <div>
       <div className="visual-slide">
@@ -49,12 +42,12 @@ function QuoteSwiper() {
           loop={true}
           modules={[Autoplay, Pagination]}
           pagination={{ clickable: true }}
-          autoplay={{ delay: 4500, disableOnInteraction: false }}
+          autoplay={{ delay: 4000, disableOnInteraction: false }}
           className="sw-visual"
         >
-          {data.map((item, index) => {
+          {slideData.map((item, index) => {
             return (
-              <SwiperSlide key={[index]}>
+              <SwiperSlide key={index}>
                 <div className="slide-content">
                   <p>{item.title}</p>
                   <p>- {item.name}</p>

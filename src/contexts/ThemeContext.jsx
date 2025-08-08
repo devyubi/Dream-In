@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import { createContext, useContext, useEffect, useState } from "react";
 
 const ThemeContext = createContext();
 
@@ -13,7 +13,7 @@ export function ThemeProvider({ children }) {
   return (
     <ThemeContext.Provider value={{ isDarkMode, setIsDarkMode }}>
       {children}
-    </ThemeContext.Provider>
+    </ThemeContext.Provider>  
   );
 }
 

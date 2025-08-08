@@ -1,5 +1,4 @@
-import { useTheme } from "@emotion/react";
-import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
 import Container from "../components/common/Container";
 import FavoriteSection from "../components/home/FavoriteSection";
 import RecordSection from "../components/home/RecordSection";
@@ -8,13 +7,12 @@ import QuoteSwiper from "../components/QuoteSwiper";
 import { useAuth } from "../contexts/AuthContext";
 import "../css/home/homepage.css";
 
-function HomePage() {
-  const { isDarkMode } = useTheme();
-  const { isLoggedIn, user, profile } = useAuth();
-  const navigate = useNavigate();
+function HomePage({ children, className, ...rest }) {
+  const { isLoggedIn, user } = useAuth();
 
   return (
-    <Container className="mainpage">
+    <Container className="mainpage" {...rest}>
+      {children}
       <div className="mainpage_wrap">
         <div className="mainpage_inner">
           <section className="greeting">
@@ -42,5 +40,10 @@ function HomePage() {
     </Container>
   );
 }
+
+HomePage.propTypes = {
+  children: PropTypes.node,
+  className: PropTypes.string,
+};
 
 export default HomePage;
