@@ -5,7 +5,6 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useRef,
   useState,
 } from "react";
 import { supabase } from "../api/supabaseClient";
@@ -16,633 +15,398 @@ import { logError } from "../utils/errorHandler";
 const AuthContext = createContext({});
 
 export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("useAuth must be used within an AuthProvider");
+  return ctx;
 };
 
-// 토큰 관리 유틸리티
-const TokenManager = {
-  // 토큰을 안전하게 저장
-  setTokens: (accessToken, refreshToken) => {
-    if (accessToken) {
-      // 메모리에 저장 (가장 안전)
-      window._accessToken = accessToken;
-      // localStorage에는 암호화해서 저장 (브라우저 종료 시 유지)
-      localStorage.setItem(
-        "auth_session",
-        btoa(
-          JSON.stringify({
-            token: accessToken,
-            timestamp: Date.now(),
-            expires: Date.now() + 24 * 60 * 60 * 1000, // 24시간
-          }),
-        ),
-      );
-    }
-    if (refreshToken) {
-      localStorage.setItem("refresh_token", refreshToken);
-    }
-  },
+// ---- 로컬 캐시 유틸 ----
+const PROFILE_CACHE_KEY = "profile_cache"; // 프로필 스냅샷을 저장
 
-  // 토큰 가져오기
-  getAccessToken: () => {
-    // 메모리에서 먼저 확인
-    if (window._accessToken) {
-      return window._accessToken;
-    }
-
-    // localStorage에서 복원
-    try {
-      const session = localStorage.getItem("auth_session");
-      if (session) {
-        const decoded = JSON.parse(atob(session));
-        if (decoded.expires > Date.now()) {
-          window._accessToken = decoded.token;
-          return decoded.token;
-        } else {
-          // 만료된 토큰 제거
-          localStorage.removeItem("auth_session");
-        }
-      }
-    } catch (error) {
-      localStorage.removeItem("auth_session");
-    }
+const loadProfileCache = () => {
+  try {
+    const raw = localStorage.getItem(PROFILE_CACHE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    console.log("loadProfileCache:", e);
     return null;
-  },
+  }
+};
 
-  getRefreshToken: () => {
-    return localStorage.getItem("refresh_token");
-  },
+const saveProfileCache = profile => {
+  try {
+    if (profile) {
+      localStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify(profile));
+    } else {
+      localStorage.removeItem(PROFILE_CACHE_KEY);
+    }
+  } catch (e) {
+    console.log("saveProfileCache:", e);
+  }
+};
 
-  // 토큰 삭제
-  clearTokens: () => {
-    window._accessToken = null;
+// 과거 키 정리(예전 구현 잔여물 제거)
+const purgeLegacyStorage = () => {
+  try {
     localStorage.removeItem("auth_session");
     localStorage.removeItem("refresh_token");
     localStorage.removeItem("user_data");
     localStorage.removeItem("profile_data");
-  },
-
-  // 토큰 유효성 검사
-  isTokenValid: token => {
-    if (!token) return false;
-    try {
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      return payload.exp * 1000 > Date.now();
-    } catch {
-      return false;
-    }
-  },
+  } catch (e) {
+    console.log("purgeLegacyStorage:", e);
+  }
 };
 
-// 사용자 데이터 관리
-const UserDataManager = {
-  setUserData: (user, profile) => {
-    if (user) {
-      localStorage.setItem("user_data", JSON.stringify(user));
-    }
-    if (profile) {
-      localStorage.setItem("profile_data", JSON.stringify(profile));
-    }
-  },
-
-  getUserData: () => {
-    try {
-      const userData = localStorage.getItem("user_data");
-      const profileData = localStorage.getItem("profile_data");
-      return {
-        user: userData ? JSON.parse(userData) : null,
-        profile: profileData ? JSON.parse(profileData) : null,
-      };
-    } catch {
-      return { user: null, profile: null };
-    }
-  },
-
-  clearUserData: () => {
-    localStorage.removeItem("user_data");
-    localStorage.removeItem("profile_data");
-  },
+// Public 버킷 가정: 표시용 URL 생성
+const makeAvatarUrl = (path, updatedAt) => {
+  if (!path) return null;
+  try {
+    const { data } = supabase.storage.from("profile-images").getPublicUrl(path);
+    const ver = encodeURIComponent(updatedAt || Date.now());
+    return `${data.publicUrl}?v=${ver}`;
+  } catch (e) {
+    console.log("makeAvatarUrl:", e);
+    return null;
+  }
 };
 
 export const AuthProvider = ({ children }) => {
-  // ===== 상태 관리 =====
   const [user, setUser] = useState(null);
-  const [profile, setProfile] = useState(null);
   const [session, setSession] = useState(null);
+  const [profile, setProfile] = useState(null);
+  const [avatarUrl, setAvatarUrl] = useState(null);
+
+  // 앱 첫 부트 완료 여부 (라우트 게이트 등에서 사용)
   const [loading, setLoading] = useState(true);
+  // 버튼/폼 등 작업 로딩
   const [authLoading, setAuthLoading] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // 타이머 참조
-  const tokenCheckInterval = useRef(null);
-  const refreshTokenTimer = useRef(null);
+  const isAuthenticated = !!session && !!user;
+  const isLoggedIn = isAuthenticated;
 
-  // ===== 토큰 기반 인증 상태 확인 =====
-  const checkAuthStatus = useCallback(async () => {
-    const token = TokenManager.getAccessToken();
-
-    if (!token || !TokenManager.isTokenValid(token)) {
-      // 토큰이 없거나 만료됨
-      const refreshToken = TokenManager.getRefreshToken();
-      if (refreshToken) {
-        // 리프레시 토큰으로 재발급 시도
-        try {
-          const result = await AuthService.refreshToken(refreshToken);
-          if (result.success) {
-            TokenManager.setTokens(result.accessToken, result.refreshToken);
-            window._accessToken = result.accessToken;
-            setSession({ access_token: result.accessToken });
-            setIsAuthenticated(true);
-            return true;
-          }
-        } catch (error) {
-          logError("토큰 갱신 실패", error);
-        }
-      }
-
-      // 토큰 갱신 실패 시 로그아웃
-      handleTokenExpired();
-      return false;
-    }
-
-    // 유효한 토큰이 있음
-    setSession({ access_token: token });
-    setIsAuthenticated(true);
-    return true;
-  }, []);
-
-  // ===== 토큰 만료 처리 =====
-  const handleTokenExpired = useCallback(() => {
-    TokenManager.clearTokens();
-    UserDataManager.clearUserData();
-    setUser(null);
-    setProfile(null);
-    setSession(null);
-    setIsAuthenticated(false);
-
-    // 로그인 페이지로 리다이렉트
-    if (
-      window.location.pathname !== "/login" &&
-      window.location.pathname !== "/" &&
-      !window.location.pathname.startsWith("/signup") &&
-      !window.location.pathname.startsWith("/auth/callback")
-    ) {
-      alert("세션이 만료되었습니다. 다시 로그인해주세요.");
-      window.location.href = "/login";
-    }
-  }, []);
-
-  // ===== 자동 토큰 갱신 설정 =====
-  const setupTokenRefresh = useCallback(
-    token => {
-      if (!token || !TokenManager.isTokenValid(token)) return;
-
-      try {
-        const payload = JSON.parse(atob(token.split(".")[1]));
-        const expiresIn = payload.exp * 1000 - Date.now();
-        const refreshTime = Math.max(expiresIn - 5 * 60 * 1000, 60000);
-
-        if (refreshTokenTimer.current) {
-          clearTimeout(refreshTokenTimer.current);
-        }
-
-        refreshTokenTimer.current = setTimeout(async () => {
-          const refreshToken = TokenManager.getRefreshToken();
-          if (refreshToken) {
-            try {
-              const result = await AuthService.refreshToken(refreshToken);
-              if (result.success) {
-                TokenManager.setTokens(result.accessToken, result.refreshToken);
-                window._accessToken = result.accessToken;
-                setSession({ access_token: result.accessToken });
-                setupTokenRefresh(result.accessToken);
-              } else {
-                handleTokenExpired();
-              }
-            } catch (error) {
-              logError("자동 토큰 갱신 실패", error);
-              handleTokenExpired();
-            }
-          }
-        }, refreshTime);
-      } catch (error) {
-        logError("토큰 갱신 스케줄 설정 실패", error);
-      }
-    },
-    [handleTokenExpired],
-  );
-
-  // ===== 프로필 로드 함수 =====
-  const loadUserProfile = useCallback(async authUser => {
+  // 프로필을 DB에서 한 번 가져오기 (백그라운드 호출 가능)
+  const fetchProfileOnce = useCallback(async uid => {
     try {
-      if (!authUser) return;
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("auth_user_id", uid)
+        .maybeSingle();
 
-      const result = await UserService.getCurrentUserProfile();
-      if (result.success && result.profile) {
-        setProfile(result.profile);
-        UserDataManager.setUserData(authUser, result.profile);
+      if (error) {
+        console.log("fetchProfileOnce error:", error);
+        return null;
       }
-    } catch (error) {
-      logError("loadUserProfile", error, { userId: authUser?.id });
+
+      if (data) {
+        setProfile(data);
+        saveProfileCache(data);
+        return data;
+      }
+
+      return null;
+    } catch (e) {
+      console.log("fetchProfileOnce exception:", e);
+      return null;
     }
   }, []);
 
-  // ===== 초기화 =====
+  // 표시용 아바타 URL 계산 (Public 버킷 기준)
   useEffect(() => {
-    const initializeAuth = async () => {
+    const url = makeAvatarUrl(profile?.profile_image_url, profile?.updated_at);
+    setAvatarUrl(url);
+  }, [profile?.profile_image_url, profile?.updated_at]);
+
+  // ---- 초기 부팅: 캐시 -> 즉시 표시, 세션만 확인하면 loading=false, 프로필은 백그라운드 ----
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      console.log("=== bootstrap start ===");
+      setLoading(true);
+      purgeLegacyStorage();
+
       try {
-        setLoading(true);
-
-        // 저장된 사용자 데이터 복원
-        const { user: savedUser, profile: savedProfile } =
-          UserDataManager.getUserData();
-        if (savedUser) {
-          setUser(savedUser);
-        }
-        if (savedProfile) {
-          setProfile(savedProfile);
+        // 1) 캐시 먼저 반영 (깜빡임 방지)
+        const cached = loadProfileCache();
+        if (cached) {
+          setProfile(cached);
         }
 
-        // 현재 Supabase 세션 확인
-        const {
-          data: { session },
-          error,
-        } = await supabase.auth.getSession();
+        // 2) 세션 확인
+        const { data } = await supabase.auth.getSession();
+        if (!mounted) return;
+        const s = data?.session;
 
-        if (session?.access_token) {
-          // Supabase 세션이 있으면 토큰 매니저에도 저장
-          TokenManager.setTokens(session.access_token, session.refresh_token);
-          setSession(session);
-          setIsAuthenticated(true);
-
-          if (session.user) {
-            setUser(session.user);
-            UserDataManager.setUserData(session.user, savedProfile);
-            await loadUserProfile(session.user);
-          }
-
-          setupTokenRefresh(session.access_token);
+        if (s?.user?.id) {
+          setSession(s);
+          setUser(s.user);
+          // 3) 최신 프로필은 백그라운드로 로드 (await 제거)
+          fetchProfileOnce(s.user.id);
         } else {
-          // Supabase 세션이 없으면 토큰 기반 인증 상태 확인
-          const isValid = await checkAuthStatus();
-
-          if (isValid && savedUser) {
-            await loadUserProfile(savedUser);
-          }
-        }
-      } catch (error) {
-        logError("초기화 오류", error);
-        handleTokenExpired();
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    initializeAuth();
-  }, [checkAuthStatus, loadUserProfile, setupTokenRefresh, handleTokenExpired]);
-
-  // ===== Supabase Auth 상태 변경 리스너 =====
-  useEffect(() => {
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      try {
-        if (event === "SIGNED_IN" && session?.access_token) {
-          // 소셜 로그인 성공
-          TokenManager.setTokens(session.access_token, session.refresh_token);
-          setSession(session);
-          setUser(session.user);
-          setIsAuthenticated(true);
-
-          UserDataManager.setUserData(session.user, null);
-
-          // 소셜 로그인 프로필 자동 생성
-          const provider = session.user.app_metadata?.provider;
-          if (provider === "google" || provider === "kakao") {
-            try {
-              const existingProfile = await UserService.getCurrentUserProfile();
-              if (!existingProfile.success || !existingProfile.profile) {
-                await UserService.createSocialUserProfile(session.user);
-              }
-            } catch (error) {
-              logError("createSocialUserProfile", error, {
-                provider,
-                userId: session.user.id,
-              });
-            }
-          }
-
-          await loadUserProfile(session.user);
-          setupTokenRefresh(session.access_token);
-        } else if (event === "SIGNED_OUT") {
-          TokenManager.clearTokens();
-          UserDataManager.clearUserData();
           setSession(null);
           setUser(null);
           setProfile(null);
-          setIsAuthenticated(false);
-        } else if (event === "TOKEN_REFRESHED" && session?.access_token) {
-          TokenManager.setTokens(session.access_token, session.refresh_token);
-          setSession(session);
-          if (session.user) {
-            setUser(session.user);
-            UserDataManager.setUserData(session.user, profile);
-          }
-          setupTokenRefresh(session.access_token);
+          saveProfileCache(null);
         }
-      } catch (error) {
-        logError("onAuthStateChange", error, { event });
+      } catch (e) {
+        if (!mounted) return;
+        console.log("bootstrap exception:", e);
+      } finally {
+        // ✅ 세션 확인만 끝났으면 무조건 loading=false
+        if (mounted) {
+          setLoading(false);
+          console.log(
+            "=== bootstrap done (session checked, loading=false) ===",
+          );
+        }
+      }
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, [fetchProfileOnce]);
+
+  // ---- Auth 이벤트: 최소 로직 (로그아웃/로그인 시 캐시 정합성 유지) ----
+  useEffect(() => {
+    const { data } = supabase.auth.onAuthStateChange(async (event, s) => {
+      console.log("onAuthStateChange:", event, !!s, s?.user?.email);
+
+      if (event === "SIGNED_OUT") {
+        setSession(null);
+        setUser(null);
+        setProfile(null);
+        saveProfileCache(null);
+        setLoading(false);
+        return;
+      }
+
+      if (s?.user?.id) {
+        setSession(s);
+        setUser(s.user);
+        // 프로필은 백그라운드로
+        fetchProfileOnce(s.user.id);
+        setLoading(false);
+      } else {
+        setLoading(false);
       }
     });
 
-    return () => subscription.unsubscribe();
-  }, [loadUserProfile, setupTokenRefresh, profile]);
+    return () => data.subscription.unsubscribe();
+  }, [fetchProfileOnce]);
 
-  // ===== 주기적 토큰 검증 =====
-  useEffect(() => {
-    if (isAuthenticated) {
-      tokenCheckInterval.current = setInterval(
-        async () => {
-          await checkAuthStatus();
-        },
-        5 * 60 * 1000,
-      ); // 5분마다
-
-      return () => {
-        if (tokenCheckInterval.current) {
-          clearInterval(tokenCheckInterval.current);
-        }
-      };
-    }
-  }, [isAuthenticated, checkAuthStatus]);
-
-  // ===== 페이지 포커스 시 토큰 검증 =====
-  useEffect(() => {
-    const handleFocus = async () => {
-      if (isAuthenticated) {
-        await checkAuthStatus();
-      }
-    };
-
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible") {
-        handleFocus();
-      }
-    };
-
-    window.addEventListener("focus", handleFocus);
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-
-    return () => {
-      window.removeEventListener("focus", handleFocus);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, [isAuthenticated, checkAuthStatus]);
-
-  // ===== 로그인 함수 =====
+  // ---- 이메일/비밀번호 로그인 ----
   const signIn = useCallback(
     async (email, password) => {
       setAuthLoading(true);
       try {
-        const result = await AuthService.signIn(email, password);
-
-        if (result.success && result.session?.access_token) {
-          // 토큰 저장
-          TokenManager.setTokens(
-            result.session.access_token,
-            result.session.refresh_token,
-          );
-
-          // 상태 업데이트
-          setSession(result.session);
-          setUser(result.session.user);
-          setIsAuthenticated(true);
-
-          // 사용자 데이터 저장
-          UserDataManager.setUserData(result.session.user, null);
-
-          // 프로필 로드 및 토큰 갱신 설정
-          await loadUserProfile(result.session.user);
-          setupTokenRefresh(result.session.access_token);
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (error) {
+          console.log("signIn:", error);
+          return { success: false, error: error.message };
         }
 
-        return result;
-      } catch (error) {
-        logError("signIn", error, { email });
-        return { success: false, error: error.message };
+        setSession(data.session);
+        setUser(data.user);
+
+        if (data.user?.id) {
+          fetchProfileOnce(data.user.id);
+        }
+
+        return { success: true, session: data.session, user: data.user };
+      } catch (e) {
+        logError("signIn", e, { email });
+        return { success: false, error: String(e?.message || e) };
       } finally {
         setAuthLoading(false);
       }
     },
-    [loadUserProfile, setupTokenRefresh],
+    [fetchProfileOnce],
   );
 
-  // ===== 회원가입 함수 =====
+  // ---- 회원가입 ----
   const signUp = useCallback(async userData => {
     setAuthLoading(true);
     try {
-      const authResult = await AuthService.signUp(
-        userData.email,
-        userData.password,
-      );
-
-      if (!authResult.success) {
-        return authResult;
-      }
-
-      const authUser = authResult.data.user;
-      if (!authUser) {
-        throw new Error("회원가입 후 사용자 정보가 없습니다.");
-      }
-
-      let profileImageUrl = null;
-      if (userData.profileImage) {
-        try {
-          const uploadResult = await FileUploadService.uploadProfileImage(
-            userData.profileImage,
-            authUser.id,
-          );
-          if (uploadResult.success) {
-            profileImageUrl = uploadResult.url;
-          }
-        } catch (error) {
-          logError("profileImageUpload", error, { userId: authUser.id });
-        }
-      }
-
-      const profileResult = await UserService.createProfile({
-        auth_user_id: authUser.id,
+      const { data, error } = await supabase.auth.signUp({
         email: userData.email,
-        nickname: userData.nickname,
-        birthdate: userData.birthdate || null,
-        gender: userData.gender || null,
-        profile_image_url: profileImageUrl,
+        password: userData.password,
       });
+      if (error) {
+        console.log("signUp:", error);
+        return { success: false, error: error.message };
+      }
 
-      if (!profileResult.success) {
-        return {
-          success: false,
-          error: "프로필 생성에 실패했습니다.",
-        };
+      const authUser = data.user;
+      if (authUser) {
+        let profileImageUrl = null;
+        if (userData.profileImage) {
+          try {
+            const upload = await FileUploadService.uploadProfileImage(
+              userData.profileImage,
+              authUser.id,
+            );
+            if (upload?.success) profileImageUrl = upload.url;
+          } catch (e) {
+            logError("profileImageUpload", e, { userId: authUser.id });
+          }
+        }
+
+        // 프로필 생성
+        const created = await UserService.createProfile({
+          auth_user_id: authUser.id,
+          email: userData.email,
+          nickname: userData.nickname,
+          birthdate: userData.birthdate || null,
+          gender: userData.gender || null,
+          profile_image_url: profileImageUrl, // 없으면 null
+        });
+
+        if (!created?.success) {
+          return { success: false, error: "프로필 생성에 실패했습니다." };
+        }
+
+        if (created.profile) {
+          setProfile(created.profile);
+          saveProfileCache(created.profile);
+        }
       }
 
       return {
         success: true,
-        data: authResult.data,
-        profile: profileResult.profile,
+        data,
         message: "회원가입이 완료되었습니다. 이메일을 확인해주세요.",
       };
-    } catch (error) {
-      logError("signUp", error, { email: userData.email });
-      return { success: false, error: error.message };
+    } catch (e) {
+      logError("signUp", e, { email: userData.email });
+      return { success: false, error: String(e?.message || e) };
     } finally {
       setAuthLoading(false);
     }
   }, []);
 
-  // ===== 로그아웃 함수 =====
+  // ---- 로그아웃 ----
   const signOut = useCallback(async () => {
     setAuthLoading(true);
+    console.log("=== signOut ===");
     try {
-      // 서버에 로그아웃 요청
-      const token = TokenManager.getAccessToken();
-      if (token) {
-        await AuthService.signOut(token);
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.log("supabase.signOut:", error);
       }
-
-      // Supabase 로그아웃도 함께 처리
-      await supabase.auth.signOut();
-
-      // 로컬 상태 및 토큰 정리
-      TokenManager.clearTokens();
-      UserDataManager.clearUserData();
-
       setSession(null);
       setUser(null);
       setProfile(null);
-      setIsAuthenticated(false);
-
-      // 타이머 정리
-      if (tokenCheckInterval.current) {
-        clearInterval(tokenCheckInterval.current);
-      }
-      if (refreshTokenTimer.current) {
-        clearTimeout(refreshTokenTimer.current);
-      }
-
+      saveProfileCache(null);
       return { success: true };
-    } catch (error) {
-      logError("signOut", error);
-      return { success: false, error: error.message };
+    } catch (e) {
+      console.log("signOut exception:", e);
+      return { success: false, error: String(e?.message || e) };
     } finally {
       setAuthLoading(false);
     }
   }, []);
 
-  // ===== 프로필 업데이트 함수 =====
+  // ---- 프로필 수정 ----
   const updateProfile = useCallback(
     async profileData => {
       setAuthLoading(true);
       try {
         if (!user?.id) {
-          throw new Error("로그인된 사용자가 없습니다.");
+          return { success: false, error: "로그인된 사용자가 없습니다." };
         }
 
         let profileImageUrl = profileData.profileImageUrl;
         if (profileData.profileImage instanceof File) {
-          const uploadResult = await FileUploadService.uploadProfileImage(
+          const upload = await FileUploadService.uploadProfileImage(
             profileData.profileImage,
             user.id,
           );
-          if (uploadResult.success) {
-            profileImageUrl = uploadResult.url;
-          }
+          if (upload?.success) profileImageUrl = upload.url;
         }
 
         const updateData = {
           nickname: profileData.nickname,
           birthdate: profileData.birthdate,
           gender: profileData.gender,
-          profile_image_url: profileImageUrl,
+          profile_image_url: profileImageUrl, // null 가능
         };
 
         const result = await UserService.updateProfile(user.id, updateData);
-
-        if (result.success) {
-          await loadUserProfile(user);
+        if (result?.success) {
+          // 최신값 재조회 + 캐시 갱신 (백그라운드)
+          fetchProfileOnce(user.id);
         }
-
         return result;
-      } catch (error) {
-        logError("updateProfile", error, { userId: user?.id });
-        return { success: false, error: error.message };
+      } catch (e) {
+        logError("updateProfile", e, { userId: user?.id });
+        return { success: false, error: String(e?.message || e) };
       } finally {
         setAuthLoading(false);
       }
     },
-    [user, loadUserProfile],
+    [user?.id, fetchProfileOnce],
   );
 
-  // ===== 비밀번호 재설정 함수 =====
+  // ---- 비밀번호 변경/재설정 ----
+  const updatePassword = useCallback(async newPassword => {
+    try {
+      const { data, error } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+      if (error) {
+        console.log("updatePassword:", error);
+        return { success: false, error: error.message };
+      }
+      console.log("updatePassword ok:", data);
+      return { success: true };
+    } catch (e) {
+      console.log("updatePassword exception:", e);
+      return { success: false, error: String(e?.message || e) };
+    }
+  }, []);
+
   const resetPassword = useCallback(async email => {
     setAuthLoading(true);
     try {
       const result = await AuthService.resetPassword(email);
       return result;
-    } catch (error) {
-      logError("resetPassword", error, { email });
-      return { success: false, error: error.message };
+    } catch (e) {
+      logError("resetPassword", e, { email });
+      return { success: false, error: String(e?.message || e) };
     } finally {
       setAuthLoading(false);
     }
   }, []);
 
-  // ===== 비밀번호 업데이트 함수 =====
-  const updatePassword = useCallback(async newPassword => {
-    setAuthLoading(true);
-    try {
-      const result = await AuthService.updatePassword(newPassword);
-      return result;
-    } catch (error) {
-      logError("updatePassword", error);
-      return { success: false, error: error.message };
-    } finally {
-      setAuthLoading(false);
+  // ---- 디버깅 로그 ----
+  useEffect(() => {
+    console.log("Auth State:", {
+      loading,
+      isAuthenticated,
+      user: user?.email,
+      profileNickname: profile?.nickname,
+      hasSession: !!session,
+    });
+  }, [loading, isAuthenticated, user, profile, session]);
+
+  // 외부에서 수동 새로고침이 필요할 때
+  const reloadProfile = useCallback(async () => {
+    if (user?.id) {
+      fetchProfileOnce(user.id);
     }
-  }, []);
+  }, [user?.id, fetchProfileOnce]);
 
-  // ===== 프로필 새로고침 함수 =====
-  const refreshProfile = useCallback(async () => {
-    if (user && isAuthenticated) {
-      await loadUserProfile(user);
-    }
-  }, [user, isAuthenticated, loadUserProfile]);
-
-  // ===== 닉네임 중복확인 함수 =====
-  const checkNicknameDuplicate = useCallback(async nickname => {
-    try {
-      const result = await UserService.checkNicknameDuplicate(nickname);
-      return result;
-    } catch (error) {
-      logError("checkNicknameDuplicate", error, { nickname });
-      return { success: false, error: error.message };
-    }
-  }, []);
-
-  // ===== 계산된 값들 =====
-  const isLoggedIn = isAuthenticated && !!user;
-
-  // ===== Context Value =====
   const value = {
     // 상태
     user,
-    profile,
     session,
-    loading,
+    profile,
+    avatarUrl, // 표시용 URL (Public 버킷 가정)
+    loading, // 초기 세션 확인 끝나면 false
     authLoading,
     isAuthenticated,
     isLoggedIn,
@@ -652,24 +416,9 @@ export const AuthProvider = ({ children }) => {
     signUp,
     signOut,
     updateProfile,
-    resetPassword,
     updatePassword,
-    refreshProfile,
-    checkNicknameDuplicate,
-
-    // 유틸리티 함수들
-    setUser: newUser => {
-      setUser(newUser);
-      if (newUser) {
-        UserDataManager.setUserData(newUser, profile);
-      }
-    },
-    setProfile: newProfile => {
-      setProfile(newProfile);
-      if (newProfile) {
-        UserDataManager.setUserData(user, newProfile);
-      }
-    },
+    resetPassword,
+    reloadProfile,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { useRef, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import defaultProfileImage from "../../assets/images/unknown.svg";

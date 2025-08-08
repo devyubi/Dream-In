@@ -1,18 +1,22 @@
 import { Navigate } from "react-router-dom";
-import { useAuthContext } from "../contexts/AuthContext";
-import PropTypes from "prop-types";
+import { useAuth } from "../../contexts/AuthContext";
 
 const ProtectedRoute = ({ children }) => {
-  const { user, loading } = useAuthContext();
+  const { loading, isAuthenticated } = useAuth();
 
-  if (loading) return <p>로딩 중...</p>;
-  if (!user) return <Navigate to="/login" replace />;
+  // Auth 부트스트랩이 끝날 때까지 대기
+  if (loading) {
+    return (
+      <div style={{ padding: "2rem", textAlign: "center" }}>로딩 중...</div>
+    );
+  }
+
+  // 부트스트랩 끝났는데 비로그인 -> 로그인으로
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
 
   return children;
-};
-
-ProtectedRoute.propTypes = {
-  children: PropTypes.node.isRequired,
 };
 
 export default ProtectedRoute;

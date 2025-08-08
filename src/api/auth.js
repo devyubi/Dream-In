@@ -161,7 +161,9 @@ export const signInWithKakao = async () => {
       provider: "kakao",
       options: {
         scopes: "profile_nickname profile_image account_email",
-        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || window.location.origin}/auth/callback`,
+        redirectTo: `${
+          process.env.NEXT_PUBLIC_SITE_URL || window.location.origin
+        }/auth/callback`,
       },
     });
 
@@ -243,54 +245,36 @@ export const getUserLoginType = user => {
 export const isSocialLoginUser = user => {
   return getUserLoginType(user) === "social";
 };
-// src/api/auth.js에 추가할 함수들
 
-/**
- * 비밀번호 변경 함수
- */
+// ===== 비밀번호 변경 함수(정리 버전) =====
+// 중복 호출 제거, 에러/경고 로그를 console.log로 통일
 export const changePassword = async (currentPassword, newPassword) => {
   try {
-    // 1. 현재 사용자 확인
-    const { data: user, error: userError } = await supabase.auth.getUser();
+    console.log("=== 비밀번호 변경 시작 ===");
 
-    if (userError || !user?.user) {
-      return {
-        success: false,
-        error: "로그인이 필요합니다.",
-      };
+    const { data: sessionData } = await supabase.auth.getSession();
+    if (!sessionData?.session) {
+      console.log("로그인 상태가 아닙니다.");
+      return { success: false, error: "로그인이 필요합니다." };
     }
 
-    // 2. 현재 비밀번호로 재인증
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email: user.user.email,
-      password: currentPassword,
-    });
-
-    if (signInError) {
-      return {
-        success: false,
-        error: "현재 비밀번호가 올바르지 않습니다.",
-      };
-    }
-
-    // 3. 새 비밀번호로 업데이트
-    const { error: updateError } = await supabase.auth.updateUser({
+    // 한 번만 호출
+    const { data, error } = await supabase.auth.updateUser({
       password: newPassword,
     });
 
-    if (updateError) {
-      return {
-        success: false,
-        error: updateError.message,
-      };
+    if (error) {
+      console.log("비밀번호 변경 실패:", error);
+      return { success: false, error: error.message };
     }
 
+    console.log("비밀번호 변경 성공:", data);
     return {
       success: true,
       message: "비밀번호가 성공적으로 변경되었습니다.",
     };
   } catch (error) {
-    console.error("비밀번호 변경 중 오류:", error);
+    console.log("비밀번호 변경 중 예외 발생:", error);
     return {
       success: false,
       error: "비밀번호 변경 중 오류가 발생했습니다.",
@@ -300,30 +284,24 @@ export const changePassword = async (currentPassword, newPassword) => {
 
 /**
  * 아이디(이메일) 찾기 함수
- * @param {string} nickname - 사용자 닉네임
- * @param {string} birthdate - 생년월일 (YYYY-MM-DD 형식)
- * @returns {Object} 성공/실패 결과
  */
 export const findUserEmail = async (nickname, birthdate) => {
   try {
-    // 프로필 테이블에서 닉네임과 생년월일이 일치하는 사용자 조회
     const { data, error } = await supabase
-      .from("profiles") // 프로필 테이블명 확인 필요
+      .from("profiles")
       .select("email, nickname, birthdate, created_at")
       .eq("nickname", nickname)
       .eq("birthdate", birthdate)
-      .single(); // 단일 결과만 반환
+      .single();
 
     if (error) {
       if (error.code === "PGRST116") {
-        // 데이터를 찾을 수 없는 경우
         return {
           success: false,
           error: "입력하신 정보와 일치하는 계정을 찾을 수 없습니다.",
         };
       }
-
-      console.error("아이디 찾기 에러:", error);
+      console.log("아이디 찾기 에러:", error);
       return {
         success: false,
         error: "아이디 찾기 중 오류가 발생했습니다.",
@@ -337,20 +315,19 @@ export const findUserEmail = async (nickname, birthdate) => {
       };
     }
 
-    // 이메일 마스킹 처리 (선택사항 - 보안을 위해)
     const maskedEmail = maskEmail(data.email);
 
     return {
       success: true,
       data: {
-        email: data.email, // 또는 maskedEmail 사용
+        email: data.email,
         maskedEmail: maskedEmail,
         nickname: data.nickname,
         joinDate: data.created_at,
       },
     };
   } catch (error) {
-    console.error("아이디 찾기 중 예외 발생:", error);
+    console.log("아이디 찾기 중 예외 발생:", error);
     return {
       success: false,
       error: "아이디 찾기 중 오류가 발생했습니다.",
@@ -358,19 +335,12 @@ export const findUserEmail = async (nickname, birthdate) => {
   }
 };
 
-/**
- * 이메일 마스킹 함수 (보안을 위해 일부 문자를 * 처리)
- * @param {string} email - 원본 이메일
- * @returns {string} 마스킹된 이메일
- */
+// 이메일 마스킹
 const maskEmail = email => {
   if (!email) return "";
-
   const [localPart, domain] = email.split("@");
-
   if (!localPart || !domain) return email;
 
-  // 로컬 파트 마스킹 (앞 2자리와 뒤 1자리만 보여주기)
   let maskedLocal;
   if (localPart.length <= 3) {
     maskedLocal = localPart[0] + "*".repeat(localPart.length - 1);
@@ -380,15 +350,11 @@ const maskEmail = email => {
       "*".repeat(localPart.length - 3) +
       localPart.slice(-1);
   }
-
   return `${maskedLocal}@${domain}`;
 };
 
 /**
- * 여러 계정이 있을 수 있는 경우를 위한 함수
- * @param {string} nickname - 사용자 닉네임
- * @param {string} birthdate - 생년월일
- * @returns {Object} 성공/실패 결과 (복수 결과 가능)
+ * 여러 계정이 있을 수 있는 경우
  */
 
 export const findUserEmails = async (nickname, birthdate) => {
@@ -400,7 +366,7 @@ export const findUserEmails = async (nickname, birthdate) => {
       .eq("birthdate", birthdate);
 
     if (error) {
-      console.error("아이디 찾기 에러:", error);
+      console.log("아이디 찾기 에러:", error);
       return {
         success: false,
         error: "아이디 찾기 중 오류가 발생했습니다.",
@@ -414,7 +380,6 @@ export const findUserEmails = async (nickname, birthdate) => {
       };
     }
 
-    // 여러 계정 처리
     const accounts = data.map(account => ({
       email: account.email,
       maskedEmail: maskEmail(account.email),
@@ -428,7 +393,7 @@ export const findUserEmails = async (nickname, birthdate) => {
       count: accounts.length,
     };
   } catch (error) {
-    console.error("아이디 찾기 중 예외 발생:", error);
+    console.log("아이디 찾기 중 예외 발생:", error);
     return {
       success: false,
       error: "아이디 찾기 중 오류가 발생했습니다.",

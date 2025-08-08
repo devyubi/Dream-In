@@ -1,46 +1,48 @@
 // src/pages/ProfileEditPage.jsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getCurrentUserProfile } from "../api/auth";
 import { useAuth } from "../contexts/AuthContext";
 import { useProfileImageUpload } from "../hooks/useProfileImageUpload";
 import ProfileImage from "../components/user/ProfileImage";
 
 const ProfileEditPage = () => {
-  const [profile, setProfile] = useState(null);
   const [saving, setSaving] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [hasChanges, setHasChanges] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false); // 삭제 모드
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  const { user, refreshProfile } = useAuth();
+  const { user, profile, loading, isAuthenticated, reloadProfile } = useAuth();
   const { uploadProfileImage, deleteProfileImage } = useProfileImageUpload();
   const navigate = useNavigate();
 
+  // Auth 부트가 끝났고 로그인 상태인데 profile이 없으면 한 번 더 불러오기
   useEffect(() => {
-    const fetchProfile = async () => {
-      const data = await getCurrentUserProfile();
-      if (data) setProfile(data);
-    };
-    fetchProfile();
-  }, []);
+    if (!loading && isAuthenticated && !profile) {
+      reloadProfile();
+    }
+  }, [loading, isAuthenticated, profile, reloadProfile]);
+
+  // 보호 게이트: 부트 끝나고 비로그인이면 이동
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      navigate("/login", { replace: true });
+    }
+  }, [loading, isAuthenticated, navigate]);
 
   // 이미지 선택 핸들러
-  const handleImageSelect = (file, previewUrl) => {
+  const handleImageSelect = (file, url) => {
     setSelectedFile(file);
-    setPreviewUrl(previewUrl);
+    setPreviewUrl(url);
     setHasChanges(true);
-    setIsDeleting(false); // 새 이미지 선택 시 삭제 모드 해제
+    setIsDeleting(false);
   };
 
-  // 저장 핸들러
   const handleSave = async () => {
     if (!hasChanges) {
       navigate("/profile");
       return;
     }
-
     if (!user?.id) {
       alert("사용자 정보를 찾을 수 없습니다.");
       return;
@@ -49,25 +51,17 @@ const ProfileEditPage = () => {
     setSaving(true);
     try {
       let result;
-
       if (isDeleting) {
-        // 이미지 삭제
-
         result = await deleteProfileImage(user.id);
       } else if (selectedFile) {
-        // 새 이미지 업로드
-
         result = await uploadProfileImage(selectedFile, user.id);
       } else {
-        // 변경사항 없음
         navigate("/profile");
         return;
       }
 
       if (result.success) {
-        // AuthContext 프로필 새로고침
-        await refreshProfile();
-
+        await reloadProfile(); // 저장 후 최신 프로필 동기화
         alert(
           isDeleting
             ? "프로필 이미지가 삭제되었습니다!"
@@ -75,18 +69,17 @@ const ProfileEditPage = () => {
         );
         navigate("/profile");
       } else {
-        console.error("저장 실패:", result.error);
+        console.log("저장 실패:", result.error);
         alert("저장에 실패했습니다: " + result.error);
       }
-    } catch (error) {
-      console.error("저장 중 오류:", error);
+    } catch (e) {
+      console.log("저장 중 오류:", e);
       alert("저장 중 오류가 발생했습니다.");
     } finally {
       setSaving(false);
     }
   };
 
-  // 취소 핸들러
   const handleCancel = () => {
     if (
       hasChanges &&
@@ -97,7 +90,6 @@ const ProfileEditPage = () => {
     navigate("/profile");
   };
 
-  // 이미지 삭제 핸들러
   const handleImageDelete = () => {
     if (window.confirm("프로필 이미지를 삭제하시겠습니까?")) {
       setSelectedFile(null);
@@ -107,10 +99,12 @@ const ProfileEditPage = () => {
     }
   };
 
-  if (!profile)
+  // 초기 로딩 또는 프로필 아직 없음
+  if (loading || (isAuthenticated && !profile)) {
     return (
       <div style={{ textAlign: "center", padding: "2rem" }}>로딩 중...</div>
     );
+  }
 
   return (
     <div className="profile-edit-page">
@@ -154,7 +148,7 @@ const ProfileEditPage = () => {
       </div>
 
       <div className="edit-actions">
-        {(profile.profile_image_url || previewUrl) && !isDeleting && (
+        {(profile?.profile_image_url || previewUrl) && !isDeleting && (
           <button onClick={handleImageDelete} className="delete-button">
             프로필 이미지 삭제
           </button>
@@ -178,48 +172,12 @@ const ProfileEditPage = () => {
       </div>
 
       <style>{`
-        .profile-edit-page {
-          max-width: 400px;
-          margin: 0 auto;
-          text-align: center;
-          padding: 2rem;
-        }
-        .edit-actions {
-          margin-top: 1.5rem;
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-        }
-        .delete-button {
-          background-color: #ef4444;
-          color: white;
-          padding: 12px;
-          border: none;
-          border-radius: 6px;
-          cursor: pointer;
-          font-size: 14px;
-        }
-        .save-button {
-          color: white;
-          padding: 12px;
-          border: none;
-          border-radius: 6px;
-          cursor: pointer;
-          font-size: 14px;
-          font-weight: bold;
-        }
-        .cancel-button {
-          background-color: #6c757d;
-          color: white;
-          padding: 12px;
-          border: none;
-          border-radius: 6px;
-          cursor: pointer;
-          font-size: 14px;
-        }
-        .save-button:disabled {
-          cursor: not-allowed;
-        }
+        .profile-edit-page { max-width: 400px; margin: 0 auto; text-align: center; padding: 2rem; }
+        .edit-actions { margin-top: 1.5rem; display: flex; flex-direction: column; gap: 10px; }
+        .delete-button { background-color: #ef4444; color: white; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; }
+        .save-button { color: white; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; }
+        .cancel-button { background-color: #6c757d; color: white; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; }
+        .save-button:disabled { cursor: not-allowed; }
       `}</style>
     </div>
   );
