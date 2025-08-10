@@ -103,7 +103,14 @@ function FavoriteList() {
                   <img src="/images/fill_star.png" alt="즐겨찾기 취소" />
                 </List.ListItemFavorites>
               </List.ListItemUser>
-              <List.ListItemTitle>{item.title}</List.ListItemTitle>
+              <List.ListItemTitle>
+                {item.title}
+                {item.type === "dream" && item.category && (
+                  <List.ListItemCategory>
+                    #{item.category}
+                  </List.ListItemCategory>
+                )}
+              </List.ListItemTitle>
               <List.ListItemDetail>{item.detail}</List.ListItemDetail>
               <List.ListItemDelete
                 onClick={e => handleDeleteFavorite(e, item)}

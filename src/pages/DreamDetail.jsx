@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import BackButton from "../components/common/BackButton";
 import Container from "../components/common/Container";
@@ -15,6 +15,26 @@ function DreamDetail() {
   const { state: dream } = useLocation();
   const [aiResult, setAiResult] = useState("");
   const [loading, setLoading] = useState(false);
+  const [dreamList, setDreamList] = useState([]);
+
+  // 해몽 버튼 클릭 시 포커스 해몽 결과로
+  const resultAi = useRef(null);
+
+  useEffect(() => {
+    if ((aiResult || loading) && resultAi.current) {
+      const element = resultAi.current;
+      const elementTop = element.getBoundingClientRect().top;
+      const scrollTop =
+        window.pageYOffset || document.documentElement.scrollTop;
+      const offset =
+        elementTop +
+        scrollTop -
+        window.innerHeight / 2 +
+        element.offsetHeight / 2;
+
+      window.scrollTo({ top: offset, behavior: "smooth" });
+    }
+  }, [aiResult, loading]);
 
   const handleAiRequest = async e => {
     // console.log("꿈 내용:", dream.detail);
@@ -66,7 +86,7 @@ function DreamDetail() {
               {
                 role: "system", // GPT 역할 부여
                 content:
-                  "당신은 수십 년의 경험을 가진 심리학 기반의 전문 꿈 해몽가입니다. 사용자가 묘사한 꿈 속 상징들을 심층적으로 분석하고, 그것이 내면의 감정, 욕망, 혹은 무의식의 신호와 어떻게 연결되는지 설명해주세요. 해몽에는 정신분석학, 융 심리학의 관점도 활용해주세요. 항상 풍부하고 구체적인 문장으로 해석하며, 사용자의 삶과 연결되는 실질적인 조언도 함께 제공하세요. 답변은 자연스럽고 따뜻한 한국어로 작성해주세요.",
+                  "당신은 수십 년의 경험을 가진 세계 최고의 심리학 기반의 전문 꿈 해몽가입니다. 사용자가 묘사한 꿈 속 상징들을 심층적으로 분석하고, 그것이 내면의 감정, 욕망, 혹은 무의식의 신호와 어떻게 연결되는지 설명해주세요. 해몽에는 정신분석학, 융 심리학의 관점도 활용해주세요. 항상 풍부하고 구체적인 문장으로 해석하며, 사용자의 삶과 연결되는 실질적인 조언도 함께 제공하세요. 답변은 자연스럽고 따뜻한 한국어로 작성해주세요.",
               },
               {
                 role: "user", //사용자 입력내용을 작성
@@ -105,8 +125,6 @@ function DreamDetail() {
       });
     }
   };
-
-  const [dreamList, setDreamList] = useState([]);
 
   return (
     <Container>
@@ -157,17 +175,19 @@ function DreamDetail() {
           ></Detail.DetailAiResult>
         )} */}
 
-        {loading && (
-          <div>
-            <QuantumSpinner></QuantumSpinner>
-          </div>
-        )}
-        {!loading && aiResult && (
-          <DetailAiResultWrap>
-            <DetailAiResultTitle>꿈 해몽 결과</DetailAiResultTitle>
-            <Detail.DetailAiResult readonly value={aiResult} />
-          </DetailAiResultWrap>
-        )}
+        <div ref={resultAi}>
+          {loading && (
+            <div>
+              <QuantumSpinner></QuantumSpinner>
+            </div>
+          )}
+          {!loading && aiResult && (
+            <DetailAiResultWrap>
+              <DetailAiResultTitle>꿈 해몽 결과</DetailAiResultTitle>
+              <Detail.DetailAiResult readonly value={aiResult} />
+            </DetailAiResultWrap>
+          )}
+        </div>
       </Detail.DetailWrap>
     </Container>
   );
