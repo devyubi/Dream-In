@@ -6,7 +6,7 @@ import "../../css/header.css";
 
 function Header() {
   const { isDarkMode, setIsDarkMode } = useThemeContext();
-  const { isLoggedIn, setUser, signOut } = useAuth();
+  const { isLoggedIn, signOut } = useAuth();
 
   const navigate = useNavigate();
 
@@ -26,7 +26,7 @@ function Header() {
   const handleAuthClick = async () => {
     // 로그아웃
     if (isLoggedIn) {
-      setUser(null);
+      signOut(null);
       // 로그아웃 처리
       try {
         await signOut();

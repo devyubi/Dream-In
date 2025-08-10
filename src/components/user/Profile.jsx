@@ -2,11 +2,13 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import { deleteAccount } from "../../api/auth";
 import ProfileImage from "./ProfileImage";
 import UserMenu from "./UserMenu";
 import LoadingSpinner from "../common/LoadingSpinner";
 import Container from "../common/Container";
 import PasswordChangeModal from "./PasswordChangeModal";
+import DeleteAccountModal from "./DeleteAccountModal";
 import "../../css/Profile.css";
 
 // 소셜 로그인 사용자 확인 함수
@@ -33,6 +35,7 @@ const Profile = () => {
   } = useAuth();
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   // 인증되지 않은 사용자 리다이렉트
   useEffect(() => {
@@ -74,6 +77,22 @@ const Profile = () => {
     setIsPasswordModalOpen(false);
   }, []);
 
+  // 회원탈퇴 모달 핸들러
+  const openDeleteModal = useCallback(() => {
+    setIsDeleteModalOpen(true);
+  }, []);
+
+  const closeDeleteModal = useCallback(() => {
+    setIsDeleteModalOpen(false);
+  }, []);
+
+  // 회원탈퇴 성공 핸들러
+  const handleDeleteSuccess = useCallback(async () => {
+    await signOut();
+    navigate("/", { replace: true });
+    alert("회원탈퇴가 완료되었습니다.");
+  }, [signOut, navigate]);
+
   // 메뉴 아이템 정의
   const menuItems = useMemo(() => {
     const baseItems = [
@@ -106,13 +125,13 @@ const Profile = () => {
         description: "문의사항이나 도움이 필요하시면 연락주세요",
         onClick: () => navigate("/support"),
       },
+      // 회원탈퇴 메뉴 추가
       {
-        id: "members",
-        className: "members",
-        icon: <img src="/images/delete_account.svg" alt="Members" />,
+        id: "delete-account",
+        icon: "🗑️",
         title: "회원탈퇴",
         description: "계정을 영구적으로 삭제합니다",
-        onClick: () => navigate("/account/delete"),
+        onClick: openDeleteModal,
         isDestructive: true,
       },
     ];
@@ -123,7 +142,7 @@ const Profile = () => {
       ...(user && !isSocialLoginUser(user) ? [passwordItem] : []),
       ...bottomItems,
     ];
-  }, [navigate, handleSignOut, user, openPasswordModal]);
+  }, [navigate, user, openPasswordModal, openDeleteModal]);
 
   // 프로필 이미지 클릭 핸들러
   const handleProfileImageClick = useCallback(() => {
@@ -303,6 +322,14 @@ const Profile = () => {
       <PasswordChangeModal
         isOpen={isPasswordModalOpen}
         onClose={closePasswordModal}
+      />
+
+      {/* 회원탈퇴 모달 */}
+      <DeleteAccountModal
+        isOpen={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        user={user}
+        onDeleteSuccess={handleDeleteSuccess}
       />
     </Container>
   );

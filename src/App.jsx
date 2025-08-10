@@ -25,6 +25,7 @@ import SignupPage from "./pages/SignupPage";
 import SleepRecordPage from "./pages/SleepRecordPage";
 import Support from "./pages/Support";
 import TermsOfService from "./pages/TermsOfService";
+import FindEmailPage from "./pages/FindEmailPage";
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
             <Route path="/support" element={<Support />}></Route>
             <Route path="/profile" element={<Profile />}></Route>
             <Route path="/profile/edit" element={<ProfileEditPage />}></Route>
+            <Route path="/find-email" element={<FindEmailPage />} />
 
             <Route path="/dreamwrite" element={<DreamWritePage />}></Route>
             <Route path="/dreamlist" element={<DreamList />}></Route>

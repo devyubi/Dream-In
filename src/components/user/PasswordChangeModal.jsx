@@ -21,7 +21,46 @@ const PasswordChangeModal = ({ isOpen, onClose }) => {
 
   const firstInputRef = useRef(null);
 
-  // 모달이 열릴 때마다 상태 초기화 + 포커스
+  // 모달이 처음 열릴 때만 상태 초기화 + 포커스
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  useEffect(() => {
+    if (isOpen && !isInitialized) {
+      // 폼 데이터 초기화
+      setFormData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+
+      // 유효성 검사 에러 초기화
+      setValidationErrors({});
+
+      // 비밀번호 표시 상태 초기화
+      setShowPasswords({
+        current: false,
+        new: false,
+        confirm: false,
+      });
+
+      // 패스워드 변경 훅 상태 초기화
+      if (resetState) {
+        resetState();
+      }
+
+      setIsInitialized(true);
+
+      // 첫 번째 입력 필드에 포커스
+      setTimeout(() => {
+        if (firstInputRef.current) {
+          firstInputRef.current.focus();
+        }
+      }, 100);
+    } else if (!isOpen) {
+      setIsInitialized(false);
+    }
+  }, [isOpen, isInitialized, resetState]);
+
   // 성공 시 모달 자동 닫기
   useEffect(() => {
     if (success) {
@@ -32,9 +71,31 @@ const PasswordChangeModal = ({ isOpen, onClose }) => {
     }
   }, [success, onClose]);
 
+  // 모달 닫기 함수 (상태 초기화 포함)
+  const handleClose = () => {
+    // 모달 닫기 전에 상태 초기화
+    setFormData({
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    });
+    setValidationErrors({});
+    setShowPasswords({
+      current: false,
+      new: false,
+      confirm: false,
+    });
+    resetState();
+
+    // 부모 컴포넌트의 onClose 호출
+    onClose();
+  };
+
   const handleInputChange = e => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+
+    // 해당 필드의 유효성 검사 에러 제거
     if (validationErrors[name]) {
       setValidationErrors(prev => ({ ...prev, [name]: "" }));
     }
@@ -42,8 +103,11 @@ const PasswordChangeModal = ({ isOpen, onClose }) => {
 
   const validateForm = () => {
     const errors = {};
-    if (!formData.currentPassword)
+
+    if (!formData.currentPassword) {
       errors.currentPassword = "현재 비밀번호를 입력해주세요.";
+    }
+
     if (!formData.newPassword) {
       errors.newPassword = "새 비밀번호를 입력해주세요.";
     } else if (formData.newPassword.length < 6) {
@@ -51,11 +115,13 @@ const PasswordChangeModal = ({ isOpen, onClose }) => {
     } else if (formData.newPassword === formData.currentPassword) {
       errors.newPassword = "현재 비밀번호와 다른 비밀번호를 입력해주세요.";
     }
+
     if (!formData.confirmPassword) {
       errors.confirmPassword = "새 비밀번호를 다시 입력해주세요.";
     } else if (formData.newPassword !== formData.confirmPassword) {
       errors.confirmPassword = "새 비밀번호가 일치하지 않습니다.";
     }
+
     return errors;
   };
 
@@ -75,7 +141,7 @@ const PasswordChangeModal = ({ isOpen, onClose }) => {
 
     if (result?.success) {
       alert("비밀번호가 변경되었습니다.");
-      onClose();
+      handleClose(); // 성공 시 상태 초기화와 함께 모달 닫기
     }
   };
 
@@ -83,15 +149,30 @@ const PasswordChangeModal = ({ isOpen, onClose }) => {
     setShowPasswords(prev => ({ ...prev, [field]: !prev[field] }));
   };
 
+  // ESC 키로 모달 닫기
+  useEffect(() => {
+    const handleEscKey = e => {
+      if (e.key === "Escape" && isOpen && !isLoading) {
+        handleClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("keydown", handleEscKey);
+      return () => {
+        document.removeEventListener("keydown", handleEscKey);
+      };
+    }
+  }, [isOpen, isLoading]);
+
   if (!isOpen) return null;
 
   return (
     <div
       className="password-modal-overlay"
-      // 오버레이 빈 영역 클릭 시에만 닫기 + 로딩 중엔 닫기 금지
       onMouseDown={e => {
         if (isLoading) return;
-        if (e.target === e.currentTarget) onClose();
+        if (e.target === e.currentTarget) handleClose();
       }}
     >
       <div
@@ -102,11 +183,12 @@ const PasswordChangeModal = ({ isOpen, onClose }) => {
           <h2>비밀번호 변경</h2>
           <button
             className="password-modal-close"
-            onClick={onClose}
+            onClick={handleClose}
             type="button"
             disabled={isLoading}
+            aria-label="모달 닫기"
           >
-            닫기
+            ✕
           </button>
         </div>
 
@@ -123,23 +205,31 @@ const PasswordChangeModal = ({ isOpen, onClose }) => {
                 value={formData.currentPassword}
                 onChange={handleInputChange}
                 placeholder="현재 비밀번호를 입력하세요"
-                // 입력 자체가 안 되면 일단 disabled는 잠시 빼고 원인 파악
-                // disabled={isLoading}
                 autoComplete="current-password"
+                aria-describedby={
+                  validationErrors.currentPassword
+                    ? "currentPassword-error"
+                    : undefined
+                }
               />
               <button
                 type="button"
                 className="password-toggle-btn"
                 onClick={() => togglePasswordVisibility("current")}
-                disabled={isLoading}
-                aria-label={showPasswords.current ? "숨김" : "보기"}
+                aria-label={
+                  showPasswords.current ? "비밀번호 숨김" : "비밀번호 보기"
+                }
                 title={showPasswords.current ? "숨김" : "보기"}
               >
-                {showPasswords.current ? "숨김" : "보기"}
+                {showPasswords.current ? "👁️" : "👁️‍🗨️"}
               </button>
             </div>
             {validationErrors.currentPassword && (
-              <span className="error-message">
+              <span
+                id="currentPassword-error"
+                className="error-message"
+                role="alert"
+              >
                 {validationErrors.currentPassword}
               </span>
             )}
@@ -156,22 +246,30 @@ const PasswordChangeModal = ({ isOpen, onClose }) => {
                 value={formData.newPassword}
                 onChange={handleInputChange}
                 placeholder="새 비밀번호를 입력하세요 (최소 6자)"
-                // disabled={isLoading}
                 autoComplete="new-password"
+                aria-describedby={
+                  validationErrors.newPassword ? "newPassword-error" : undefined
+                }
               />
               <button
                 type="button"
                 className="password-toggle-btn"
                 onClick={() => togglePasswordVisibility("new")}
                 disabled={isLoading}
-                aria-label={showPasswords.new ? "숨김" : "보기"}
+                aria-label={
+                  showPasswords.new ? "비밀번호 숨김" : "비밀번호 보기"
+                }
                 title={showPasswords.new ? "숨김" : "보기"}
               >
-                {showPasswords.new ? "숨김" : "보기"}
+                {showPasswords.new ? "👁️" : "👁️‍🗨️"}
               </button>
             </div>
             {validationErrors.newPassword && (
-              <span className="error-message">
+              <span
+                id="newPassword-error"
+                className="error-message"
+                role="alert"
+              >
                 {validationErrors.newPassword}
               </span>
             )}
@@ -188,31 +286,46 @@ const PasswordChangeModal = ({ isOpen, onClose }) => {
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
                 placeholder="새 비밀번호를 다시 입력하세요"
-                // disabled={isLoading}
+                disabled={isLoading}
                 autoComplete="new-password"
+                aria-describedby={
+                  validationErrors.confirmPassword
+                    ? "confirmPassword-error"
+                    : undefined
+                }
               />
               <button
                 type="button"
                 className="password-toggle-btn"
                 onClick={() => togglePasswordVisibility("confirm")}
                 disabled={isLoading}
-                aria-label={showPasswords.confirm ? "숨김" : "보기"}
+                aria-label={
+                  showPasswords.confirm ? "비밀번호 숨김" : "비밀번호 보기"
+                }
                 title={showPasswords.confirm ? "숨김" : "보기"}
               >
-                {showPasswords.confirm ? "숨김" : "보기"}
+                {showPasswords.confirm ? "👁️" : "👁️‍🗨️"}
               </button>
             </div>
             {validationErrors.confirmPassword && (
-              <span className="error-message">
+              <span
+                id="confirmPassword-error"
+                className="error-message"
+                role="alert"
+              >
                 {validationErrors.confirmPassword}
               </span>
             )}
           </div>
 
           {/* 에러/성공 메시지 */}
-          {error && <div className="error-message global-error">{error}</div>}
+          {error && (
+            <div className="error-message global-error" role="alert">
+              {error}
+            </div>
+          )}
           {success && (
-            <div className="success-message">
+            <div className="success-message" role="alert">
               비밀번호가 성공적으로 변경되었습니다!
             </div>
           )}
@@ -221,7 +334,7 @@ const PasswordChangeModal = ({ isOpen, onClose }) => {
           <div className="password-modal-buttons">
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleClose}
               className="cancel-btn"
               disabled={isLoading}
             >
