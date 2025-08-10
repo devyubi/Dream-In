@@ -114,12 +114,13 @@ section {
 
 .auth_box {
   display: flex;
+  align-items: center;
+  justify-content: center;
   background: #f7f7f7;
   padding: 20px;
   border-radius: 20px;
   box-sizing: border-box;
   flex-wrap: wrap;
-  align-items: center;
   gap: 12px;
 }
 

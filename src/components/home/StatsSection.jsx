@@ -10,25 +10,25 @@ export function StatsSection() {
   const iconSet = [
     [
       `/images/total_${isDarkMode ? "dark" : "light"}.svg`,
-      24,
+      " 3",
       "총 꿈 기록",
       "/dreamlist",
     ],
     [
       `/images/calendar_${isDarkMode ? "dark" : "light"}.svg`,
-      13,
+      "3",
       "총 감정 기록",
       "/emotionlist",
     ],
     [
       `/images/clock_${isDarkMode ? "dark" : "light"}.svg`,
-      8,
+      "7시간 12분",
       "평균 수면 시간",
       "/sleeprecord",
     ],
     [
       `/images/ai_${isDarkMode ? "dark" : "light"}.svg`,
-      4,
+      "4",
       "주간 꿈 해몽",
       "/aidreamsresult",
     ],

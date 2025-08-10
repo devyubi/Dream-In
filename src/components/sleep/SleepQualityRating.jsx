@@ -1,7 +1,6 @@
-import { FaStar } from "react-icons/fa6";
-import { FaRegStar } from "react-icons/fa";
-import "../../css/sleep/sleepqualityrating.css";
 import { useState } from "react";
+import { FaStar } from "react-icons/fa6";
+import "../../css/sleep/sleepqualityrating.css";
 import PostButton from "../common/PostButton";
 import TextArea from "../common/TextArea";
 

@@ -166,32 +166,39 @@ const LoginForm = ({
       </form>
 
       {/* 이메일/비밀번호 찾기 링크 */}
-      {/* {showPasswordReset && (
-        <div className={styles.loginLinks}>
-          <button
-            type="button"
-            className={styles.linkButton}
-            onClick={openResetPasswordModal}
-            disabled={loading}
-          >
-            비밀번호 찾기
-          </button>
-        </div>
-      )} */}
-      <Link
-        to="/find-password"
-        className={styles.linkButton}
+      <div
         style={{
-          cursor: "pointer",
-          textAlign: "center",
-          justifyContent: "center",
           display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
           marginTop: "10px",
-          textDecoration: "none",
+          gap: "8px",
         }}
       >
-        비밀번호 찾기
-      </Link>
+        {/* 이메일 찾기 링크 */}
+        <Link
+          to="/find-email"
+          className={styles.linkButton}
+          style={{
+            cursor: "pointer",
+            textDecoration: "none",
+          }}
+        >
+          이메일 찾기
+        </Link>
+        <span>|</span>
+        {/* 비밀번호 찾기 링크 */}
+        <Link
+          to="/find-password"
+          className={styles.linkButton}
+          style={{
+            cursor: "pointer",
+            textDecoration: "none",
+          }}
+        >
+          비밀번호 찾기
+        </Link>
+      </div>
 
       {/* 소셜 로그인 */}
       {showSocialLogin && (

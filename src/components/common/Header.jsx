@@ -6,27 +6,27 @@ import "../../css/header.css";
 
 function Header() {
   const { isDarkMode, setIsDarkMode } = useThemeContext();
-  const { isLoggedIn, setUser, signOut } = useAuth();
+  const { isAuthenticated, signOut } = useAuth();
 
   const navigate = useNavigate();
 
   // 로그인 상태 및 다크모드 상태에 따라 로고 및 아이콘 경로 설정
   const logoSrc = "/images/logo.png";
   const authIconSrc = isDarkMode
-    ? isLoggedIn
+    ? isAuthenticated
       ? "/images/logout_dark.svg"
       : "/images/login_dark.svg"
-    : isLoggedIn
+    : isAuthenticated
       ? "/images/logout_light.svg"
       : "/images/login_light.svg";
 
-  const authText = isLoggedIn ? "로그아웃" : "로그인";
+  const authText = isAuthenticated ? "로그아웃" : "로그인";
 
   // 로그인 또는 로그아웃 버튼 클릭 시 동작
   const handleAuthClick = async () => {
     // 로그아웃
-    if (isLoggedIn) {
-      setUser(null);
+    if (isAuthenticated) {
+      signOut(null);
       // 로그아웃 처리
       try {
         await signOut();
