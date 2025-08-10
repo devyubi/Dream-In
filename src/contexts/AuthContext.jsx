@@ -1,4 +1,4 @@
-// src/contexts/AuthContext.jsx
+// src/contexts/AuthContext.jsx 완전판
 import PropTypes from "prop-types";
 import {
   createContext,
@@ -11,6 +11,7 @@ import { supabase } from "../api/supabaseClient";
 import { AuthService } from "../services/authService";
 import { FileUploadService, UserService } from "../services/userService";
 import { logError } from "../utils/errorHandler";
+import { checkAccountDeleted, checkEmailAvailability } from "../api/auth";
 
 const AuthContext = createContext({});
 
@@ -21,14 +22,13 @@ export const useAuth = () => {
 };
 
 // ---- 로컬 캐시 유틸 ----
-const PROFILE_CACHE_KEY = "profile_cache"; // 프로필 스냅샷을 저장
+const PROFILE_CACHE_KEY = "profile_cache";
 
 const loadProfileCache = () => {
   try {
     const raw = localStorage.getItem(PROFILE_CACHE_KEY);
     return raw ? JSON.parse(raw) : null;
   } catch (e) {
-    // console.log("loadProfileCache:", e);
     return null;
   }
 };
@@ -45,7 +45,6 @@ const saveProfileCache = profile => {
   }
 };
 
-// 과거 키 정리(예전 구현 잔여물 제거)
 const purgeLegacyStorage = () => {
   try {
     localStorage.removeItem("auth_session");
@@ -57,7 +56,6 @@ const purgeLegacyStorage = () => {
   }
 };
 
-// Public 버킷 가정: 표시용 URL 생성
 const makeAvatarUrl = (path, updatedAt) => {
   if (!path) return null;
   try {
@@ -65,7 +63,6 @@ const makeAvatarUrl = (path, updatedAt) => {
     const ver = encodeURIComponent(updatedAt || Date.now());
     return `${data.publicUrl}?v=${ver}`;
   } catch (e) {
-    // console.log("makeAvatarUrl:", e);
     return null;
   }
 };
@@ -75,49 +72,86 @@ export const AuthProvider = ({ children }) => {
   const [session, setSession] = useState(null);
   const [profile, setProfile] = useState(null);
   const [avatarUrl, setAvatarUrl] = useState(null);
-
-  // 앱 첫 부트 완료 여부 (라우트 게이트 등에서 사용)
   const [loading, setLoading] = useState(true);
-  // 버튼/폼 등 작업 로딩
   const [authLoading, setAuthLoading] = useState(false);
 
   const isAuthenticated = !!session && !!user;
   const isLoggedIn = isAuthenticated;
 
-  // 프로필을 DB에서 한 번 가져오기 (백그라운드 호출 가능)
-  const fetchProfileOnce = useCallback(async uid => {
+  // 계정 삭제 상태 체크
+  const checkAndHandleDeletedAccount = useCallback(async userId => {
+    if (!userId) return false;
+
     try {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("auth_user_id", uid)
-        .maybeSingle();
+      const { deleted } = await checkAccountDeleted(userId);
 
-      if (error) {
-        // console.log("fetchProfileOnce error:", error);
-        return null;
+      if (deleted) {
+        console.log("삭제된 계정 감지");
+        await supabase.auth.signOut();
+        setSession(null);
+        setUser(null);
+        setProfile(null);
+        saveProfileCache(null);
+        throw new Error("탈퇴한 유저 이메일입니다.");
       }
 
-      if (data) {
-        setProfile(data);
-        saveProfileCache(data);
-        return data;
-      }
-
-      return null;
-    } catch (e) {
-      // console.log("fetchProfileOnce exception:", e);
-      return null;
+      return false;
+    } catch (error) {
+      throw error;
     }
   }, []);
 
-  // 표시용 아바타 URL 계산 (Public 버킷 기준)
+  const checkDeletedAccountByEmail = useCallback(async email => {
+    try {
+      const result = await checkEmailAvailability(email);
+      return { deleted: result.reason === "deleted" };
+    } catch (error) {
+      console.error("이메일 삭제 상태 확인 오류:", error);
+      return { deleted: false };
+    }
+  }, []);
+
+  const fetchProfileOnce = useCallback(
+    async uid => {
+      try {
+        await checkAndHandleDeletedAccount(uid);
+
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("auth_user_id", uid)
+          .eq("is_deleted", false)
+          .is("deleted_at", null)
+          .maybeSingle();
+
+        if (error) {
+          console.log("fetchProfileOnce error:", error);
+          return null;
+        }
+
+        if (data) {
+          setProfile(data);
+          saveProfileCache(data);
+          return data;
+        }
+
+        return null;
+      } catch (e) {
+        console.log("fetchProfileOnce exception:", e);
+        if (e.message.includes("탈퇴한")) {
+          throw e;
+        }
+        return null;
+      }
+    },
+    [checkAndHandleDeletedAccount],
+  );
+
   useEffect(() => {
     const url = makeAvatarUrl(profile?.profile_image_url, profile?.updated_at);
     setAvatarUrl(url);
   }, [profile?.profile_image_url, profile?.updated_at]);
 
-  // ---- 초기 부팅: 캐시 -> 즉시 표시, 세션만 확인하면 loading=false, 프로필은 백그라운드 ----
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -125,22 +159,24 @@ export const AuthProvider = ({ children }) => {
       purgeLegacyStorage();
 
       try {
-        // 1) 캐시 먼저 반영 (깜빡임 방지)
         const cached = loadProfileCache();
         if (cached) {
           setProfile(cached);
         }
 
-        // 2) 세션 확인
         const { data } = await supabase.auth.getSession();
         if (!mounted) return;
         const s = data?.session;
 
         if (s?.user?.id) {
-          setSession(s);
-          setUser(s.user);
-          // 3) 최신 프로필은 백그라운드로 로드 (await 제거)
-          fetchProfileOnce(s.user.id);
+          try {
+            await checkAndHandleDeletedAccount(s.user.id);
+            setSession(s);
+            setUser(s.user);
+            fetchProfileOnce(s.user.id);
+          } catch (error) {
+            console.log("초기화 중 삭제된 계정 감지:", error.message);
+          }
         } else {
           setSession(null);
           setUser(null);
@@ -149,9 +185,8 @@ export const AuthProvider = ({ children }) => {
         }
       } catch (e) {
         if (!mounted) return;
-        // console.log("bootstrap exception:", e);
+        console.log("bootstrap exception:", e);
       } finally {
-        // ✅ 세션 확인만 끝났으면 무조건 loading=false
         if (mounted) {
           setLoading(false);
         }
@@ -161,12 +196,11 @@ export const AuthProvider = ({ children }) => {
     return () => {
       mounted = false;
     };
-  }, [fetchProfileOnce]);
+  }, [fetchProfileOnce, checkAndHandleDeletedAccount]);
 
-  // ---- Auth 이벤트: 최소 로직 (로그아웃/로그인 시 캐시 정합성 유지) ----
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange(async (event, s) => {
-      // console.log("onAuthStateChange:", event, !!s, s?.user?.email);
+      console.log("onAuthStateChange:", event, !!s, s?.user?.email);
 
       if (event === "SIGNED_OUT") {
         setSession(null);
@@ -178,31 +212,51 @@ export const AuthProvider = ({ children }) => {
       }
 
       if (s?.user?.id) {
-        setSession(s);
-        setUser(s.user);
-        // 프로필은 백그라운드로
-        fetchProfileOnce(s.user.id);
-        setLoading(false);
+        try {
+          await checkAndHandleDeletedAccount(s.user.id);
+          setSession(s);
+          setUser(s.user);
+          fetchProfileOnce(s.user.id);
+          setLoading(false);
+        } catch (error) {
+          console.log("Auth 상태 변경 중 삭제된 계정 감지:", error.message);
+          setLoading(false);
+        }
       } else {
         setLoading(false);
       }
     });
 
     return () => data.subscription.unsubscribe();
-  }, [fetchProfileOnce]);
+  }, [fetchProfileOnce, checkAndHandleDeletedAccount]);
 
-  // ---- 이메일/비밀번호 로그인 ----
+  // 로그인
   const signIn = useCallback(
     async (email, password) => {
       setAuthLoading(true);
       try {
+        const { deleted } = await checkDeletedAccountByEmail(email);
+        if (deleted) {
+          return {
+            success: false,
+            error: "탈퇴한 유저 이메일입니다.",
+          };
+        }
+
         const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
         if (error) {
-          // console.log("signIn:", error);
           return { success: false, error: error.message };
+        }
+
+        if (data.user?.id) {
+          try {
+            await checkAndHandleDeletedAccount(data.user.id);
+          } catch (checkError) {
+            return { success: false, error: checkError.message };
+          }
         }
 
         setSession(data.session);
@@ -220,19 +274,38 @@ export const AuthProvider = ({ children }) => {
         setAuthLoading(false);
       }
     },
-    [fetchProfileOnce],
+    [
+      fetchProfileOnce,
+      checkDeletedAccountByEmail,
+      checkAndHandleDeletedAccount,
+    ],
   );
 
-  // ---- 회원가입 ----
+  // 회원가입
   const signUp = useCallback(async userData => {
     setAuthLoading(true);
     try {
+      const emailCheck = await checkEmailAvailability(userData.email);
+
+      if (!emailCheck.available) {
+        return {
+          success: false,
+          error: emailCheck.message,
+        };
+      }
+
       const { data, error } = await supabase.auth.signUp({
         email: userData.email,
         password: userData.password,
       });
+
       if (error) {
-        // console.log("signUp:", error);
+        if (error.message.includes("User already registered")) {
+          return {
+            success: false,
+            error: "이미 가입된 이메일입니다.",
+          };
+        }
         return { success: false, error: error.message };
       }
 
@@ -251,14 +324,13 @@ export const AuthProvider = ({ children }) => {
           }
         }
 
-        // 프로필 생성
         const created = await UserService.createProfile({
           auth_user_id: authUser.id,
           email: userData.email,
           nickname: userData.nickname,
           birthdate: userData.birthdate || null,
           gender: userData.gender || null,
-          profile_image_url: profileImageUrl, // 없으면 null
+          profile_image_url: profileImageUrl,
         });
 
         if (!created?.success) {
@@ -284,13 +356,13 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // ---- 로그아웃 ----
+  // 로그아웃
   const signOut = useCallback(async () => {
     setAuthLoading(true);
     try {
       const { error } = await supabase.auth.signOut();
       if (error) {
-        // console.log("supabase.signOut:", error);
+        console.log("supabase.signOut:", error);
       }
       setSession(null);
       setUser(null);
@@ -298,14 +370,14 @@ export const AuthProvider = ({ children }) => {
       saveProfileCache(null);
       return { success: true };
     } catch (e) {
-      // console.log("signOut exception:", e);
+      console.log("signOut exception:", e);
       return { success: false, error: String(e?.message || e) };
     } finally {
       setAuthLoading(false);
     }
   }, []);
 
-  // ---- 프로필 수정 ----
+  // 프로필 수정
   const updateProfile = useCallback(
     async profileData => {
       setAuthLoading(true);
@@ -313,6 +385,8 @@ export const AuthProvider = ({ children }) => {
         if (!user?.id) {
           return { success: false, error: "로그인된 사용자가 없습니다." };
         }
+
+        await checkAndHandleDeletedAccount(user.id);
 
         let profileImageUrl = profileData.profileImageUrl;
         if (profileData.profileImage instanceof File) {
@@ -327,75 +401,99 @@ export const AuthProvider = ({ children }) => {
           nickname: profileData.nickname,
           birthdate: profileData.birthdate,
           gender: profileData.gender,
-          profile_image_url: profileImageUrl, // null 가능
+          profile_image_url: profileImageUrl,
         };
 
         const result = await UserService.updateProfile(user.id, updateData);
         if (result?.success) {
-          // 최신값 재조회 + 캐시 갱신 (백그라운드)
           fetchProfileOnce(user.id);
         }
         return result;
       } catch (e) {
         logError("updateProfile", e, { userId: user?.id });
+        if (e.message.includes("탈퇴한")) {
+          return { success: false, error: e.message };
+        }
         return { success: false, error: String(e?.message || e) };
       } finally {
         setAuthLoading(false);
       }
     },
-    [user?.id, fetchProfileOnce],
+    [user?.id, fetchProfileOnce, checkAndHandleDeletedAccount],
   );
 
-  // ---- 비밀번호 변경/재설정 ----
-  const updatePassword = useCallback(async newPassword => {
-    try {
-      const { data, error } = await supabase.auth.updateUser({
-        password: newPassword,
-      });
-      if (error) {
-        // console.log("updatePassword:", error);
-        return { success: false, error: error.message };
+  // 비밀번호 변경
+  const updatePassword = useCallback(
+    async newPassword => {
+      try {
+        if (user?.id) {
+          await checkAndHandleDeletedAccount(user.id);
+        }
+
+        const { data, error } = await supabase.auth.updateUser({
+          password: newPassword,
+        });
+        if (error) {
+          return { success: false, error: error.message };
+        }
+
+        return { success: true };
+      } catch (e) {
+        if (e.message.includes("탈퇴한")) {
+          return { success: false, error: e.message };
+        }
+        return { success: false, error: String(e?.message || e) };
       }
+    },
+    [user?.id, checkAndHandleDeletedAccount],
+  );
 
-      return { success: true };
-    } catch (e) {
-      // console.log("updatePassword exception:", e);
-      return { success: false, error: String(e?.message || e) };
-    }
-  }, []);
+  const resetPassword = useCallback(
+    async email => {
+      setAuthLoading(true);
+      try {
+        const { deleted } = await checkDeletedAccountByEmail(email);
+        if (deleted) {
+          return {
+            success: false,
+            error: "탈퇴한 유저 이메일입니다.",
+          };
+        }
 
-  const resetPassword = useCallback(async email => {
-    setAuthLoading(true);
-    try {
-      const result = await AuthService.resetPassword(email);
-      return result;
-    } catch (e) {
-      logError("resetPassword", e, { email });
-      return { success: false, error: String(e?.message || e) };
-    } finally {
-      setAuthLoading(false);
-    }
-  }, []);
+        const result = await AuthService.resetPassword(email);
+        return result;
+      } catch (e) {
+        logError("resetPassword", e, { email });
+        return { success: false, error: String(e?.message || e) };
+      } finally {
+        setAuthLoading(false);
+      }
+    },
+    [checkDeletedAccountByEmail],
+  );
 
-  // 외부에서 수동 새로고침이 필요할 때
   const reloadProfile = useCallback(async () => {
     if (user?.id) {
-      fetchProfileOnce(user.id);
+      try {
+        fetchProfileOnce(user.id);
+      } catch (error) {
+        if (error.message.includes("탈퇴한")) {
+          return;
+        }
+        throw error;
+      }
     }
   }, [user?.id, fetchProfileOnce]);
 
   const value = {
-    // 상태
     user,
     session,
     profile,
-    avatarUrl, // 표시용 URL (Public 버킷 가정)
-    loading, // 초기 세션 확인 끝나면 false
+    avatarUrl,
+    loading,
     authLoading,
     isAuthenticated,
     isLoggedIn,
-
-    // 메서드
     signIn,
     signUp,
     signOut,

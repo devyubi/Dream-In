@@ -1,10 +1,14 @@
 // src/components/auth/SignupForm.jsx
-import { useState, useCallback } from "react";
 import PropTypes from "prop-types";
+import { useCallback, useEffect, useState } from "react";
+import {
+  checkEmailAvailability,
+  checkNicknameDuplicate,
+  validateEmail,
+} from "../../api/auth";
 import { useForm } from "../../hooks/useForm";
 import { useImageUpload } from "../../hooks/useImageUpload";
 import { validateSignupForm } from "../../utils/validation";
-import { checkNicknameDuplicate } from "../../api/auth";
 import styles from "./SignupForm.module.css";
 
 const SignupForm = ({ onSubmit, onNicknameCheck, loading = false }) => {
@@ -12,6 +16,10 @@ const SignupForm = ({ onSubmit, onNicknameCheck, loading = false }) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [nicknameChecked, setNicknameChecked] = useState(false);
   const [nicknameCheckLoading, setNicknameCheckLoading] = useState(false);
+
+  // 이메일 체크 관련 상태
+  const [emailCheck, setEmailCheck] = useState(null);
+  const [emailChecking, setEmailChecking] = useState(false);
 
   const {
     values,
@@ -52,6 +60,41 @@ const SignupForm = ({ onSubmit, onNicknameCheck, loading = false }) => {
   const genderState = getFieldState("gender");
   const profileImageState = getFieldState("profileImage");
 
+  // 이메일 실시간 체크 (디바운스 적용)
+  useEffect(() => {
+    const checkEmail = async () => {
+      if (!values.email || !validateEmail(values.email)) {
+        setEmailCheck(null);
+        return;
+      }
+
+      setEmailChecking(true);
+      try {
+        const result = await checkEmailAvailability(values.email);
+        setEmailCheck(result);
+
+        // 이메일이 사용 불가능한 경우 폼 에러 설정
+        if (!result.available) {
+          setFieldError("email", result.message);
+        } else {
+          clearFieldError("email");
+        }
+      } catch (error) {
+        setEmailCheck({
+          available: false,
+          reason: "error",
+          message: "이메일 확인 중 오류가 발생했습니다.",
+        });
+        setFieldError("email", "이메일 확인 중 오류가 발생했습니다.");
+      } finally {
+        setEmailChecking(false);
+      }
+    };
+
+    const timer = setTimeout(checkEmail, 800); // 800ms 디바운스
+    return () => clearTimeout(timer);
+  }, [values.email, setFieldError, clearFieldError]);
+
   /**
    * 파일 입력 처리
    */
@@ -86,6 +129,12 @@ const SignupForm = ({ onSubmit, onNicknameCheck, loading = false }) => {
       if (name === "nickname") {
         setNicknameChecked(false);
         clearFieldError("nickname");
+      }
+
+      // 이메일 변경 시 체크 상태 초기화
+      if (name === "email") {
+        setEmailCheck(null);
+        clearFieldError("email");
       }
 
       formHandleChange(e);
@@ -147,6 +196,12 @@ const SignupForm = ({ onSubmit, onNicknameCheck, loading = false }) => {
    * 폼 제출
    */
   const handleFormSubmit = handleSubmit(async formData => {
+    // 이메일 체크 확인
+    if (emailCheck && !emailCheck.available) {
+      setFieldError("email", emailCheck.message);
+      return { success: false };
+    }
+
     // 닉네임 중복확인 체크
     if (!nicknameChecked) {
       setFieldError("nickname", "닉네임 중복확인을 해주세요.");
@@ -182,18 +237,43 @@ const SignupForm = ({ onSubmit, onNicknameCheck, loading = false }) => {
               onBlur={handleBlur}
               onKeyPress={handleKeyPress}
               placeholder="이메일을 입력하세요"
-              className={emailState.showError ? styles.error : ""}
+              className={
+                emailState.showError
+                  ? styles.error
+                  : emailCheck?.available
+                    ? styles.success
+                    : ""
+              }
               disabled={loading}
               autoComplete="email"
             />
             <span className={styles.inputIcon}>
-              <img
-                className={styles.inputSvg}
-                src="/images/email_light.svg"
-                alt="email"
-              />
+              {emailChecking ? (
+                <div className={styles.spinner}></div>
+              ) : (
+                <img
+                  className={styles.inputSvg}
+                  src="/images/email_light.svg"
+                  alt="email"
+                />
+              )}
             </span>
           </div>
+
+          {/* 이메일 체크 결과 표시 */}
+          {emailChecking && !emailState.showError && (
+            <span className={styles.checkingText}>이메일 확인 중...</span>
+          )}
+
+          {emailCheck &&
+            !emailChecking &&
+            emailCheck.available &&
+            !emailState.showError && (
+              <span className={styles.successText}>
+                ✓ 사용 가능한 이메일입니다
+              </span>
+            )}
+
           {emailState.showError && (
             <span className={styles.errorText}>{emailState.error}</span>
           )}
@@ -413,7 +493,13 @@ const SignupForm = ({ onSubmit, onNicknameCheck, loading = false }) => {
         <button
           type="submit"
           className={styles.signupButton}
-          disabled={loading || !formState.isValid || !nicknameChecked}
+          disabled={
+            loading ||
+            !formState.isValid ||
+            !nicknameChecked ||
+            emailChecking ||
+            (emailCheck && !emailCheck.available)
+          }
         >
           {loading ? "처리 중..." : "회원가입"}
         </button>
