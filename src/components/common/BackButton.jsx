@@ -25,6 +25,14 @@ const BackLight = styled(Link)`
   }
 `;
 
+export const StyledBackButton = styled(BackButton)`
+  && {
+    position: absolute;
+    top: 120px;
+    left: 100px;
+  }
+`;
+
 // 다크모드용 버튼
 const BackDark = styled(Link)`
   padding: 2px 17px;
@@ -60,7 +68,7 @@ const BackDark = styled(Link)`
 `;
 
 // 3. props로 onClick 받기
-function BackButton({ to, onClick }) {
+function BackButton({ to, onClick, className }) {
   // useThemeContext가 undefined를 반환할 경우를 대비
   const themeContext = useThemeContext() || { isDarkMode: false };
 
@@ -79,7 +87,7 @@ function BackButton({ to, onClick }) {
 
   // 실제 반영
   return (
-    <BackButton to={to} onClick={onClick}>
+    <BackButton to={to} onClick={onClick} className={className}>
       <img src={iconSrc} alt="뒤로가기" />
     </BackButton>
   );

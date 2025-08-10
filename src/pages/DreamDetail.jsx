@@ -161,10 +161,11 @@ function DreamDetail() {
                 },
               })
             }
+            disabled={loading}
           >
             수정하기
           </Detail.DetailBttuon>
-          <Detail.DetailBttuon onClick={handleDelete}>
+          <Detail.DetailBttuon onClick={handleDelete} disabled={loading}>
             삭제하기
           </Detail.DetailBttuon>
         </Detail.DetailButtonWrap>

@@ -89,7 +89,7 @@ function EmotionDetail() {
     } catch (error) {
       console.error("error:", error);
       setAiResult(
-        "죄송합니다. 분석 중 오류가 발생햇씁니다. 잠시 후 다시 시도해주세요.",
+        "죄송합니다. 분석 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
       );
     } finally {
       setLoading(false);
@@ -120,7 +120,7 @@ function EmotionDetail() {
               지난 감정을 다시 기억해보세요.
             </Detail.DetailSubTitle>
           </Detail.DetailTitleWrap>
-          <Detail.DetailAiAsk onClick={handleAiRequest}>
+          <Detail.DetailAiAsk onClick={handleAiRequest} disabled={loading}>
             AI 해몽 요청하기
           </Detail.DetailAiAsk>
         </Detail.DetailTop>
@@ -143,10 +143,11 @@ function EmotionDetail() {
                 },
               })
             }
+            disabled={loading}
           >
             수정하기
           </Detail.DetailBttuon>
-          <Detail.DetailBttuon onClick={handleDelete}>
+          <Detail.DetailBttuon onClick={handleDelete} disabled={loading}>
             삭제하기
           </Detail.DetailBttuon>
         </Detail.DetailButtonWrap>
