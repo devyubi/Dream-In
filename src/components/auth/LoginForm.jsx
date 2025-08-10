@@ -175,6 +175,7 @@ const LoginForm = ({
           gap: "8px",
         }}
       >
+        {/* 이메일 찾기 링크 */}
         <Link
           to="/find-email"
           className={styles.linkButton}
@@ -186,6 +187,7 @@ const LoginForm = ({
           이메일 찾기
         </Link>
         <span>|</span>
+        {/* 비밀번호 찾기 링크 */}
         <Link
           to="/find-password"
           className={styles.linkButton}
