@@ -1,14 +1,15 @@
 .main_record {
   display: flex;
-  gap: 10px;
   justify-content: center;
-  padding: 30px 20px;
   align-items: center;
+  gap: 10px;
+  padding: 30px 20px;
   height: 100%;
 }
 
 .main_record_wrap {
   display: flex;
+  justify-content: center;
   gap: 30px;
   width: 100%;
   max-width: 900px;

@@ -161,7 +161,7 @@ function FavoriteSection() {
               </Link>
               <div className="sub_links">
                 <Link to="/find-email" className="sub_link">
-                  아이디 찾기
+                  이메일 찾기
                 </Link>
                 <span>|</span>
                 <Link to="/find-password" className="sub_link">

@@ -14,10 +14,20 @@ export const getCurrentUserProfile = async () => {
       return null;
     }
 
+    // 삭제된 계정인지 먼저 확인
+    const { deleted } = await checkAccountDeleted(session.user.id);
+    if (deleted) {
+      // 삭제된 계정이면 로그아웃 처리
+      await supabase.auth.signOut();
+      return null;
+    }
+
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("*")
       .eq("auth_user_id", session.user.id)
+      .eq("is_deleted", false) // 삭제되지 않은 계정만
+      .is("deleted_at", null) // 삭제 시간이 null인 계정만
       .maybeSingle();
 
     if (profileError || !profile) {
@@ -216,8 +226,10 @@ export const checkNicknameDuplicate = async nickname => {
   try {
     const { data, error } = await supabase
       .from("profiles")
-      .select("nickname")
-      .eq("nickname", nickname);
+      .select("nickname, is_deleted, deleted_at")
+      .eq("nickname", nickname)
+      .eq("is_deleted", false) // 삭제되지 않은 계정만 중복 체크
+      .is("deleted_at", null); // 삭제 시간이 null인 계정만
 
     if (error) {
       return { isDuplicate: false, error: error.message };
@@ -275,121 +287,196 @@ export const changePassword = async (currentPassword, newPassword) => {
   }
 };
 
-/**
- * 아이디(이메일) 찾기 함수
- */
-export const findUserEmail = async (nickname, birthdate) => {
+// ===== 이메일 찾기 및 탈퇴 관련 함수들 =====
+
+// 이메일 찾기 함수 (삭제된 계정 제외)
+export const findEmailByInfo = async (nickname, birthDate) => {
   try {
+    console.log("이메일 찾기 시도:", { nickname, birthDate }); // 디버그용
+
+    // profiles 테이블에서 닉네임과 생년월일로 이메일 찾기 (삭제되지 않은 계정만)
     const { data, error } = await supabase
       .from("profiles")
-      .select("email, nickname, birthdate, created_at")
+      .select("email")
       .eq("nickname", nickname)
-      .eq("birthdate", birthdate)
+      .eq("birthdate", birthDate)
+      .eq("is_deleted", false) // 삭제되지 않은 계정만
+      .is("deleted_at", null) // 삭제 시간이 null인 계정만
       .single();
+
+    console.log("쿼리 결과:", { data, error }); // 디버그용
 
     if (error) {
       if (error.code === "PGRST116") {
-        return {
-          success: false,
-          error: "입력하신 정보와 일치하는 계정을 찾을 수 없습니다.",
-        };
+        console.log("데이터를 찾을 수 없음");
+        return null; // 데이터를 찾을 수 없음
       }
-      console.log("아이디 찾기 에러:", error);
-      return {
-        success: false,
-        error: "아이디 찾기 중 오류가 발생했습니다.",
-      };
+      throw error;
     }
 
-    if (!data) {
-      return {
-        success: false,
-        error: "입력하신 정보와 일치하는 계정을 찾을 수 없습니다.",
-      };
-    }
-
-    const maskedEmail = maskEmail(data.email);
-
-    return {
-      success: true,
-      data: {
-        email: data.email,
-        maskedEmail: maskedEmail,
-        nickname: data.nickname,
-        joinDate: data.created_at,
-      },
-    };
+    return data?.email || null;
   } catch (error) {
-    console.log("아이디 찾기 중 예외 발생:", error);
-    return {
-      success: false,
-      error: "아이디 찾기 중 오류가 발생했습니다.",
-    };
+    console.error("이메일 찾기 오류:", error);
+    throw error;
   }
 };
 
-// 이메일 마스킹
-const maskEmail = email => {
-  if (!email) return "";
-  const [localPart, domain] = email.split("@");
-  if (!localPart || !domain) return email;
-
-  let maskedLocal;
-  if (localPart.length <= 3) {
-    maskedLocal = localPart[0] + "*".repeat(localPart.length - 1);
-  } else {
-    maskedLocal =
-      localPart.slice(0, 2) +
-      "*".repeat(localPart.length - 3) +
-      localPart.slice(-1);
-  }
-  return `${maskedLocal}@${domain}`;
-};
-
-/**
- * 여러 계정이 있을 수 있는 경우
- */
-
-export const findUserEmails = async (nickname, birthdate) => {
+// 탈퇴한 이메일인지 체크하는 함수
+export const checkDeletedEmail = async email => {
   try {
     const { data, error } = await supabase
       .from("profiles")
-      .select("email, nickname, birthdate, created_at")
-      .eq("nickname", nickname)
-      .eq("birthdate", birthdate);
+      .select("is_deleted, deleted_at, email")
+      .eq("email", email)
+      .single();
+
+    if (error && error.code === "PGRST116") {
+      // 프로필이 없는 경우 (사용 가능한 이메일)
+      return { isDeleted: false, isExisting: false };
+    }
 
     if (error) {
-      console.log("아이디 찾기 에러:", error);
+      throw error;
+    }
+
+    // 삭제된 계정인지 확인
+    if (data?.is_deleted || data?.deleted_at) {
+      return { isDeleted: true, isExisting: true };
+    }
+
+    // 활성 계정이 존재하는 경우
+    return { isDeleted: false, isExisting: true };
+  } catch (error) {
+    console.error("이메일 삭제 상태 확인 오류:", error);
+    throw error;
+  }
+};
+
+// 이메일 사용 가능 여부 종합 체크 함수
+export const checkEmailAvailability = async email => {
+  try {
+    const { isDeleted, isExisting } = await checkDeletedEmail(email);
+
+    if (isDeleted) {
       return {
-        success: false,
-        error: "아이디 찾기 중 오류가 발생했습니다.",
+        available: false,
+        reason: "deleted",
+        message: "탈퇴한 유저 이메일입니다.",
       };
     }
 
-    if (!data || data.length === 0) {
+    if (isExisting) {
       return {
-        success: false,
-        error: "입력하신 정보와 일치하는 계정을 찾을 수 없습니다.",
+        available: false,
+        reason: "existing",
+        message: "이미 가입된 이메일입니다.",
       };
     }
-
-    const accounts = data.map(account => ({
-      email: account.email,
-      maskedEmail: maskEmail(account.email),
-      nickname: account.nickname,
-      joinDate: account.created_at,
-    }));
 
     return {
-      success: true,
-      data: accounts,
-      count: accounts.length,
+      available: true,
+      reason: "available",
+      message: "사용 가능한 이메일입니다.",
     };
   } catch (error) {
-    console.log("아이디 찾기 중 예외 발생:", error);
+    console.error("이메일 사용 가능 여부 확인 오류:", error);
     return {
-      success: false,
-      error: "아이디 찾기 중 오류가 발생했습니다.",
+      available: false,
+      reason: "error",
+      message: "이메일 확인 중 오류가 발생했습니다.",
     };
+  }
+};
+
+// 회원탈퇴 함수 (소프트 삭제 - 이메일/닉네임 보존)
+export const deleteAccount = async userId => {
+  try {
+    console.log("회원탈퇴 시도 (소프트 삭제):", userId);
+
+    // 1. profiles 테이블에서 소프트 삭제 처리 (이메일/닉네임은 보존)
+    const timestamp = new Date().toISOString();
+
+    const { error: profileError } = await supabase
+      .from("profiles")
+      .update({
+        is_deleted: true,
+        deleted_at: timestamp,
+        // ✅ 이메일과 닉네임은 그대로 보존
+        // email: email 그대로 유지
+        // nickname: nickname 그대로 유지
+
+        // 🔒 개인정보만 제거
+        profile_image_url: null,
+        gender: null,
+        // 추가로 제거할 개인정보가 있다면 여기에 추가
+      })
+      .eq("auth_user_id", userId);
+
+    if (profileError) {
+      console.error("프로필 소프트 삭제 오류:", profileError);
+      throw profileError;
+    }
+
+    // 2. 관련 데이터도 소프트 삭제 (필요한 테이블들 추가)
+    try {
+      // dreams 테이블이 있다면 소프트 삭제
+      const { error: dreamError } = await supabase
+        .from("dreams")
+        .update({
+          is_deleted: true,
+          deleted_at: timestamp,
+        })
+        .eq("user_id", userId);
+
+      if (dreamError && dreamError.code !== "PGRST116") {
+        console.warn("꿈 데이터 소프트 삭제 중 오류:", dreamError);
+      }
+    } catch (err) {
+      console.warn("꿈 데이터 처리 중 오류 (테이블이 없을 수 있음):", err);
+    }
+
+    // 3. 현재 세션에서 로그아웃
+    const { error: signOutError } = await supabase.auth.signOut();
+
+    if (signOutError) {
+      console.error("로그아웃 오류:", signOutError);
+      // 로그아웃 실패해도 탈퇴는 성공한 것으로 처리
+    }
+
+    console.log("회원탈퇴 완료 (소프트 삭제 - 이메일/닉네임 보존)");
+    return { success: true };
+  } catch (error) {
+    console.error("회원탈퇴 오류:", error);
+    throw error;
+  }
+};
+
+// 삭제된 계정 체크 함수
+export const checkAccountDeleted = async userId => {
+  try {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("is_deleted, deleted_at")
+      .eq("auth_user_id", userId)
+      .single();
+
+    if (error && error.code === "PGRST116") {
+      // 프로필이 없는 경우
+      return { deleted: true, reason: "profile_not_found" };
+    }
+
+    if (error) {
+      throw error;
+    }
+
+    // 삭제된 계정인지 확인
+    if (data?.is_deleted || data?.deleted_at) {
+      return { deleted: true, reason: "soft_deleted" };
+    }
+
+    return { deleted: false };
+  } catch (error) {
+    console.error("계정 삭제 상태 확인 오류:", error);
+    throw error;
   }
 };

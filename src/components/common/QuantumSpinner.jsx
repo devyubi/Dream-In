@@ -8,7 +8,7 @@ function QuantumSpinner() {
         display: `flex`,
         justifyContent: `center`,
         alignItems: `center`,
-        marginTop: `30px`,
+        marginTop: `20px`,
       }}
     >
       <Quantum size="90" speed="3.5" color="rgb(197, 71, 255)" />

@@ -1,3 +1,5 @@
+/* src/components/user/UserMenu.module.css */
+
 .userMenu {
   width: 100%;
 }
@@ -70,6 +72,7 @@
   border-radius: 12px;
   flex-shrink: 0;
   transition: all 0.2s ease;
+  font-size: 24px;
 }
 
 .menuItem:hover:not(.disabled) .menuIcon {
@@ -259,6 +262,7 @@
   .menuIcon {
     width: 44px;
     height: 44px;
+    font-size: 22px;
   }
 
   .menuIcon img {
@@ -284,6 +288,7 @@
   .menuIcon {
     width: 40px;
     height: 40px;
+    font-size: 20px;
   }
 
   .menuIcon img {

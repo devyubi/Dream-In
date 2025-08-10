@@ -156,6 +156,15 @@
   opacity: 0.5;
 }
 
+.checkingText {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .errorText {
   display: block;
   margin-top: 8px;
