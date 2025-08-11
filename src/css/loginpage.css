@@ -44,7 +44,7 @@
   font-weight: bold;
   color: #3a3a74;
   margin: 0;
-  /* text-shadow: 0 2px 4px rgba(84, 71, 131, 0.1); */
+  text-shadow: 0 2px 4px rgba(84, 71, 131, 0.1);
   font-family: "tj400", "Inter", sans-serif;
 }
 
