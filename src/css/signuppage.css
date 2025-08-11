@@ -32,9 +32,9 @@
   border-radius: 50%;
   margin: 0 auto 20px;
   overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  background: var(--color-primary-p-100);
-  backdrop-filter: blur(10px);
+  /* box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); */
+  /* background: var(--color-primary-p-100); */
+  /* backdrop-filter: blur(10px); */
   display: flex;
   align-items: center;
   justify-content: center;

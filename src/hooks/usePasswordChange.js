@@ -55,9 +55,7 @@ export const usePasswordChange = () => {
 
       try {
         await supabase.auth.refreshSession();
-      } catch (e) {
-        // console.log("refreshSession 오류(무시):", e);
-      }
+      } catch (e) {}
 
       setSuccess(true);
       return {
@@ -65,13 +63,11 @@ export const usePasswordChange = () => {
         message: "비밀번호가 성공적으로 변경되었습니다.",
       };
     } catch (err) {
-      // console.log("비밀번호 변경 중 예외:", err);
       const msg = "비밀번호 변경 중 오류가 발생했습니다.";
       setError(msg);
       return { success: false, error: msg };
     } finally {
       setIsLoading(false);
-      // console.log("=== usePasswordChange 완료 ===");
     }
   };
 

@@ -115,6 +115,7 @@ export const uploadProfileImage = async (file, userId) => {
     const fileName = `${userId}.${fileExt}`;
     const filePath = `profiles/${fileName}`;
 
+    // eslint-disable-next-line
     const { data, error } = await supabase.storage
       .from("profile-images")
       .upload(filePath, file, {
@@ -267,6 +268,7 @@ export const changePassword = async (currentPassword, newPassword) => {
     }
 
     // 한 번만 호출
+    // eslint-disable-next-line
     const { data, error } = await supabase.auth.updateUser({
       password: newPassword,
     });
@@ -292,8 +294,6 @@ export const changePassword = async (currentPassword, newPassword) => {
 // 이메일 찾기 함수 (삭제된 계정 제외)
 export const findEmailByInfo = async (nickname, birthDate) => {
   try {
-    console.log("이메일 찾기 시도:", { nickname, birthDate }); // 디버그용
-
     // profiles 테이블에서 닉네임과 생년월일로 이메일 찾기 (삭제되지 않은 계정만)
     const { data, error } = await supabase
       .from("profiles")
@@ -304,11 +304,8 @@ export const findEmailByInfo = async (nickname, birthDate) => {
       .is("deleted_at", null) // 삭제 시간이 null인 계정만
       .single();
 
-    console.log("쿼리 결과:", { data, error }); // 디버그용
-
     if (error) {
       if (error.code === "PGRST116") {
-        console.log("데이터를 찾을 수 없음");
         return null; // 데이터를 찾을 수 없음
       }
       throw error;
@@ -316,7 +313,6 @@ export const findEmailByInfo = async (nickname, birthDate) => {
 
     return data?.email || null;
   } catch (error) {
-    console.error("이메일 찾기 오류:", error);
     throw error;
   }
 };
@@ -347,7 +343,6 @@ export const checkDeletedEmail = async email => {
     // 활성 계정이 존재하는 경우
     return { isDeleted: false, isExisting: true };
   } catch (error) {
-    console.error("이메일 삭제 상태 확인 오류:", error);
     throw error;
   }
 };
@@ -379,7 +374,6 @@ export const checkEmailAvailability = async email => {
       message: "사용 가능한 이메일입니다.",
     };
   } catch (error) {
-    console.error("이메일 사용 가능 여부 확인 오류:", error);
     return {
       available: false,
       reason: "error",
@@ -391,8 +385,6 @@ export const checkEmailAvailability = async email => {
 // 회원탈퇴 함수 (소프트 삭제 - 이메일/닉네임 보존)
 export const deleteAccount = async userId => {
   try {
-    console.log("회원탈퇴 시도 (소프트 삭제):", userId);
-
     // 1. profiles 테이블에서 소프트 삭제 처리 (이메일/닉네임은 보존)
     const timestamp = new Date().toISOString();
 
@@ -405,15 +397,16 @@ export const deleteAccount = async userId => {
         // email: email 그대로 유지
         // nickname: nickname 그대로 유지
 
-        // 🔒 개인정보만 제거
-        profile_image_url: null,
-        gender: null,
+        // 문제없으면 아래 전부 주석 제거
+
+        // 개인정보만 제거
+        // profile_image_url: null,
+        // gender: null,
         // 추가로 제거할 개인정보가 있다면 여기에 추가
       })
       .eq("auth_user_id", userId);
 
     if (profileError) {
-      console.error("프로필 소프트 삭제 오류:", profileError);
       throw profileError;
     }
 
@@ -429,24 +422,17 @@ export const deleteAccount = async userId => {
         .eq("user_id", userId);
 
       if (dreamError && dreamError.code !== "PGRST116") {
-        console.warn("꿈 데이터 소프트 삭제 중 오류:", dreamError);
       }
-    } catch (err) {
-      console.warn("꿈 데이터 처리 중 오류 (테이블이 없을 수 있음):", err);
-    }
+    } catch (err) {}
 
     // 3. 현재 세션에서 로그아웃
     const { error: signOutError } = await supabase.auth.signOut();
 
     if (signOutError) {
-      console.error("로그아웃 오류:", signOutError);
-      // 로그아웃 실패해도 탈퇴는 성공한 것으로 처리
     }
 
-    console.log("회원탈퇴 완료 (소프트 삭제 - 이메일/닉네임 보존)");
     return { success: true };
   } catch (error) {
-    console.error("회원탈퇴 오류:", error);
     throw error;
   }
 };
@@ -476,7 +462,6 @@ export const checkAccountDeleted = async userId => {
 
     return { deleted: false };
   } catch (error) {
-    console.error("계정 삭제 상태 확인 오류:", error);
     throw error;
   }
 };

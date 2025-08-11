@@ -22,13 +22,13 @@
   height: 120px;
   margin: 0 auto 24px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.9);
+  background: inherit;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 32px rgba(84, 71, 131, 0.2);
-  backdrop-filter: blur(10px);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  /* box-shadow: 0 8px 32px rgba(84, 71, 131, 0.2); */
+  /* backdrop-filter: blur(10px); */
+  /* border: 2px solid rgba(255, 255, 255, 0.3); */
   overflow: hidden;
 }
 
