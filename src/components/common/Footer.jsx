@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const FooterWrap = styled.div`
   position: relative;
@@ -62,15 +62,22 @@ const FooterTopInfoSocialList = styled.ul`
   margin: 0;
 `;
 const FooterTopInfoSocialItem = styled.li`
-  border: 1px solid #acacac;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 33px;
+  height: 33px;
+  border: 1px solid #acacac;
+  border-radius: 50%;
   background-color: rgba(252, 243, 251, 0.3);
   cursor: pointer;
+  a {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
   img {
     width: 70%;
     height: 70%;
@@ -186,16 +193,40 @@ function Footer() {
           </FooterTopInfoDetail>
           <FooterTopInfoSocialList>
             <FooterTopInfoSocialItem>
-              <img src="/images/insta.png" alt="인스타" />
+              <a
+                href="https://www.instagram.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img src="/images/insta.png" alt="인스타" />
+              </a>
             </FooterTopInfoSocialItem>
             <FooterTopInfoSocialItem>
-              <img src="/images/twitter.png" alt="X" />
+              <a
+                href="https://x.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img src="/images/twitter.png" alt="X" />
+              </a>
             </FooterTopInfoSocialItem>
             <FooterTopInfoSocialItem>
-              <img src="/images/facebook.png" alt="페이스북" />
+              <a
+                href="https://www.facebook.com/?locale=ko_KR"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img src="/images/facebook.png" alt="페이스북" />
+              </a>
             </FooterTopInfoSocialItem>
             <FooterTopInfoSocialItem>
-              <img src="/images/youtube.png" alt="유튜브" />
+              <a
+                href="https://www.youtube.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img src="/images/youtube.png" alt="유튜브" />
+              </a>
             </FooterTopInfoSocialItem>
           </FooterTopInfoSocialList>
         </FooterTopInfo>

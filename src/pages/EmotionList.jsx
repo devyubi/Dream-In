@@ -5,11 +5,31 @@ import Title from "../components/common/Title";
 import { List } from "./List.styles";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useFavorites } from "../contexts/FavoriteContext";
+import Pagination from "../components/common/Pagination";
 
 function EmotionList() {
   const location = useLocation();
   const [emotionList, setEmotionList] = useState([]);
   const navigate = useNavigate();
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = emotionList.slice(indexOfFirstItem, indexOfLastItem);
+
+  useEffect(() => {
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = emotionList.slice(indexOfFirstItem, indexOfLastItem);
+
+    if (currentItems.length === 0 && currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  }, [emotionList, currentPage, itemsPerPage]);
+
+  const totalPages = Math.ceil(emotionList.length / itemsPerPage);
 
   const { favoriteEmotions, toggleEmotionFavorite } = useFavorites();
 
@@ -47,6 +67,36 @@ function EmotionList() {
         photo: "/images/photo3.png",
         isFavorite: false,
       },
+      {
+        id: 4,
+        name: "문박송",
+        time: "1시간 전",
+        title: "오늘은 아주 환상적인 날입니다~",
+        category: "몽환적",
+        detail: "오늘은 마치 하늘을 나는 것 같이 환상적인 날입니다~",
+        photo: "/images/photo3.png",
+        isFavorite: false,
+      },
+      {
+        id: 5,
+        name: "문박송",
+        time: "1시간 전",
+        title: "오늘은 아주 환상적인 날입니다~",
+        category: "몽환적",
+        detail: "오늘은 마치 하늘을 나는 것 같이 환상적인 날입니다~",
+        photo: "/images/photo3.png",
+        isFavorite: false,
+      },
+      {
+        id: 6,
+        name: "문박송",
+        time: "1시간 전",
+        title: "오늘은 아주 환상적인 날입니다~",
+        category: "몽환적",
+        detail: "오늘은 마치 하늘을 나는 것 같이 환상적인 날입니다~",
+        photo: "/images/photo3.png",
+        isFavorite: false,
+      },
     ];
 
     if (deleteId) {
@@ -72,7 +122,7 @@ function EmotionList() {
       <BackButton to="/" />
       <Title title="감정일기 목록" />
       <List.ListWrap>
-        {emotionList.map(emotion => {
+        {currentItems.map(emotion => {
           const isFavorite = favoriteEmotions?.some(f => f.id === emotion.id);
 
           return (
@@ -126,6 +176,11 @@ function EmotionList() {
           );
         })}
       </List.ListWrap>
+      <Pagination
+        totalPages={totalPages}
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
+      />
     </Container>
   );
 }
