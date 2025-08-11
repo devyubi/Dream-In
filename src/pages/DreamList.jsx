@@ -9,11 +9,29 @@ import { useFavorites } from "../contexts/FavoriteContext";
 function DreamList() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [selectedCategory, setSelectedCategory] = useState("전체");
-  const deletedId = location.state?.deletedId;
-  const { favoriteDreams, toggleDreamFavorite } = useFavorites();
 
   const [dreamList, setDreamList] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("전체");
+  const [currentPage, setCurrentPage] = useState(1);
+  const deletedId = location.state?.deletedId;
+  const { favoriteDreams, toggleDreamFavorite } = useFavorites();
+  const postsPerPage = 5;
+
+  // 감정 카테고리 필터
+  const filteredDreams =
+    selectedCategory === "전체"
+      ? dreamList
+      : dreamList.filter(dream => dream.category === selectedCategory);
+
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+
+  const currentPosts = filteredDreams.slice(indexOfFirstPost, indexOfLastPost);
+  const totalPages = Math.ceil(filteredDreams.length / postsPerPage);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory]);
 
   useEffect(() => {
     if (deletedId) {
@@ -54,6 +72,39 @@ function DreamList() {
           "하늘을 나르는 아이언맨을 보고 있는 사람을 보는 꿈을 꾸었어요. He is man.",
         photo: "/images/photo3.png",
       },
+      {
+        id: 4,
+        name: "문박송",
+        time: "1시간 전",
+        title:
+          "하늘에서 아이언맨이 날고 있는 것을 보는 사람을 보는 꿈을 꾸었습니다.",
+        category: "몽환적",
+        detail:
+          "하늘을 나르는 아이언맨을 보고 있는 사람을 보는 꿈을 꾸었어요. He is man.",
+        photo: "/images/photo3.png",
+      },
+      {
+        id: 5,
+        name: "문박송",
+        time: "1시간 전",
+        title:
+          "하늘에서 아이언맨이 날고 있는 것을 보는 사람을 보는 꿈을 꾸었습니다.",
+        category: "몽환적",
+        detail:
+          "하늘을 나르는 아이언맨을 보고 있는 사람을 보는 꿈을 꾸었어요. He is man.",
+        photo: "/images/photo3.png",
+      },
+      {
+        id: 6,
+        name: "문박송",
+        time: "1시간 전",
+        title:
+          "하늘에서 아이언맨이 날고 있는 것을 보는 사람을 보는 꿈을 꾸었습니다.",
+        category: "몽환적",
+        detail:
+          "하늘을 나르는 아이언맨을 보고 있는 사람을 보는 꿈을 꾸었어요. He is man.",
+        photo: "/images/photo3.png",
+      },
     ];
 
     if (deletedId) {
@@ -63,12 +114,6 @@ function DreamList() {
       setDreamList(mockData);
     }
   }, []);
-
-  // 감정 카테고리 필터
-  const filteredDreams =
-    selectedCategory === "전체"
-      ? dreamList
-      : dreamList.filter(dream => dream.category === selectedCategory);
 
   const emojiCategories = [
     "전체",
@@ -108,7 +153,7 @@ function DreamList() {
       </List.EmojiCategoryWrap>
       {filteredDreams.length > 0 && (
         <List.ListWrap>
-          {filteredDreams.map(dream => {
+          {currentPosts.map(dream => {
             const isFavorite =
               favoriteDreams?.some(f => f.id === dream.id) ?? false; // 즐겨찾기 여부 확인
 
@@ -167,6 +212,22 @@ function DreamList() {
             );
           })}
         </List.ListWrap>
+      )}
+      {totalPages > 1 && (
+        <div style={{ marginTop: "20px", textAlign: "center" }}>
+          {[...Array(totalPages)].map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setCurrentPage(idx + 1)}
+              style={{
+                margin: "0 5px",
+                fontWeight: currentPage === idx + 1 ? "bold" : "normal",
+              }}
+            >
+              {idx + 1}
+            </button>
+          ))}
+        </div>
       )}
     </Container>
   );
