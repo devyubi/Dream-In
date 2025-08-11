@@ -26,6 +26,7 @@ import SleepRecordPage from "./pages/SleepRecordPage";
 import Support from "./pages/Support";
 import TermsOfService from "./pages/TermsOfService";
 import FindEmailPage from "./pages/FindEmailPage";
+import ScrollUpButton from "./components/common/ScrollUpButton";
 
 function App() {
   return (
@@ -66,6 +67,7 @@ function App() {
             <Route path="/termsofservice" element={<TermsOfService />}></Route>
           </Routes>
         </FavoritesProvider>
+        <ScrollUpButton />
         <Footer />
       </AuthProvider>
     </Router>

@@ -5,6 +5,7 @@ import Container from "../components/common/Container";
 import Title from "../components/common/Title";
 import { List } from "./List.styles";
 import { useFavorites } from "../contexts/FavoriteContext";
+import Pagination from "../components/common/Pagination";
 
 function DreamList() {
   const navigate = useNavigate();
@@ -22,6 +23,18 @@ function DreamList() {
     selectedCategory === "전체"
       ? dreamList
       : dreamList.filter(dream => dream.category === selectedCategory);
+
+  useEffect(() => {
+    // 현재 페이지에 보여야 할 게시물 수 계산
+    const currentPagePosts = filteredDreams.slice(
+      (currentPage - 1) * postsPerPage,
+      currentPage * postsPerPage,
+    );
+    // 만약 현재 페이지에 게시물이 없고, 현재 페이지가 1보다 크면 이전 페이지로 이동
+    if (currentPagePosts.length === 0 && currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  }, [dreamList, filteredDreams, currentPage, postsPerPage]);
 
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
@@ -213,22 +226,11 @@ function DreamList() {
           })}
         </List.ListWrap>
       )}
-      {totalPages > 1 && (
-        <div style={{ marginTop: "20px", textAlign: "center" }}>
-          {[...Array(totalPages)].map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setCurrentPage(idx + 1)}
-              style={{
-                margin: "0 5px",
-                fontWeight: currentPage === idx + 1 ? "bold" : "normal",
-              }}
-            >
-              {idx + 1}
-            </button>
-          ))}
-        </div>
-      )}
+      <Pagination
+        totalPages={totalPages}
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
+      />
     </Container>
   );
 }

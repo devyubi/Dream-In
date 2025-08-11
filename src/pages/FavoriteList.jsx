@@ -1,15 +1,15 @@
 import styled from "@emotion/styled";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BackButton, { StyledBackButton } from "../components/common/BackButton";
 import Container from "../components/common/Container";
 import Title from "../components/common/Title";
 import { useFavorites } from "../contexts/FavoriteContext";
 import { List } from "./List.styles";
+import Pagination from "../components/common/Pagination";
 
 function FavoriteList() {
   const [selectedCategory, setSelectedCategory] = useState("전체");
-  const [refreshKey, setRefreshKey] = useState(0);
   const listCategories = ["전체", "꿈 이야기", "감정일기"];
   const {
     favoriteDreams,
@@ -20,17 +20,16 @@ function FavoriteList() {
 
   const navigate = useNavigate();
 
-  // 두 리스트 병합
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  // 즐겨찾기 합치기 + 타입 표시
   const allFavorites = [
     ...favoriteDreams.map(item => ({ ...item, type: "dream" })),
     ...favoriteEmotions.map(item => ({ ...item, type: "emotion" })),
   ];
 
-  const countAll = allFavorites.length;
-  const countDreams = favoriteDreams.length;
-  const countEmotions = favoriteEmotions.length;
-
-  // 선택된 카테고리에 따라 필터링
+  // 카테고리 필터링
   const filteredFavorites = allFavorites.filter(item => {
     if (selectedCategory === "전체") return true;
     if (selectedCategory === "꿈 이야기") return item.type === "dream";
@@ -38,74 +37,69 @@ function FavoriteList() {
     return false;
   });
 
-  // const handleDeleteFavorite = (e, item) => {
-  //   e.stopPropagation();
-  //   const confirmResult = window.confirm("즐겨찾기에서 삭제하시겠습니까?");
-  //   if (confirmResult) {
-  //     handleToggleFavorite(item);
-  //     alert("즐겨찾기에서 삭제되었습니다.");
-  //   }
-  // };
+  // 페이지 계산
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredFavorites.slice(
+    indexOfFirstItem,
+    indexOfLastItem,
+  );
 
-  // const handleToggleFavorite = item => {
-  //   if (item.type === "dream") {
-  //     toggleDreamFavorite(item);
-  //   } else if (item.type === "emotion") {
-  //     toggleEmotionFavorite(item);
-  //   }
-  // };
+  // 페이지 번호 조정 (항목 수 변경 시)
+  useEffect(() => {
+    const lastPage = Math.max(
+      1,
+      Math.ceil(filteredFavorites.length / itemsPerPage),
+    );
+    if (currentPage > lastPage) {
+      setCurrentPage(lastPage);
+    }
+  }, [filteredFavorites.length, currentPage, itemsPerPage]);
 
+  // 카테고리 변경 시 1페이지로 초기화
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory]);
+
+  // 즐겨찾기 토글
   const handleToggleFavorite = item => {
+    const confirmMsg = "정말 즐겨찾기에서 삭제하시겠습니까?";
     if (item.type === "dream") {
       const isFavorited = favoriteDreams.some(d => d.id === item.id);
-
-      if (isFavorited) {
-        // 이미 즐겨찾기된 상태에서 해제하려고 하면 확인창 띄우기
-        const confirmResult = window.confirm(
-          "정말 즐겨찾기에서 삭제하시겠습니까?",
-        );
-        if (!confirmResult) return; // 취소하면 함수 종료
-      }
-
+      if (isFavorited && !window.confirm(confirmMsg)) return;
       toggleDreamFavorite(item);
-      if (isFavorited) {
-        alert("즐겨찾기에서 삭제되었습니다.");
-      }
+      if (isFavorited) alert("즐겨찾기에서 삭제되었습니다.");
     } else if (item.type === "emotion") {
       const isFavorited = favoriteEmotions.some(e => e.id === item.id);
-
-      if (isFavorited) {
-        const confirmResult = window.confirm(
-          "정말 즐겨찾기에서 삭제하시겠습니까?",
-        );
-        if (!confirmResult) return;
-      }
-
+      if (isFavorited && !window.confirm(confirmMsg)) return;
       toggleEmotionFavorite(item);
-      if (isFavorited) {
-        alert("즐겨찾기에서 삭제되었습니다.");
-      }
+      if (isFavorited) alert("즐겨찾기에서 삭제되었습니다.");
     }
-    setRefreshKey(prev => prev + 1);
   };
+
+  const countAll = allFavorites.length;
+  const countDreams = favoriteDreams.length;
+  const countEmotions = favoriteEmotions.length;
+
   return (
-    <Container key={refreshKey}>
+    <Container>
       <Title title="즐겨찾기 목록" />
       <List.EmojiCategoryWrap>
         <StyledBackButton to="/" />
-        {listCategories.map((categorylist, index) => (
+        {listCategories.map((category, index) => (
           <List.EmojiCategoryItem
             key={index}
-            onClick={() => setSelectedCategory(categorylist)}
-            isActive={selectedCategory === categorylist}
+            onClick={() => setSelectedCategory(category)}
+            isActive={selectedCategory === category}
           >
-            {categorylist}
-            {categorylist === "전체" && `(${countAll})`}
-            {categorylist === "꿈 이야기" && `(${countDreams})`}
-            {categorylist === "감정일기" && `(${countEmotions})`}
+            {category}
+            {category === "전체" && `(${countAll})`}
+            {category === "꿈 이야기" && `(${countDreams})`}
+            {category === "감정일기" && `(${countEmotions})`}
           </List.EmojiCategoryItem>
         ))}
       </List.EmojiCategoryWrap>
+
       <List.ListWrap>
         {filteredFavorites.length === 0 ? (
           <p
@@ -121,7 +115,7 @@ function FavoriteList() {
             즐겨찾기한 항목이 없습니다.
           </p>
         ) : (
-          filteredFavorites.map(item => (
+          currentItems.map(item => (
             <List.ListItem
               key={item.id}
               onClick={() =>
@@ -157,13 +151,17 @@ function FavoriteList() {
                 )}
               </List.ListItemTitle>
               <List.ListItemDetail>{item.detail}</List.ListItemDetail>
-              {/* <List.ListItemDelete
-                onClick={e => handleDeleteFavorite(e, item)}
-              ></List.ListItemDelete> */}
             </List.ListItem>
           ))
         )}
       </List.ListWrap>
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={Math.ceil(filteredFavorites.length / itemsPerPage)}
+        itemsPerPage={itemsPerPage}
+        onPageChange={setCurrentPage}
+      />
     </Container>
   );
 }
