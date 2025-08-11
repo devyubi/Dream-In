@@ -37,7 +37,12 @@ export const usePasswordChange = () => {
         password: currentPassword,
       });
       if (reauthError) {
-        const msg = reauthError.message || "현재 비밀번호가 올바르지 않습니다.";
+        let msg;
+        if (reauthError.message.includes("Invalid login credentials")) {
+          msg = "현재 비밀번호가 올바르지 않습니다.";
+        } else {
+          msg = reauthError.message;
+        }
         setError(msg);
         return { success: false, error: msg };
       }

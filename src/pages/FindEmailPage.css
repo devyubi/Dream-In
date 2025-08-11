@@ -1,51 +1,107 @@
 /* FindEmailPage.css */
-
 .find-email-container {
   min-height: 100vh;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  position: relative;
   padding: 20px;
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-.find-email-card {
-  background: white;
-  border-radius: 16px;
-  box-shadow:
-    0 20px 25px -5px rgba(0, 0, 0, 0.1),
-    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+.background-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+}
+
+/* 로고 스타일 */
+.logo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 40px;
+  z-index: 1;
+}
+
+.logo-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.logo-image {
   width: 100%;
-  max-width: 420px;
-  overflow: hidden;
+  height: 100%;
+  object-fit: contain;
 }
 
-.card-header {
-  padding: 32px 32px 24px;
-  text-align: center;
-  background: linear-gradient(to bottom, #f8fafc, #ffffff);
-}
-
-.title {
-  font-size: 28px;
-  font-weight: 700;
-  color: #1e293b;
-  margin: 0 0 8px 0;
-}
-
-.subtitle {
-  font-size: 15px;
-  color: #64748b;
+.app-title {
+  font-size: 32px;
+  font-weight: 600;
+  /* color: white; */
   margin: 0;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* 모달 스타일 */
+.email-find-modal {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 400px;
+  padding: 0;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  animation: modalAppear 0.3s ease-out;
+}
+
+@keyframes modalAppear {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 24px 0;
+  margin-bottom: 16px;
+}
+
+.modal-header h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0;
+}
+
+.modal-content {
+  padding: 0 24px 24px;
+}
+
+.modal-description {
+  font-size: 14px;
+  color: #4a5568;
   line-height: 1.5;
+  margin-bottom: 24px;
 }
 
-.find-form {
-  padding: 24px 32px 32px;
-}
-
+/* 입력 그룹 */
 .input-group {
   margin-bottom: 20px;
 }
@@ -53,105 +109,115 @@
 .input-group label {
   display: block;
   font-size: 14px;
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 6px;
+  font-weight: 500;
+  color: #2d3748;
+  margin-bottom: 8px;
 }
 
 .input-group input {
   width: 100%;
   padding: 12px 16px;
   border: 2px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 16px;
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+  border-radius: 12px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.8);
   box-sizing: border-box;
 }
 
 .input-group input:focus {
   outline: none;
-  border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  border-color: #667eea;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.input-group input.error {
+  border-color: #e53e3e;
+}
+
+.input-group input.error:focus {
+  box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.1);
 }
 
 .input-group input:disabled {
-  background-color: #f1f5f9;
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
-.error-message {
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  border-radius: 8px;
+/* 메시지 */
+.message {
   padding: 12px 16px;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #dc2626;
-  font-size: 14px;
-}
-
-.error-icon {
-  font-size: 16px;
-}
-
-.submit-btn {
-  width: 100%;
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-  color: white;
-  border: none;
-  padding: 14px 24px;
   border-radius: 8px;
-  font-size: 16px;
+  font-size: 14px;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.message.error {
+  background: rgba(229, 62, 62, 0.1);
+  color: #c53030;
+  border: 1px solid rgba(229, 62, 62, 0.2);
+}
+
+.message.success {
+  background: rgba(72, 187, 120, 0.1);
+  color: #2f855a;
+  border: 1px solid rgba(72, 187, 120, 0.2);
+}
+
+/* 버튼 그룹 */
+.button-group {
+  display: flex;
+  gap: 12px;
+}
+
+.cancel-button,
+.submit-button {
+  flex: 1;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+  transition: all 0.2s ease;
+  border: none;
 }
 
-.submit-btn:hover:not(:disabled) {
+.cancel-button {
+  background: rgba(113, 128, 150, 0.1);
+  color: #4a5568;
+  border: 1px solid rgba(113, 128, 150, 0.2);
+}
+
+.cancel-button:hover:not(:disabled) {
+  background: rgba(113, 128, 150, 0.15);
+}
+
+.submit-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.submit-button:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
 
-.submit-btn:disabled {
+.submit-button:disabled,
+.cancel-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
 }
 
-.spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top: 2px solid white;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
+/* 결과 섹션 */
 .result-section {
-  padding: 24px 32px 32px;
+  text-align: center;
 }
 
 .success-message {
-  text-align: center;
   margin-bottom: 24px;
 }
 
@@ -180,7 +246,6 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-bottom: 12px;
 }
 
 .email-label {
@@ -200,109 +265,22 @@
   border: 1px solid #d1fae5;
 }
 
-.email-note {
-  font-size: 13px;
-  color: #6b7280;
-  margin: 0;
-  line-height: 1.4;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 12px;
-}
-
-.retry-btn {
-  flex: 1;
-  background: white;
-  color: #6366f1;
-  border: 2px solid #6366f1;
-  padding: 12px 20px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-decoration: none;
-  text-align: center;
-}
-
-.retry-btn:hover {
-  background: #6366f1;
-  color: white;
-}
-
-.login-btn {
-  flex: 1;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-  text-decoration: none;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.login-btn:hover {
-  transform: translateY(-1px);
-}
-
-.footer-links {
-  padding: 20px 32px 32px;
-  text-align: center;
-  border-top: 1px solid #f1f5f9;
-  background: #fafafa;
-}
-
-.link {
-  color: #6366f1;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  transition: color 0.2s ease;
-}
-
-.link:hover {
-  color: #4f46e5;
-  text-decoration: underline;
-}
-
-.separator {
-  margin: 0 12px;
-  color: #d1d5db;
-}
-
-/* 반응형 디자인 */
+/* 반응형 */
 @media (max-width: 480px) {
   .find-email-container {
     padding: 16px;
   }
 
-  .find-email-card {
+  .email-find-modal {
     max-width: 100%;
   }
 
-  .card-header,
-  .find-form,
-  .result-section,
-  .footer-links {
-    padding-left: 24px;
-    padding-right: 24px;
-  }
-
-  .title {
-    font-size: 24px;
-  }
-
-  .action-buttons {
+  .button-group {
     flex-direction: column;
+  }
+
+  .app-title {
+    font-size: 28px;
   }
 
   .email-text {

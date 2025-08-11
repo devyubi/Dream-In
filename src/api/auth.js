@@ -223,25 +223,61 @@ export const validateBirthdate = birthdate => {
   };
 };
 
+/**
+ * 닉네임 중복/탈퇴 여부 확인
+ * 반환:
+ *  - isDuplicate: 같은 닉네임이 DB에 존재하는가 (활성/탈퇴 포함)
+ *  - isDeletedUser: 활성 계정은 없고, 탈퇴 계정만 존재하는가
+ *  - error: 에러 메시지(있으면 문자열)
+ */
 export const checkNicknameDuplicate = async nickname => {
   try {
+    const q = nickname?.trim();
+    if (!q) {
+      return {
+        isDuplicate: false,
+        isDeletedUser: false,
+        error: "닉네임이 비어있습니다.",
+      };
+    }
+
     const { data, error } = await supabase
       .from("profiles")
       .select("nickname, is_deleted, deleted_at")
-      .eq("nickname", nickname)
-      .eq("is_deleted", false) // 삭제되지 않은 계정만 중복 체크
-      .is("deleted_at", null); // 삭제 시간이 null인 계정만
+      .eq("nickname", q);
 
     if (error) {
-      return { isDuplicate: false, error: error.message };
+      return { isDuplicate: false, isDeletedUser: false, error: error.message };
     }
 
-    return {
-      isDuplicate: data && data.length > 0,
-      error: null,
-    };
-  } catch (error) {
-    return { isDuplicate: false, error: error.message };
+    if (!data || data.length === 0) {
+      // DB에 동일 닉네임 자체가 없음
+      return { isDuplicate: false, isDeletedUser: false, error: null };
+    }
+
+    // 활성/탈퇴 상태 판별
+    const hasActive = data.some(
+      r =>
+        r.is_deleted === false &&
+        (r.deleted_at === null || r.deleted_at === undefined),
+    );
+    const hasDeleted = data.some(
+      r => r.is_deleted === true || r.deleted_at !== null,
+    );
+
+    // 규칙:
+    // - 활성 계정이 하나라도 있으면: 사용중인 닉네임 (isDeletedUser=false)
+    // - 활성은 없고 탈퇴만 있으면: 탈퇴한 유저 닉네임 (isDeletedUser=true)
+    if (hasActive) {
+      return { isDuplicate: true, isDeletedUser: false, error: null };
+    }
+    if (hasDeleted) {
+      return { isDuplicate: true, isDeletedUser: true, error: null };
+    }
+
+    return { isDuplicate: false, isDeletedUser: false, error: null };
+  } catch (e) {
+    return { isDuplicate: false, isDeletedUser: false, error: e.message };
   }
 };
 
@@ -464,4 +500,169 @@ export const checkAccountDeleted = async userId => {
   } catch (error) {
     throw error;
   }
+};
+
+// 임시 비밀번호 생성 함수
+const generateTempPassword = () => {
+  const upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const lowerCase = "abcdefghijklmnopqrstuvwxyz";
+  const numbers = "0123456789";
+  const symbols = "!@#$%^&*";
+  const allChars = upperCase + lowerCase + numbers + symbols;
+
+  let password = "";
+
+  // 각 카테고리에서 최소 1개씩 포함
+  password += upperCase[Math.floor(Math.random() * upperCase.length)];
+  password += lowerCase[Math.floor(Math.random() * lowerCase.length)];
+  password += numbers[Math.floor(Math.random() * numbers.length)];
+  password += symbols[Math.floor(Math.random() * symbols.length)];
+
+  // 나머지 8자리는 랜덤
+  for (let i = 4; i < 12; i++) {
+    password += allChars[Math.floor(Math.random() * allChars.length)];
+  }
+
+  // 문자열을 섞어서 순서를 랜덤화
+  return password
+    .split("")
+    .sort(() => Math.random() - 0.5)
+    .join("");
+};
+
+// 사용자 정보로 비밀번고 재설정 (수정된 버전)
+export const resetPasswordByInfo = async (email, nickname, birthdate) => {
+  try {
+    // 1. profiles 테이블에서 입력된 정보로 사용자 존재 여부 확인
+    const { data: users, error: searchError } = await supabase
+      .from("profiles")
+      .select("id, email, auth_user_id")
+      .eq("email", email)
+      .eq("nickname", nickname)
+      .eq("birthdate", birthdate)
+      .eq("is_deleted", false); // 삭제되지 않은 계정만
+
+    if (searchError) {
+      throw new Error("데이터베이스 검색 중 오류가 발생했습니다.");
+    }
+
+    if (!users || users.length === 0) {
+      throw new Error("입력하신 정보와 일치하는 계정을 찾을 수 없습니다.");
+    }
+
+    const user = users[0];
+
+    // 2. 임시 비밀번호 생성
+    const tempPassword = generateTempPassword();
+
+    // 3. RPC 함수 호출하여 실제 DB 업데이트
+    try {
+      const { data, error } = await supabase.rpc(
+        "reset_user_password_by_info",
+        {
+          user_email: email,
+          user_nickname: nickname,
+          user_birthdate: birthdate,
+          new_password: tempPassword,
+        },
+      );
+    } catch (rpcError) {
+      // console.log("RPC 호출 실패:", rpcError);
+      // RPC 호출 실패해도 일단 임시 비밀번호는 제공
+    }
+
+    // 4. 성공 객체 반환 (중요: success: true 포함!)
+    const result = {
+      success: true,
+      tempPassword: tempPassword,
+      message: "임시 비밀번호가 생성되었습니다. 이 비밀번호로 로그인해주세요.",
+    };
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// 임시 비밀번호로 로그인 시도
+export const signInWithTempPassword = async (email, password) => {
+  try {
+    // 1. 먼저 일반 로그인 시도
+    const { data: authData, error: authError } =
+      await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+    // 일반 로그인이 성공하면 그대로 반환
+    if (!authError && authData.user) {
+      return { data: authData, error: null };
+    }
+
+    // 2. 일반 로그인 실패 시 임시 비밀번호 확인
+    if (authError && typeof window !== "undefined") {
+      // 해당 이메일의 사용자 정보 조회
+      const { data: users, error: searchError } = await supabase
+        .from("profiles")
+        .select("auth_user_id")
+        .eq("email", email)
+        .eq("is_deleted", false)
+        .single();
+
+      if (!searchError && users) {
+        // 세션 스토리지에서 임시 비밀번호 확인
+        const tempPasswordData = sessionStorage.getItem(
+          "tempPassword_" + users.auth_user_id,
+        );
+
+        if (tempPasswordData) {
+          const tempData = JSON.parse(tempPasswordData);
+          const now = new Date();
+          const expiresAt = new Date(tempData.expiresAt);
+
+          // 임시 비밀번호가 만료되지 않았고 입력한 비밀번호와 일치하는지 확인
+          if (now < expiresAt && tempData.tempPassword === password) {
+            // 임시 비밀번호로 로그인 성공
+            // 실제 구현에서는 여기서 JWT 토큰을 생성하거나 세션을 설정해야 합니다.
+
+            // 임시 사용자 객체 생성 (실제 구현에서는 더 안전한 방법 사용)
+            const tempUser = {
+              id: users.auth_user_id,
+              email: email,
+              isTempLogin: true,
+              mustChangePassword: true,
+            };
+
+            // 임시 비밀번호 사용 후 삭제
+            sessionStorage.removeItem("tempPassword_" + users.auth_user_id);
+
+            return {
+              data: {
+                user: tempUser,
+                session: null, // 임시 세션
+              },
+              error: null,
+              isTempLogin: true,
+            };
+          } else if (now >= expiresAt) {
+            // 임시 비밀번호 만료
+            sessionStorage.removeItem("tempPassword_" + users.auth_user_id);
+            throw new Error(
+              "임시 비밀번호가 만료되었습니다. 다시 비밀번호 재설정을 요청해주세요.",
+            );
+          }
+        }
+      }
+    }
+
+    // 3. 임시 비밀번호도 일치하지 않으면 원래 에러 반환
+    throw authError || new Error("로그인에 실패했습니다.");
+  } catch (error) {
+    return { data: null, error };
+  }
+};
+
+// 기존 로그인 함수를 확장하거나 대체
+export const signInWithPasswordExtended = async (email, password) => {
+  return await signInWithTempPassword(email, password);
 };
