@@ -3,6 +3,7 @@ import { FaStar } from "react-icons/fa6";
 import "../../css/sleep/sleepqualityrating.css";
 import PostButton from "../common/PostButton";
 import TextArea from "../common/TextArea";
+import React from "react";
 
 function SleepQualityRating({
   rating,
@@ -28,7 +29,7 @@ function SleepQualityRating({
       return;
     }
 
-    // 입력 유효성 검사
+    // 입력 유효성 검사 앞뒤
     if (!text.trim()) {
       setError("수면메모를 작성해주세요");
       return;
@@ -105,4 +106,4 @@ function SleepQualityRating({
   );
 }
 
-export default SleepQualityRating;
+export default React.memo(SleepQualityRating);
