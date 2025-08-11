@@ -54,8 +54,6 @@ const FindPasswordPage = () => {
         navigate("/login");
       }, 3000);
     } catch (error) {
-      // console.log("Password reset error:", error);
-
       // Supabase 에러 메시지에 따른 한국어 처리
       let errorMessage = "오류가 발생했습니다. 다시 시도해주세요.";
 

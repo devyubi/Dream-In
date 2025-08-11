@@ -187,21 +187,6 @@ export const logError = (context, error, additionalInfo = {}) => {
   } else {
     errorInfo.message = String(error);
   }
-
-  // 개발 환경에서는 콘솔에 상세 로그
-  if (process.env.NODE_ENV === "development") {
-    console.group(`🚨 Error in ${context}`);
-    console.error("Error Details:", errorInfo);
-    console.error("Original Error:", error);
-    console.groupEnd();
-  } else {
-    // 프로덕션 환경에서는 간단한 로그
-    console.error(`Error in ${context}:`, errorInfo.message);
-  }
-
-  // TODO: 프로덕션에서는 에러 트래킹 서비스로 전송
-  // 예: Sentry, LogRocket, Bugsnag 등
-  // sendToErrorTrackingService(errorInfo);
 };
 
 /**
@@ -270,9 +255,6 @@ export const withRetry = (asyncFunction, maxRetries = 3, delayMs = 1000) => {
         // 마지막 시도가 아니면 딜레이 후 재시도
         if (attempt < maxRetries) {
           await new Promise(resolve => setTimeout(resolve, delayMs * attempt));
-          console.warn(
-            `Retrying ${asyncFunction.name} (attempt ${attempt + 1}/${maxRetries})`,
-          );
         }
       }
     }

@@ -21,7 +21,6 @@ const DeleteAccountModal = ({ isOpen, onClose, user, onDeleteSuccess }) => {
       await deleteAccount(user.id);
       onDeleteSuccess();
     } catch (err) {
-      console.error("회원탈퇴 실패:", err);
       setError("회원탈퇴 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
     } finally {
       setLoading(false);
