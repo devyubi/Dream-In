@@ -45,7 +45,6 @@ const FindEmailPage = () => {
         );
       }
     } catch (err) {
-      console.error("이메일 찾기 오류:", err);
       setError(
         "이메일 찾기 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
       );

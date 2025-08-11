@@ -138,8 +138,6 @@ export const AuthService = {
       const { error } = await supabase.auth.signOut();
 
       if (error) {
-        // console.log("Supabase 로그아웃 오류:", error);
-        // 로그아웃 오류가 있어도 성공으로 처리 (로컬 정리는 진행)
       }
 
       return { success: true };

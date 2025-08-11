@@ -28,7 +28,7 @@ export const AUTH_ERRORS = {
   TIMEOUT_ERROR: "요청 시간이 초과되었습니다. 다시 시도해주세요.",
 
   // 일반 에러
-  UNKNOWN_ERROR: "알 수 없는 오류가 발생했습니다.",
+  UNKNOWN_ERROR: "이메일 혹은 비밀번호가 틀렸거나 탈퇴한 회원입니다.",
   PERMISSION_DENIED: "권한이 없습니다.",
   NOT_FOUND: "요청한 데이터를 찾을 수 없습니다.",
 };
@@ -118,7 +118,7 @@ export const getSupabaseErrorMessage = errorMessage => {
 
   // 매칭되지 않으면 원본 메시지 반환 (개발 환경에서 디버깅용)
   return process.env.NODE_ENV === "development"
-    ? `개발 모드 에러: ${errorMessage}`
+    ? `${errorMessage}`
     : AUTH_ERRORS.UNKNOWN_ERROR;
 };
 
@@ -187,21 +187,6 @@ export const logError = (context, error, additionalInfo = {}) => {
   } else {
     errorInfo.message = String(error);
   }
-
-  // 개발 환경에서는 콘솔에 상세 로그
-  if (process.env.NODE_ENV === "development") {
-    console.group(`🚨 Error in ${context}`);
-    console.error("Error Details:", errorInfo);
-    console.error("Original Error:", error);
-    console.groupEnd();
-  } else {
-    // 프로덕션 환경에서는 간단한 로그
-    console.error(`Error in ${context}:`, errorInfo.message);
-  }
-
-  // TODO: 프로덕션에서는 에러 트래킹 서비스로 전송
-  // 예: Sentry, LogRocket, Bugsnag 등
-  // sendToErrorTrackingService(errorInfo);
 };
 
 /**
@@ -270,9 +255,6 @@ export const withRetry = (asyncFunction, maxRetries = 3, delayMs = 1000) => {
         // 마지막 시도가 아니면 딜레이 후 재시도
         if (attempt < maxRetries) {
           await new Promise(resolve => setTimeout(resolve, delayMs * attempt));
-          console.warn(
-            `Retrying ${asyncFunction.name} (attempt ${attempt + 1}/${maxRetries})`,
-          );
         }
       }
     }
