@@ -4,17 +4,15 @@
 .total {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: space-around;
   gap: 15px;
-  min-width: 0;
 }
 
 .mytotal {
-  flex: 1 1 22%;
   min-width: 150px;
   max-width: 200px;
   border-radius: 16px;
-  padding: 25px 120px;
+  padding: 25px 100px;
   background-color: var(--color-primary-p-100, #fcf3fb);
   color: #493d78;
   display: flex;
