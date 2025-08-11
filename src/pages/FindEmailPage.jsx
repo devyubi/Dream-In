@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { findEmailByInfo } from "../api/auth";
 import "./FindEmailPage.css";
 
@@ -11,6 +11,7 @@ const FindEmailPage = () => {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleInputChange = e => {
     const { name, value } = e.target;
@@ -20,6 +21,10 @@ const FindEmailPage = () => {
     }));
     // 입력 시 에러 메시지 초기화
     if (error) setError("");
+  };
+
+  const handleClose = () => {
+    navigate("/login"); // 로그인 페이지로 이동
   };
 
   const handleSubmit = async e => {
@@ -61,100 +66,116 @@ const FindEmailPage = () => {
 
   return (
     <div className="find-email-container">
-      <div className="find-email-card">
-        <div className="card-header">
-          <h1 className="title">이메일 찾기</h1>
-          <p className="subtitle">
-            가입 시 입력한 닉네임과 생년월일을 입력해주세요
-          </p>
+      {/* 로고 섹션 */}
+      <div className="logo-section">
+        <div className="logo-circle">
+          <img
+            src="/images/logo.png"
+            alt="Dream-in Logo"
+            className="logo-image"
+          />
+        </div>
+        <h1 className="app-title">Dream-in</h1>
+      </div>
+
+      {/* 이메일 찾기 모달 */}
+      <div className="email-find-modal">
+        <div className="modal-header">
+          <h2>이메일 찾기</h2>
         </div>
 
-        {!result ? (
-          <form onSubmit={handleSubmit} className="find-form">
-            <div className="input-group">
-              <label htmlFor="nickname">닉네임</label>
-              <input
-                type="text"
-                id="nickname"
-                name="nickname"
-                value={formData.nickname}
-                onChange={handleInputChange}
-                placeholder="가입 시 사용한 닉네임"
-                required
-                disabled={loading}
-              />
-            </div>
+        <div className="modal-content">
+          {!result ? (
+            <>
+              <p className="modal-description">
+                가입 시 입력한 닉네임과 생년월일을 입력해주세요
+              </p>
 
-            <div className="input-group">
-              <label htmlFor="birthdate">생년월일</label>
-              <input
-                type="date"
-                id="birthdate"
-                name="birthdate"
-                value={formData.birthdate}
-                onChange={handleInputChange}
-                required
-                disabled={loading}
-              />
-            </div>
+              <form onSubmit={handleSubmit}>
+                <div className="input-group">
+                  <label htmlFor="nickname">닉네임</label>
+                  <input
+                    type="text"
+                    id="nickname"
+                    name="nickname"
+                    value={formData.nickname}
+                    onChange={handleInputChange}
+                    placeholder="가입 시 사용한 닉네임"
+                    required
+                    disabled={loading}
+                    className={error && !formData.nickname ? "error" : ""}
+                  />
+                </div>
 
-            {error && (
-              <div className="error-message">
-                <span className="error-icon">⚠️</span>
-                {error}
+                <div className="input-group">
+                  <label htmlFor="birthdate">생년월일</label>
+                  <input
+                    type="date"
+                    id="birthdate"
+                    name="birthdate"
+                    value={formData.birthdate}
+                    onChange={handleInputChange}
+                    required
+                    disabled={loading}
+                    className={error && !formData.birthdate ? "error" : ""}
+                  />
+                </div>
+
+                {error && <div className="message error">{error}</div>}
+
+                <div className="button-group">
+                  <button
+                    type="button"
+                    className="cancel-button"
+                    onClick={handleClose}
+                    disabled={loading}
+                  >
+                    취소
+                  </button>
+                  <button
+                    type="submit"
+                    className="submit-button"
+                    disabled={
+                      loading || !formData.nickname || !formData.birthdate
+                    }
+                  >
+                    {loading ? "찾는 중..." : "이메일 찾기"}
+                  </button>
+                </div>
+              </form>
+            </>
+          ) : (
+            <div className="result-section">
+              <div className="success-message">
+                <span className="success-icon">✅</span>
+                <h3>이메일을 찾았습니다!</h3>
               </div>
-            )}
 
-            <button
-              type="submit"
-              className="submit-btn"
-              disabled={loading || !formData.nickname || !formData.birthdate}
-            >
-              {loading ? (
-                <>
-                  <span className="spinner"></span>
-                  찾는 중...
-                </>
-              ) : (
-                "이메일 찾기"
-              )}
-            </button>
-          </form>
-        ) : (
-          <div className="result-section">
-            <div className="success-message">
-              <span className="success-icon">✅</span>
-              <h3>이메일을 찾았습니다!</h3>
-            </div>
+              <div className="email-result">
+                <div className="email-display">
+                  <span className="email-label">찾은 이메일:</span>
+                  <span className="email-text">{result.email}</span>
+                </div>
+              </div>
 
-            <div className="email-result">
-              <div className="email-display">
-                <span className="email-label">찾은 이메일:</span>
-                <span className="email-text">{result.email}</span>
+              <div className="button-group">
+                <button onClick={resetForm} className="cancel-button">
+                  다시 찾기
+                </button>
+                <button
+                  onClick={() => navigate("/login")}
+                  className="submit-button"
+                >
+                  로그인하기
+                </button>
               </div>
             </div>
-
-            <div className="action-buttons">
-              <button onClick={resetForm} className="retry-btn">
-                다시 찾기
-              </button>
-              <Link to="/login" className="login-btn">
-                로그인하기
-              </Link>
-            </div>
-          </div>
-        )}
-
-        <div className="footer-links">
-          <Link to="/login" className="link">
-            로그인
-          </Link>
-          <span className="separator">|</span>
-          <Link to="/signup" className="link">
-            회원가입
-          </Link>
+          )}
         </div>
       </div>
+
+      {/* 배경 그라데이션 */}
+      <div className="background-gradient"></div>
     </div>
   );
 };

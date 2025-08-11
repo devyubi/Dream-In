@@ -145,31 +145,56 @@ const SignupForm = ({ onSubmit, onNicknameCheck, loading = false }) => {
   /**
    * 닉네임 중복확인
    */
-  const handleNicknameCheck = async () => {
-    if (!values.nickname) {
+  /**
+   * 닉네임 중복확인 핸들러
+   * 필요 상태/함수:
+   *  - values.nickname
+   *  - setFieldError(field, msg)
+   *  - clearFieldError(field)
+   *  - setNicknameChecked(bool)
+   *  - setNicknameCheckLoading(bool)
+   *  - onNicknameCheck?(nickname)
+   *  - checkNicknameDuplicate(nickname)
+   */
+  const handleNicknameCheck = async e => {
+    // 엔터키가 아닌 다른 키 입력이면 그냥 리턴
+    if (e && e.key && e.key !== "Enter") return;
+
+    const q = values.nickname?.trim();
+
+    if (!q) {
       setFieldError("nickname", "닉네임을 먼저 입력해주세요.");
+      setNicknameChecked(false);
       return;
     }
 
     setNicknameCheckLoading(true);
-
     try {
-      const result = await checkNicknameDuplicate(values.nickname);
+      const { isDuplicate, isDeletedUser, error } =
+        await checkNicknameDuplicate(q);
 
-      if (result.error) {
+      if (error) {
         setFieldError("nickname", "중복확인 중 오류가 발생했습니다.");
         setNicknameChecked(false);
-      } else if (result.isDuplicate) {
+        return;
+      }
+
+      if (isDeletedUser) {
+        setFieldError("nickname", "탈퇴한 유저의 닉네임입니다.");
+        setNicknameChecked(false);
+        return;
+      }
+
+      if (isDuplicate) {
         setFieldError("nickname", "이미 사용중인 닉네임입니다.");
         setNicknameChecked(false);
-      } else {
-        clearFieldError("nickname");
-        setNicknameChecked(true);
-        if (onNicknameCheck) {
-          onNicknameCheck(values.nickname);
-        }
+        return;
       }
-    } catch (error) {
+
+      clearFieldError("nickname");
+      setNicknameChecked(true);
+      onNicknameCheck?.(q);
+    } catch (e) {
       setFieldError("nickname", "중복확인 중 오류가 발생했습니다.");
       setNicknameChecked(false);
     } finally {
@@ -290,7 +315,6 @@ const SignupForm = ({ onSubmit, onNicknameCheck, loading = false }) => {
               value={passwordState.value || ""}
               onChange={handleChange}
               onBlur={handleBlur}
-              onKeyPress={handleKeyPress}
               placeholder="6자 이상 입력하세요"
               className={passwordState.showError ? styles.error : ""}
               disabled={loading}
@@ -364,6 +388,7 @@ const SignupForm = ({ onSubmit, onNicknameCheck, loading = false }) => {
               onBlur={handleBlur}
               onKeyPress={handleKeyPress}
               placeholder="닉네임을 입력해주세요."
+              onKeyDown={handleNicknameCheck}
               className={
                 nicknameState.showError
                   ? styles.error
