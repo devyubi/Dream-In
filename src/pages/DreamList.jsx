@@ -32,7 +32,6 @@ function DreamList() {
         detail:
           "하늘을 아이언맨처럼 빠르게 날았습니다. I'm ironman. 하늘을 아이언맨처럼 빠르게 날았습니다. I'm ironman. 하늘을 아이언맨처럼 빠르게 날았습니다. I'm ironman. 하늘을 아이언맨처럼 빠르게 날았습니다. I'm ironman. 하늘을 아이언맨처럼 빠르게 날았습니다. I'm ironman. 하늘을 아이언맨처럼 빠르게 날았습니다. I'm ironman. 하늘을 아이언맨처럼 빠르게 날았습니다. I'm ironman. 하늘을 아이언맨처럼 빠르게 날았습니다. I'm ironman.",
         photo: "/images/photo1.png",
-        // isFavorite: false,
       },
       {
         id: 2,
@@ -43,7 +42,6 @@ function DreamList() {
         detail:
           "하늘을 올려다 보았을 때 아이언맨처럼 빠른 사람이 날고 있었어요. He is ironman.",
         photo: "/images/photo2.png",
-        // isFavorite: false,
       },
       {
         id: 3,
@@ -55,7 +53,6 @@ function DreamList() {
         detail:
           "하늘을 나르는 아이언맨을 보고 있는 사람을 보는 꿈을 꾸었어요. He is man.",
         photo: "/images/photo3.png",
-        // isFavorite: false,
       },
     ];
 
@@ -66,14 +63,6 @@ function DreamList() {
       setDreamList(mockData);
     }
   }, []);
-
-  // const toggleFavorite = id => {
-  //   setDreamList(prevList =>
-  //     prevList.map(dream =>
-  //       dream.id === id ? { ...dream, isFavorite: !dream.isFavorite } : dream,
-  //     ),
-  //   );
-  // };
 
   // 감정 카테고리 필터
   const filteredDreams =
@@ -93,6 +82,15 @@ function DreamList() {
     "기타",
   ];
 
+  const categoryCounts = emojiCategories.reduce((acc, category) => {
+    if (category === "전체") {
+      acc[category] = dreamList.length;
+    } else {
+      acc[category] = dreamList.filter(d => d.category === category).length;
+    }
+    return acc;
+  }, {});
+
   return (
     <Container>
       <Title title="꿈 이야기 목록" />
@@ -104,7 +102,7 @@ function DreamList() {
             onClick={() => setSelectedCategory(categorylist)}
             isActive={selectedCategory === categorylist}
           >
-            {categorylist}
+            {categorylist} ({categoryCounts[categorylist] || 0})
           </List.EmojiCategoryItem>
         ))}
       </List.EmojiCategoryWrap>
@@ -127,21 +125,6 @@ function DreamList() {
                   </List.ListItemUserPhoto>
                   <List.ListItemUserName>{dream.name}</List.ListItemUserName>
                   <List.ListItemTime>{dream.time}</List.ListItemTime>
-                  {/* <List.ListItemFavorites
-                  onClick={e => {
-                    e.stopPropagation();
-                    toggleFavorite(dream.id);
-                  }}
-                >
-                  <img
-                    src={
-                      dream.isFavorite
-                        ? "/images/fill_star.png"
-                        : "/images/empty_star.png"
-                    }
-                    alt={dream.isFavorite ? "즐겨찾기 취소" : "즐겨찾기"}
-                  />
-                </List.ListItemFavorites> */}
                   <List.ListItemFavorites
                     onClick={e => {
                       e.stopPropagation();
