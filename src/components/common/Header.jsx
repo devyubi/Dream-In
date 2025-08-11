@@ -11,7 +11,9 @@ function Header() {
   const navigate = useNavigate();
 
   // 로그인 상태 및 다크모드 상태에 따라 로고 및 아이콘 경로 설정
-  const logoSrc = "/images/logo.png";
+  const logoSrc = isDarkMode
+    ? "/images/icon-dark.png"
+    : "/images/icon-light.png";
   const authIconSrc = isDarkMode
     ? isAuthenticated
       ? "/images/logout_dark.svg"
