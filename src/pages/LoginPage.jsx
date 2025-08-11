@@ -1,12 +1,13 @@
 // src/pages/LoginPage.jsx
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
-import { getErrorMessage } from "../utils/errorHandler";
 import LoginForm from "../components/auth/LoginForm";
 import PasswordResetModal from "../components/auth/PasswordResetModal";
-import "../css/loginpage.css";
 import Container from "../components/common/Container";
+import { useAuth } from "../contexts/AuthContext";
+import { useThemeContext } from "../contexts/ThemeContext";
+import "../css/loginpage.css";
+import { getErrorMessage } from "../utils/errorHandler";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const LoginPage = () => {
   const [showResetModal, setShowResetModal] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const { isDarkMode, setIsDarkMode } = useThemeContext();
 
   // 이미 로그인된 사용자는 홈으로 리다이렉트
   useEffect(() => {
@@ -120,7 +122,10 @@ const LoginPage = () => {
         <div className="logo-section">
           <div className="logo-circle">
             <img
-              src="/images/logo.png"
+              // src="/images/logo.png"
+              src={
+                isDarkMode ? "/images/icon-dark.png" : "/images/icon-light.png"
+              }
               alt="Dream-in Logo"
               className="logo-image"
             />

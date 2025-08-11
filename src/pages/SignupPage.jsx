@@ -5,6 +5,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { getErrorMessage } from "../utils/errorHandler";
 import SignupForm from "../components/auth/SignupForm";
 import Container from "../components/common/Container";
+import { useThemeContext } from "../contexts/ThemeContext";
 
 const SignupPage = () => {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ const SignupPage = () => {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
+  const { isDarkMode, setIsDarkMode } = useThemeContext();
   // 이미 로그인된 사용자는 홈으로 리다이렉트
   useEffect(() => {
     if (user) {
@@ -128,18 +130,16 @@ const SignupPage = () => {
               height: "100px",
               margin: "0 auto 20px",
               borderRadius: "50%",
-              background: "rgba(255, 255, 255, 0.9)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              boxShadow: "0 8px 32px rgba(139, 92, 246, 0.2)",
-              backdropFilter: "blur(10px)",
-              border: "2px solid rgba(255, 255, 255, 0.3)",
               overflow: "hidden",
             }}
           >
             <img
-              src="/images/logo.png"
+              src={
+                isDarkMode ? "/images/icon-dark.png" : "/images/icon-light.png"
+              }
               alt="Dream-in Logo"
               style={{
                 width: "70px",
