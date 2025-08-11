@@ -242,7 +242,6 @@ export const ENV = {
 
 // ===== 기능 플래그 =====
 export const FEATURES = {
-  // 개발 중인 기능들
   DARK_MODE: true,
   NOTIFICATIONS: false,
   ANALYTICS: process.env.NODE_ENV === "production",

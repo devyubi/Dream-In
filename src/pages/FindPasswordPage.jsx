@@ -130,8 +130,7 @@ const FindPasswordPage = () => {
                 onClick={handleClose}
                 disabled={isLoading}
               >
-                {/* 취소  */}
-                아이메일이기억났어요로그인하러갈께요!!!!!!!
+                취소
               </button>
               <button
                 type="submit"
