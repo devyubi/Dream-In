@@ -1,10 +1,11 @@
+import styled from "@emotion/styled";
 import { useState } from "react";
-import BackButton from "../components/common/BackButton";
+import { useNavigate } from "react-router-dom";
+import BackButton, { StyledBackButton } from "../components/common/BackButton";
 import Container from "../components/common/Container";
 import Title from "../components/common/Title";
-import { List } from "./List.styles";
 import { useFavorites } from "../contexts/FavoriteContext";
-import { useNavigate } from "react-router-dom";
+import { List } from "./List.styles";
 
 function FavoriteList() {
   const [selectedCategory, setSelectedCategory] = useState("전체");
@@ -32,28 +33,60 @@ function FavoriteList() {
     return false;
   });
 
+  // const handleDeleteFavorite = (e, item) => {
+  //   e.stopPropagation();
+  //   const confirmResult = window.confirm("즐겨찾기에서 삭제하시겠습니까?");
+  //   if (confirmResult) {
+  //     handleToggleFavorite(item);
+  //     alert("즐겨찾기에서 삭제되었습니다.");
+  //   }
+  // };
+
+  // const handleToggleFavorite = item => {
+  //   if (item.type === "dream") {
+  //     toggleDreamFavorite(item);
+  //   } else if (item.type === "emotion") {
+  //     toggleEmotionFavorite(item);
+  //   }
+  // };
+
   const handleToggleFavorite = item => {
     if (item.type === "dream") {
+      const isFavorited = favoriteDreams.some(d => d.id === item.id);
+
+      if (isFavorited) {
+        // 이미 즐겨찾기된 상태에서 해제하려고 하면 확인창 띄우기
+        const confirmResult = window.confirm(
+          "정말 즐겨찾기에서 삭제하시겠습니까?",
+        );
+        if (!confirmResult) return; // 취소하면 함수 종료
+      }
+
       toggleDreamFavorite(item);
+      if (isFavorited) {
+        alert("즐겨찾기에서 삭제되었습니다.");
+      }
     } else if (item.type === "emotion") {
+      const isFavorited = favoriteEmotions.some(e => e.id === item.id);
+
+      if (isFavorited) {
+        const confirmResult = window.confirm(
+          "정말 즐겨찾기에서 삭제하시겠습니까?",
+        );
+        if (!confirmResult) return;
+      }
+
       toggleEmotionFavorite(item);
+      if (isFavorited) {
+        alert("즐겨찾기에서 삭제되었습니다.");
+      }
     }
   };
-
-  const handleDeleteFavorite = (e, item) => {
-    e.stopPropagation();
-    const confirmResult = window.confirm("즐겨찾기에서 삭제하시겠습니까?");
-    if (confirmResult) {
-      handleToggleFavorite(item);
-      alert("즐겨찾기에서 삭제되었습니다.");
-    }
-  };
-
   return (
     <Container>
       <Title title="즐겨찾기 목록" />
       <List.EmojiCategoryWrap>
-        <BackButton to="/" />
+        <StyledBackButton to="/" />
         {listCategories.map((categorylist, index) => (
           <List.EmojiCategoryItem
             key={index}
@@ -71,6 +104,9 @@ function FavoriteList() {
               paddingTop: "70px",
               display: "flex",
               justifyContent: "center",
+              fontSize: "16px",
+              fontWeight: "600",
+              letterSpacing: "2px",
             }}
           >
             즐겨찾기한 항목이 없습니다.
@@ -112,9 +148,9 @@ function FavoriteList() {
                 )}
               </List.ListItemTitle>
               <List.ListItemDetail>{item.detail}</List.ListItemDetail>
-              <List.ListItemDelete
+              {/* <List.ListItemDelete
                 onClick={e => handleDeleteFavorite(e, item)}
-              ></List.ListItemDelete>
+              ></List.ListItemDelete> */}
             </List.ListItem>
           ))
         )}
