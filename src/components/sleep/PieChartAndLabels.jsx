@@ -1,24 +1,30 @@
 import { ResponsivePie } from "@nivo/pie";
+import React, { useMemo } from "react";
 import { FaStar } from "react-icons/fa6";
 
 const LABELS = ["매우 나쁨", "나쁨", "보통", "좋음", "매우 좋음"];
 const COLORS = ["#ff6961", "#fca652", "#f6d55c", "#88cc88", "#8FC8F6"];
 
 function PieChartAndLabels({ records }) {
-  // ㅊㅏ트 7일 이내의 데이터만 반영
-  const now = new Date();
-  const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(now.getDate() - 6);
+  // 차트가 7일 내의 것만 반영되도록 (일주일 이내의 데이터만 반영)
+  const recentRecords = useMemo(() => {
+    const now = new Date();
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(now.getDate() - 6);
 
-  const recentRecords = records.filter(r => {
-    const recordDate = new Date(r.day);
-    return recordDate >= sevenDaysAgo && recordDate <= now;
-  });
+    return records.filter(r => {
+      const recordDate = new Date(r.day);
+      return recordDate >= sevenDaysAgo && recordDate <= now;
+    });
+  }, [records]);
 
-  const chartData = LABELS.map((label, idx) => {
-    const value = recentRecords.filter(r => r.rating === idx + 1).length;
-    return { id: label, label, value };
-  }).filter(d => d.value > 0);
+  // useMemo로 최적화 
+  const chartData = useMemo(() => {
+    return LABELS.map((label, idx) => {
+      const value = recentRecords.filter(r => r.rating === idx + 1).length;
+      return { id: label, label, value };
+    }).filter(d => d.value > 0);
+  }, [recentRecords]);
 
   if (chartData.length === 0) {
     return <p className="empty-chart">저장된 수면 기록이 없습니다.</p>;
@@ -68,4 +74,4 @@ function PieChartAndLabels({ records }) {
   );
 }
 
-export default PieChartAndLabels;
+export default React.memo(PieChartAndLabels);

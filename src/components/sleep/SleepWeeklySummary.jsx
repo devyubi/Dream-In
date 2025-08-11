@@ -19,13 +19,13 @@ function SleepWeeklySummary({ records = [] }) {
     // reduce : 배열의 모든 데이터를 하나의 값으로 합친다
     // sum : ( 분 단위로 ) 계산한 총 수면시간 합계
     recentRecords.reduce((sum, r) => {
-      const [bedH, bedM] = r.bedTime.split(":").map(Number);
-      const [wakeH, wakeM] = r.wakeTime.split(":").map(Number);
-      let start = bedH * 60 + bedM;
-      let end = wakeH * 60 + wakeM;
+      const [bedHour, bedMinute] = r.bedTime.split(":").map(Number);
+      const [wakeHour, wakeMinute] = r.wakeTime.split(":").map(Number);
+      let start = bedHour * 60 + bedMinute;
+      let end = wakeHour * 60 + wakeMinute;
       if (end <= start) end += 24 * 60;
       return sum + (end - start);
-      // 마지막 0은 합계의 초기값
+      // 마지막 0은 합계의 초기값 
     }, 0) / (recentRecords.length || 1);
 
   const avgHours = Math.floor(averageSleepMinutes / 60);

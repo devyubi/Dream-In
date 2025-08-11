@@ -5,7 +5,7 @@ import "../../css/home/statssection.css";
 
 export function StatsSection() {
   const { isDarkMode } = useThemeContext();
-  const { isLoggedIn, user } = useAuth();
+  const { isLoggedIn } = useAuth();
 
   const iconSet = [
     [
