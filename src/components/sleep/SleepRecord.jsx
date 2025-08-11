@@ -1,4 +1,3 @@
-import { useState } from "react";
 import "../../css/sleep/sleeprecord.css";
 
 const SleepRecord = ({ bedTime, setBedTime, wakeTime, setWakeTime }) => {

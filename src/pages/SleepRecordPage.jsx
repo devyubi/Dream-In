@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import BackButton from "../components/common/BackButton";
 import Container from "../components/common/Container";
 import SleepTabBar from "../components/sleep/SleepTabBar";
@@ -10,13 +10,18 @@ function SleepRecordPage() {
   const [bedTime, setBedTime] = useState("");
   const [wakeTime, setWakeTime] = useState("");
 
+  // 콜백 최적화
+  const updateActiveTab = useCallback(tab => {
+    setActiveTab(tab);
+  }, []);
+
   return (
     <Container>
       <BackButton to="/" />
       <div className="sleep_record">
         <div className="sleep_record_wrap">
           {/* 상단 탭 */}
-          <SleepTabBar activeTab={activeTab} setActiveTab={setActiveTab} />
+          <SleepTabBar activeTab={activeTab} setActiveTab={updateActiveTab} />
 
           {/* 탭 내용 */}
           <SleepAnimatedSwitch

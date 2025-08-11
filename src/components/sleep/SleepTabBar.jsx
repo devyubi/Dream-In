@@ -1,3 +1,4 @@
+import React, { useCallback } from "react";
 import "../../css/sleep/sleeptabbar.css";
 
 function SleepTabBar({ activeTab, setActiveTab }) {
@@ -20,4 +21,4 @@ function SleepTabBar({ activeTab, setActiveTab }) {
   );
 }
 
-export default SleepTabBar;
+export default React.memo(SleepTabBar);

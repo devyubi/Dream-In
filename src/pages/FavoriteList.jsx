@@ -9,6 +9,7 @@ import { List } from "./List.styles";
 
 function FavoriteList() {
   const [selectedCategory, setSelectedCategory] = useState("전체");
+  const [refreshKey, setRefreshKey] = useState(0);
   const listCategories = ["전체", "꿈 이야기", "감정일기"];
   const {
     favoriteDreams,
@@ -24,6 +25,10 @@ function FavoriteList() {
     ...favoriteDreams.map(item => ({ ...item, type: "dream" })),
     ...favoriteEmotions.map(item => ({ ...item, type: "emotion" })),
   ];
+
+  const countAll = allFavorites.length;
+  const countDreams = favoriteDreams.length;
+  const countEmotions = favoriteEmotions.length;
 
   // 선택된 카테고리에 따라 필터링
   const filteredFavorites = allFavorites.filter(item => {
@@ -81,9 +86,10 @@ function FavoriteList() {
         alert("즐겨찾기에서 삭제되었습니다.");
       }
     }
+    setRefreshKey(prev => prev + 1);
   };
   return (
-    <Container>
+    <Container key={refreshKey}>
       <Title title="즐겨찾기 목록" />
       <List.EmojiCategoryWrap>
         <StyledBackButton to="/" />
@@ -94,6 +100,9 @@ function FavoriteList() {
             isActive={selectedCategory === categorylist}
           >
             {categorylist}
+            {categorylist === "전체" && `(${countAll})`}
+            {categorylist === "꿈 이야기" && `(${countDreams})`}
+            {categorylist === "감정일기" && `(${countEmotions})`}
           </List.EmojiCategoryItem>
         ))}
       </List.EmojiCategoryWrap>

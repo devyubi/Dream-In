@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import SleepStats from "./SleepStats";
 import SleepRecord from "./SleepRecord";
 import SleepQualityRating from "./SleepQualityRating";
+import React, { useCallback } from "react";
 
 function SleepAnimatedSwitch({
   activeTab,
@@ -13,6 +14,11 @@ function SleepAnimatedSwitch({
   wakeTime,
   setWakeTime,
 }) {
+  // onSaveComplete 콜백 최적화
+  const onSaveComplete = useCallback(() => {
+    setActiveTab("stats");
+  }, [setActiveTab]);
+
   return (
     <div className="sleep-animated-switch">
       <AnimatePresence mode="wait">
@@ -37,7 +43,7 @@ function SleepAnimatedSwitch({
             <SleepQualityRating
               rating={rating}
               setRating={setRating}
-              onSaveComplete={() => setActiveTab("stats")}
+              onSaveComplete={onSaveComplete} // {() => setActiveTab("stats")} 요거 최적화 완료
               bedTime={bedTime}
               wakeTime={wakeTime}
             />
@@ -60,4 +66,4 @@ function SleepAnimatedSwitch({
   );
 }
 
-export default SleepAnimatedSwitch;
+export default React.memo(SleepAnimatedSwitch);
