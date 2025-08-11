@@ -4,12 +4,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   position: relative;
-  padding: 20px;
+  padding: 60px 20px 40px;
 }
 
-.background-gradient {
+.find-email-container .background-gradient {
   position: absolute;
   top: 0;
   left: 0;
@@ -19,40 +19,33 @@
 }
 
 /* 로고 스타일 */
-.logo-section {
+.find-email-container .logo-section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 40px;
+  margin-bottom: 60px;
+  margin-top: 40px;
   z-index: 1;
 }
 
-.logo-circle {
-  width: 80px;
-  height: 80px;
+.find-email-container .logo-circle {
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
-.logo-image {
+.find-email-container .logo-image {
   width: 100%;
   height: 100%;
   object-fit: contain;
 }
 
-.app-title {
-  font-size: 32px;
-  font-weight: 600;
-  /* color: white; */
-  margin: 0;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-}
-
 /* 모달 스타일 */
-.email-find-modal {
+.find-email-container .email-find-modal {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   border-radius: 20px;
@@ -61,10 +54,10 @@
   padding: 0;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  animation: modalAppear 0.3s ease-out;
+  animation: emailModalAppear 0.3s ease-out;
 }
 
-@keyframes modalAppear {
+@keyframes emailModalAppear {
   from {
     opacity: 0;
     transform: translateY(20px) scale(0.9);
@@ -75,7 +68,7 @@
   }
 }
 
-.modal-header {
+.find-email-container .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -83,18 +76,18 @@
   margin-bottom: 16px;
 }
 
-.modal-header h2 {
+.find-email-container .modal-header h2 {
   font-size: 20px;
   font-weight: 600;
   color: #2d3748;
   margin: 0;
 }
 
-.modal-content {
+.find-email-container .modal-content {
   padding: 0 24px 24px;
 }
 
-.modal-description {
+.find-email-container .modal-description {
   font-size: 14px;
   color: #4a5568;
   line-height: 1.5;
@@ -102,11 +95,11 @@
 }
 
 /* 입력 그룹 */
-.input-group {
+.find-email-container .input-group {
   margin-bottom: 20px;
 }
 
-.input-group label {
+.find-email-container .input-group label {
   display: block;
   font-size: 14px;
   font-weight: 500;
@@ -114,7 +107,7 @@
   margin-bottom: 8px;
 }
 
-.input-group input {
+.find-email-container .input-group input {
   width: 100%;
   padding: 12px 16px;
   border: 2px solid #e2e8f0;
@@ -125,28 +118,28 @@
   box-sizing: border-box;
 }
 
-.input-group input:focus {
+.find-email-container .input-group input:focus {
   outline: none;
   border-color: #667eea;
   background: white;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
-.input-group input.error {
+.find-email-container .input-group input.error {
   border-color: #e53e3e;
 }
 
-.input-group input.error:focus {
+.find-email-container .input-group input.error:focus {
   box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.1);
 }
 
-.input-group input:disabled {
+.find-email-container .input-group input:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
 /* 메시지 */
-.message {
+.find-email-container .message {
   padding: 12px 16px;
   border-radius: 8px;
   font-size: 14px;
@@ -154,26 +147,26 @@
   font-weight: 500;
 }
 
-.message.error {
+.find-email-container .message.error {
   background: rgba(229, 62, 62, 0.1);
   color: #c53030;
   border: 1px solid rgba(229, 62, 62, 0.2);
 }
 
-.message.success {
+.find-email-container .message.success {
   background: rgba(72, 187, 120, 0.1);
   color: #2f855a;
   border: 1px solid rgba(72, 187, 120, 0.2);
 }
 
 /* 버튼 그룹 */
-.button-group {
+.find-email-container .button-group {
   display: flex;
   gap: 12px;
 }
 
-.cancel-button,
-.submit-button {
+.find-email-container .cancel-button,
+.find-email-container .submit-button {
   flex: 1;
   padding: 12px 20px;
   border-radius: 12px;
@@ -184,57 +177,57 @@
   border: none;
 }
 
-.cancel-button {
+.find-email-container .cancel-button {
   background: rgba(113, 128, 150, 0.1);
   color: #4a5568;
   border: 1px solid rgba(113, 128, 150, 0.2);
 }
 
-.cancel-button:hover:not(:disabled) {
+.find-email-container .cancel-button:hover:not(:disabled) {
   background: rgba(113, 128, 150, 0.15);
 }
 
-.submit-button {
+.find-email-container .submit-button {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
 
-.submit-button:hover:not(:disabled) {
+.find-email-container .submit-button:hover:not(:disabled) {
   transform: translateY(-1px);
   box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
 
-.submit-button:disabled,
-.cancel-button:disabled {
+.find-email-container .submit-button:disabled,
+.find-email-container .cancel-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
 }
 
 /* 결과 섹션 */
-.result-section {
+.find-email-container .result-section {
   text-align: center;
 }
 
-.success-message {
+.find-email-container .success-message {
   margin-bottom: 24px;
 }
 
-.success-icon {
+.find-email-container .success-icon {
   font-size: 48px;
   display: block;
   margin-bottom: 12px;
 }
 
-.success-message h3 {
+.find-email-container .success-message h3 {
   font-size: 20px;
   font-weight: 600;
   color: #059669;
   margin: 0;
 }
 
-.email-result {
+.find-email-container .email-result {
   background: #f0fdf4;
   border: 1px solid #bbf7d0;
   border-radius: 12px;
@@ -242,19 +235,19 @@
   margin-bottom: 24px;
 }
 
-.email-display {
+.find-email-container .email-display {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.email-label {
+.find-email-container .email-label {
   font-size: 14px;
   color: #374151;
   font-weight: 500;
 }
 
-.email-text {
+.find-email-container .email-text {
   font-size: 18px;
   font-weight: 700;
   color: #059669;
@@ -265,25 +258,61 @@
   border: 1px solid #d1fae5;
 }
 
+/* 푸터 링크 */
+.find-email-container .footer-links {
+  padding-top: 20px;
+  margin-top: 20px;
+  text-align: center;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.find-email-container .link {
+  color: #667eea;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.find-email-container .link:hover {
+  color: #4f46e5;
+  text-decoration: underline;
+}
+
+.find-email-container .separator {
+  margin: 0 12px;
+  color: #a0aec0;
+}
+
 /* 반응형 */
 @media (max-width: 480px) {
   .find-email-container {
-    padding: 16px;
+    padding: 40px 16px 20px;
   }
 
-  .email-find-modal {
+  .find-email-container .logo-section {
+    margin-top: 20px;
+    margin-bottom: 40px;
+  }
+
+  .find-email-container .logo-circle {
+    width: 150px;
+    height: 150px;
+  }
+
+  .find-email-container .email-find-modal {
     max-width: 100%;
   }
 
-  .button-group {
+  .find-email-container .button-group {
     flex-direction: column;
   }
 
-  .app-title {
-    font-size: 28px;
+  .find-email-container .app-title {
+    font-size: 32px;
   }
 
-  .email-text {
+  .find-email-container .email-text {
     font-size: 16px;
   }
 }

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { resetPasswordByInfo } from "../api/auth";
 import "./FindPasswordPage.css";
+import { useThemeContext } from "../contexts/ThemeContext";
 
 const FindPasswordPage = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +14,7 @@ const FindPasswordPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const isDarkMode = useThemeContext();
 
   const handleInputChange = e => {
     const { name, value } = e.target;
@@ -49,6 +51,13 @@ const FindPasswordPage = () => {
     setResult(null);
 
     try {
+      console.log("=== FindPasswordPage에서 API 호출 ===");
+      console.log("전송할 데이터:", {
+        email: formData.email,
+        nickname: formData.nickname,
+        birthdate: formData.birthdate,
+      });
+
       // 사용자 정보 확인 및 초기 비밀번호 생성
       const newPassword = await resetPasswordByInfo(
         formData.email,
@@ -56,18 +65,27 @@ const FindPasswordPage = () => {
         formData.birthdate,
       );
 
+      console.log("=== API 응답 결과 ===");
+      console.log("newPassword:", newPassword);
+
       if (newPassword && newPassword.success) {
+        console.log("=== 성공 처리 ===");
         setResult({
           success: true,
           password: newPassword.tempPassword,
           message: newPassword.message,
         });
       } else {
+        console.log("=== 실패 처리 (success가 false) ===");
         setError(
           "입력하신 정보와 일치하는 계정을 찾을 수 없습니다. 이메일, 닉네임, 생년월일을 다시 확인해주세요.",
         );
       }
     } catch (err) {
+      console.log("=== catch 블록에서 에러 처리 ===");
+      console.error("에러 객체:", err);
+      console.error("에러 메시지:", err.message);
+
       // 에러 메시지 처리
       let errorMessage =
         err.message ||
@@ -84,6 +102,8 @@ const FindPasswordPage = () => {
         errorMessage = err.message; // 원본 메시지 사용
       }
 
+      console.log("=== 최종 에러 메시지 ===");
+      console.log("errorMessage:", errorMessage);
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -118,12 +138,26 @@ const FindPasswordPage = () => {
       <div className="logo-section">
         <div className="logo-circle">
           <img
-            src="/images/logo.png"
+            src={
+              isDarkMode ? "/images/icon-dark.png" : "/images/icon-light.png"
+            }
             alt="Dream-in Logo"
             className="logo-image"
           />
         </div>
-        <h1 className="app-title">Dream-in</h1>
+        <h1
+          className="app-title"
+          style={{
+            color: isDarkMode ? "#fcf3fb" : "#3a3a74",
+            fontSize: "40px",
+            fontWeight: 600,
+            margin: 0,
+            textShadow: "0 2px 10px rgba(0, 0, 0, 0.2)",
+            transition: "color 0.3s ease",
+          }}
+        >
+          Dream-in
+        </h1>
       </div>
 
       {/* 비밀번호 재설정 모달 */}
@@ -254,9 +288,6 @@ const FindPasswordPage = () => {
           )}
         </div>
       </div>
-
-      {/* 배경 그라데이션 */}
-      <div className="background-gradient"></div>
     </div>
   );
 };

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { findEmailByInfo } from "../api/auth";
 import "./FindEmailPage.css";
+import { useThemeContext } from "../contexts/ThemeContext";
 
 const FindEmailPage = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ const FindEmailPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const isDarkMode = useThemeContext();
 
   const handleInputChange = e => {
     const { name, value } = e.target;
@@ -70,7 +72,9 @@ const FindEmailPage = () => {
       <div className="logo-section">
         <div className="logo-circle">
           <img
-            src="/images/logo.png"
+            src={
+              isDarkMode ? "/images/icon-dark.png" : "/images/icon-light.png"
+            }
             alt="Dream-in Logo"
             className="logo-image"
           />
