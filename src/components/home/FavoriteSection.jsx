@@ -78,41 +78,40 @@ function FavoriteSection() {
             <p className="no-bookmarks">즐겨찾기가 없습니다.</p>
           )}
 
-          {isLoggedIn &&
-            bookmarkedDreams.map(dream => (
-              <div className="dream_card" key={dream.id}>
-                <div
-                  className="dream_card_top"
-                  style={{ cursor: "pointer" }}
-                  onClick={onDreamClick}
-                >
-                  <span>
-                    {dream.title}
-                    <span className="dream_date">{dream.date}</span>
-                  </span>
+          {bookmarkedDreams.map(dream => (
+            <div className="dream_card" key={dream.id}>
+              <div
+                className="dream_card_top"
+                style={{ cursor: "pointer" }}
+                onClick={onDreamClick}
+              >
+                <span>
+                  {dream.title}
+                  <span className="dream_date">{dream.date}</span>
+                </span>
 
-                  <img
-                    src={
-                      dream.isBookmarked
-                        ? "/images/fullstar.svg"
-                        : "/images/star.svg"
-                    }
-                    alt="즐겨찾기"
-                    onClick={e =>
-                      handleBookmarkClick(e, dream.id, dream.isBookmarked)
-                    }
-                    style={{ cursor: "pointer" }}
-                  />
-                </div>
-                <div
-                  className="dream_item"
+                <img
+                  src={
+                    dream.isBookmarked
+                      ? "/images/fullstar.svg"
+                      : "/images/star.svg"
+                  }
+                  alt="즐겨찾기"
+                  onClick={e =>
+                    handleBookmarkClick(e, dream.id, dream.isBookmarked)
+                  }
                   style={{ cursor: "pointer" }}
-                  onClick={onDreamClick}
-                >
-                  <p>{dream.description}</p>
-                </div>
+                />
               </div>
-            ))}
+              <div
+                className="dream_item"
+                style={{ cursor: "pointer" }}
+                onClick={onDreamClick}
+              >
+                <p>{dream.description}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -161,8 +160,8 @@ function FavoriteSection() {
                 Dream-in 로그인
               </Link>
               <div className="sub_links">
-                <Link to="/find-id" className="sub_link">
-                  아이디 찾기
+                <Link to="/find-email" className="sub_link">
+                  이메일 찾기
                 </Link>
                 <span>|</span>
                 <Link to="/find-password" className="sub_link">
