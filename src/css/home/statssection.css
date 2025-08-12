@@ -1,24 +1,56 @@
 .main_section {
   padding: 20px 0;
 }
+
+.state_wrap {
+  display: flex;
+}
+
+.my_state {
+  position: relative;
+  margin: 0 auto;
+  min-height: 170px;
+}
+
+.state_blur_overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 130%;
+  height: 100%;
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  color: var(--text-color, #222);
+  font-size: 18px;
+  z-index: 999;
+  pointer-events: none;
+  border-radius: 20px;
+}
+
 .total {
   display: flex;
-  flex-wrap: nowrap;
-  justify-content: space-around;
-  gap: 15px;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+  width: 100%;
 }
 
 .mytotal {
-  min-width: 150px;
-  max-width: 200px;
+  width: 250px;
+  height: 150px;
   border-radius: 16px;
-  padding: 25px 100px;
+  padding: 20px;
   background-color: var(--bg-color);
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: all 0.3s ease;
+  justify-content: center;
   text-align: center;
+  transition: all 0.3s ease;
+  text-decoration: none;
 }
 
 .hoverBt {
@@ -30,7 +62,6 @@
   transform: translateY(-2px);
 }
 
-
 .mytotal img {
   padding-top: 10px;
   width: 28px;
@@ -40,5 +71,6 @@
 
 .mytotal span {
   white-space: nowrap;
-  /* color: var(--text-color, #3a3a74); */
+  font-size: 13px;
+  margin-top: 10px;
 }
