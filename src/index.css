@@ -23,6 +23,7 @@
   font-style: normal;
 }
 
+/* 전역 */
 :root {
   --bg-gradient: linear-gradient(
     180deg,
@@ -78,7 +79,7 @@
   --login-btn--text-color: #8672d0;
 }
 
-/* 기록하기 버튼 */
+/* 기록하기 버튼 그 외도 적용가능 */
 :root {
   --record-box-bg: var(--color-primary-p-100, #fcf3fb);
   --record-box-text-color: #493d78;
@@ -89,6 +90,26 @@
   --record-box-text-color: #fcf3fb;
 }
 
+/* 메인 text 타이틀 (h1,h2,h3 등 그외도 적용 가능) */
+:root {
+  --header-title-color: #25254d;
+}
+[data-theme="dark"] {
+  --header-title-color: #f5c8e7;
+}
+
+/* 서브 text 타이틀 */
+:root {
+  --record-box-hover-bg: #fad4e8;
+  --record-box-active-bg: #fff8dc;
+  --text-subtle-color: #919191;
+}
+
+[data-theme="dark"] {
+  --record-box-hover-bg: #6b5ca7;
+  --record-box-active-bg: #3a3a74;
+  --text-subtle-color: #25254d;
+}
 
 body {
   height: auto;

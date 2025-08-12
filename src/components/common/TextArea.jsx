@@ -9,7 +9,9 @@ const DetailsWrap = styled.div`
   padding-right: 25px;
   height: 310px;
 `;
-const DetailsTitle = styled.h2``;
+const DetailsTitle = styled.h2`
+  color: var(--text-color);
+`;
 const DetailsText = styled.textarea`
   font-family: "tj400";
   border: ${({ error }) => (error ? "2px" : "1px")} solid

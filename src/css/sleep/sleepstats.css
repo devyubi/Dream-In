@@ -1,11 +1,13 @@
-.sleep-stats-container {
+.sleep_stats_container {
   padding: 20px;
   text-align: center;
+  color: var(--text-color);
 }
 
-.stats-title {
+.stats_title {
   font-size: 24px;
   margin-bottom: 10px;
+  color: var(--header-title-color);
 }
 
 .chart-section {
@@ -43,6 +45,7 @@
   font-size: 14px;
   font-weight: 500;
   gap: 10px;
+  color: var(--text-color);
 }
 .label-item svg {
   gap: 10px;
@@ -54,7 +57,7 @@
 
 .rating-label-list {
   display: flex;
-  flex-direction: column-reverse; /* 매우 좋음이 위로 */
+  flex-direction: column-reverse;
   justify-content: center;
   align-items: flex-start;
   gap: 10px;
@@ -66,7 +69,15 @@
   font-size: 14px;
   font-weight: 500;
   gap: 8px;
+  color: var(--text-color);
 }
+
+.pie-chart-wrapper g {
+  fill: var(--text-color);
+}
+/* .pie-chart-wrapper text {
+  fill: var(--text-color);
+} */
 
 /* 원 색상 */
 .color-circle {

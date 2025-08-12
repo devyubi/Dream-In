@@ -1,38 +1,63 @@
-.sleep-tab-bar {
+.sleep_tab_bar {
   display: flex;
   justify-content: space-around;
   border-radius: 20px;
-  background: linear-gradient(
-    90deg,
-    rgba(230, 179, 247, 0.3) 0%,
-    rgba(211, 188, 232, 0.3) 53.37%,
-    rgba(194, 193, 238, 0.3) 100%
-  );
+  background: var(--sleep-tab-bar-bg);
   margin: 20px;
   padding: 8px;
 }
 
-.sleep-tab-button {
+.sleep_tab_button {
   flex: 1;
   padding: 10px 0;
   border: none;
   background: transparent;
   font-size: 16px;
   cursor: pointer;
-  color: #888;
+  color: var(--sleep-tab-button-color);
   position: relative;
   transition: all 0.3s ease;
 }
 
-.sleep-tab-button.active {
-  color: var(--color-secondary-s-200, #493d78);
+.sleep_tab_button.active {
+  color: var(--sleep-tab-button-active-color);
   border-radius: 20px;
-  background: linear-gradient(
+  background: var(--sleep-tab-button-active-bg);
+  font-weight: bold;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* var 변수 선언 */
+:root {
+  --sleep-tab-bar-bg: linear-gradient(
     90deg,
     rgba(230, 179, 247, 0.3) 0%,
     rgba(211, 188, 232, 0.3) 53.37%,
     rgba(194, 193, 238, 0.3) 100%
   );
-  font-weight: bold;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  --sleep-tab-button-color: #888;
+  --sleep-tab-button-active-color: var(--color-secondary-s-200, #493d78);
+  --sleep-tab-button-active-bg: linear-gradient(
+    90deg,
+    rgba(230, 179, 247, 0.3) 0%,
+    rgba(211, 188, 232, 0.3) 53.37%,
+    rgba(194, 193, 238, 0.3) 100%
+  );
+}
+
+[data-theme="dark"] {
+  --sleep-tab-bar-bg: linear-gradient(
+    90deg,
+    rgba(54, 43, 78, 0.6) 0%,
+    rgba(67, 58, 91, 0.6) 53.37%,
+    rgba(79, 74, 98, 0.6) 100%
+  );
+  --sleep-tab-button-color: #bbb;
+  --sleep-tab-button-active-color: var(--color-secondary-s-200, #fcf3fb);
+  --sleep-tab-button-active-bg: linear-gradient(
+    90deg,
+    rgba(110, 87, 170, 0.6) 0%,
+    rgba(121, 102, 186, 0.6) 53.37%,
+    rgba(134, 124, 203, 0.6) 100%
+  );
 }

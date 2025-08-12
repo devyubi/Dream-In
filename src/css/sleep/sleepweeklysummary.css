@@ -1,32 +1,48 @@
-.weekly-summary {
+.weekly_summary {
   padding: 16px;
-  background: var(--color-primary-p-100, #fcf3fb);
+  background: var(--weekly-summary-bg, var(--record-box-bg, #fcf3fb));
   border-radius: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: background 0.3s ease;
 }
 
-.summary-grid {
+.summary_grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
   text-align: center;
 }
 
-.stat-card {
-  background-color: white;
+.stat_card {
+  background-color: var(--stat-card-bg, #fff);
   padding: 30px;
   border-radius: 16px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  transition: background-color 0.3s ease;
 }
 
-.stat-value {
+.stat_value {
   font-size: 18px;
-  font-weight: bold;
+  font-weight: 700;
   margin-bottom: 4px;
-  color: #333;
+  color: var(--stat-value-color, #333);
 }
 
-.stat-label {
+.stat_label {
   font-size: 14px;
-  color: #777;
+  color: var(--stat-label-color, #777);
+}
+/* var 변수들 추가 */
+:root {
+  --weekly-summary-bg: var(--record-box-bg, #fcf3fb);
+  --stat-card-bg: #fff;
+  --stat-value-color: #333;
+  --stat-label-color: #777;
+}
+
+[data-theme="dark"] {
+  --weekly-summary-bg: var(--record-box-bg, #544783);
+  --stat-card-bg: #6358a0;
+  --stat-value-color: #fcf3fb;
+  --stat-label-color: #cfcfdf;
 }

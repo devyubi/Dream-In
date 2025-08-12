@@ -2,14 +2,14 @@ import "../../css/sleep/sleeprecord.css";
 
 const SleepRecord = ({ bedTime, setBedTime, wakeTime, setWakeTime }) => {
   return (
-    <div className="sleep-record-container">
-      <h2 className="sleep-record-title">오늘의 수면 기록</h2>
-      <p className="sleep-record-subtitle">어젯밤 수면 패턴을 기록해보세요</p>
+    <div className="sleep_record_container">
+      <h2 className="sleep_record_title">오늘의 수면 기록</h2>
+      <p className="sleep_record_subtitle">어젯밤 수면 패턴을 기록해보세요</p>
 
-      <div className="time-input-group">
-        <div className="time-input">
+      <div className="time_input_group">
+        <div className="time_input">
           <label htmlFor="bedTime">취침 시간</label>
-          <div className="input-with-icon">
+          <div className="input_with_icon">
             <input
               id="bedTime"
               type="time"
@@ -19,9 +19,9 @@ const SleepRecord = ({ bedTime, setBedTime, wakeTime, setWakeTime }) => {
           </div>
         </div>
 
-        <div className="time-input">
+        <div className="time_input">
           <label htmlFor="wakeTime">기상 시간</label>
-          <div className="input-with-icon">
+          <div className="input_with_icon">
             <input
               id="wakeTime"
               type="time"

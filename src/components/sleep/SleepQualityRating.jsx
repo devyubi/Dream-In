@@ -67,13 +67,13 @@ function SleepQualityRating({
   ];
 
   return (
-    <div className="sleep-quality-rating">
-      <p className="sleep-quality-label">수면 질 평가</p>
-      <div className="rating-boxes">
+    <div className="sleep_quality_rating ">
+      <p className="sleep_quality_label">수면 질 평가</p>
+      <div className="rating_boxes">
         {ratingOptions.map(option => (
           <div
             key={option.value}
-            className={`rating-box ${rating === option.value ? "active" : ""}`}
+            className={`rating_box ${rating === option.value ? "active" : ""}`}
             onClick={() =>
               setRating(rating === option.value ? 0 : option.value)
             }
@@ -83,12 +83,12 @@ function SleepQualityRating({
                 <FaStar key={i} className="star filled" />
               ))}
             </div>
-            <p className="rating-label">{option.label}</p>
+            <p className="rating_label">{option.label}</p>
           </div>
         ))}
       </div>
 
-      <div className="diary-section">
+      <div className="diary_section">
         <TextArea
           value={text}
           onChange={e => {

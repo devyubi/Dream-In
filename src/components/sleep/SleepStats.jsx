@@ -87,17 +87,17 @@ function SleepStats() {
   }).filter(d => d.value > 0);
 
   return (
-    <div className="sleep-stats-container">
-      <h2 className="stats-title">수면 통계</h2>
+    <div className="sleep_stats_container">
+      <h2 className="stats_title">수면 통계</h2>
       <PieChartWithLabels records={records} />
       <h1>주간 수면 통계</h1>
       <SleepWeeklySummary records={records} />
-      <h1 className="history-title">수면 기록 히스토리</h1>
-      <div className="history-list">
+      <h1 className="history_title">수면 기록 히스토리</h1>
+      <div className="history_list">
         {records.length ? (
           records.map((entry, i) => <SleepEntryCard key={i} entry={entry} />)
         ) : (
-          <p className="empty-message">히스토리 없음</p>
+          <p className="empty_message">히스토리 없음</p>
         )}
       </div>
     </div>
