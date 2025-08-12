@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useMemo, useState } from "react";
+import { useThemeContext } from "../../contexts/ThemeContext";
 
 const mockDreams = [
   {
@@ -28,6 +29,7 @@ const mockDreams = [
 ];
 
 function FavoriteSection() {
+  const { isDarkMode } = useThemeContext();
   const { isLoggedIn, user, profile } = useAuth();
   const [dreams, setDreams] = useState(mockDreams);
   const navigate = useNavigate();
@@ -135,20 +137,28 @@ function FavoriteSection() {
               <p className="email">{user.email}</p>
               <div className="user_links">
                 <Link to="/profile">
-                  <img
-                    className="main_mypage"
-                    src="/images/mypage_light.svg"
-                    alt="마이페이지"
-                  />
-                  마이페이지
+                  <div>
+                    <img
+                      className="main_mypage"
+                      src={
+                        isDarkMode
+                          ? "/images/mypage_dark.svg"
+                          : "/images/mypage_light.svg"
+                      }
+                      alt="마이페이지"
+                    />
+                    마이페이지
+                  </div>
                 </Link>
                 <Link to="/favorites">
-                  <img
-                    className="main_favorite"
-                    src="/images/fullstar.svg"
-                    alt="즐겨찾기"
-                  />
-                  즐겨찾기
+                  <div className="user_favorite_sec">
+                    <img
+                      className="main_favorite"
+                      src="/images/fullstar.svg"
+                      alt="즐겨찾기"
+                    />
+                    즐겨찾기
+                  </div>
                 </Link>
               </div>
             </div>
