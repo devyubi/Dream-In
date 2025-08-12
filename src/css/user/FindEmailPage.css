@@ -1,5 +1,5 @@
-/* FindPasswordPage.css */
-.find-password-container {
+/* FindEmailPage.css */
+.find-email-container {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -9,7 +9,7 @@
   padding: 60px 20px 40px;
 }
 
-.find-password-container .background-gradient {
+.find-email-container .background-gradient {
   position: absolute;
   top: 0;
   left: 0;
@@ -19,7 +19,7 @@
 }
 
 /* 로고 스타일 */
-.find-password-container .logo-section {
+.find-email-container .logo-section {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -28,7 +28,7 @@
   z-index: 1;
 }
 
-.find-password-container .logo-circle {
+.find-email-container .logo-circle {
   width: 200px;
   height: 200px;
   border-radius: 50%;
@@ -38,26 +38,26 @@
   margin-bottom: 20px;
 }
 
-.find-password-container .logo-image {
+.find-email-container .logo-image {
   width: 100%;
   height: 100%;
   object-fit: contain;
 }
 
 /* 모달 스타일 */
-.find-password-container .password-reset-modal {
-  background: rgba(255, 255, 255, 0.95);
+.find-email-container .email-find-modal {
+  background-color: var(--bg-color);
   backdrop-filter: blur(20px);
   border-radius: 20px;
   width: 100%;
-  max-width: 420px;
+  max-width: 400px;
   padding: 0;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  animation: passwordModalAppear 0.3s ease-out;
+  animation: emailModalAppear 0.3s ease-out;
 }
 
-@keyframes passwordModalAppear {
+@keyframes emailModalAppear {
   from {
     opacity: 0;
     transform: translateY(20px) scale(0.9);
@@ -68,7 +68,7 @@
   }
 }
 
-.find-password-container .modal-header {
+.find-email-container .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -76,38 +76,38 @@
   margin-bottom: 16px;
 }
 
-.find-password-container .modal-header h2 {
+.find-email-container .modal-header h2 {
   font-size: 20px;
   font-weight: 600;
-  color: #2d3748;
+  color: var(--text-color, #544783);
   margin: 0;
 }
 
-.find-password-container .modal-content {
+.find-email-container .modal-content {
   padding: 0 24px 24px;
 }
 
-.find-password-container .modal-description {
+.find-email-container .modal-description {
   font-size: 14px;
-  color: #4a5568;
+  color: var(--text-color, #544783);
   line-height: 1.5;
   margin-bottom: 24px;
 }
 
 /* 입력 그룹 */
-.find-password-container .input-group {
+.find-email-container .input-group {
   margin-bottom: 20px;
 }
 
-.find-password-container .input-group label {
+.find-email-container .input-group label {
   display: block;
   font-size: 14px;
   font-weight: 500;
-  color: #2d3748;
+  color: var(--text-color, #544783);
   margin-bottom: 8px;
 }
 
-.find-password-container .input-group input {
+.find-email-container .input-group input {
   width: 100%;
   padding: 12px 16px;
   border: 2px solid #e2e8f0;
@@ -118,28 +118,28 @@
   box-sizing: border-box;
 }
 
-.find-password-container .input-group input:focus {
+.find-email-container .input-group input:focus {
   outline: none;
   border-color: #667eea;
   background: white;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
-.find-password-container .input-group input.error {
+.find-email-container .input-group input.error {
   border-color: #e53e3e;
 }
 
-.find-password-container .input-group input.error:focus {
+.find-email-container .input-group input.error:focus {
   box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.1);
 }
 
-.find-password-container .input-group input:disabled {
+.find-email-container .input-group input:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
 /* 메시지 */
-.find-password-container .message {
+.find-email-container .message {
   padding: 12px 16px;
   border-radius: 8px;
   font-size: 14px;
@@ -147,26 +147,26 @@
   font-weight: 500;
 }
 
-.find-password-container .message.error {
+.find-email-container .message.error {
   background: rgba(229, 62, 62, 0.1);
   color: #c53030;
   border: 1px solid rgba(229, 62, 62, 0.2);
 }
 
-.find-password-container .message.success {
+.find-email-container .message.success {
   background: rgba(72, 187, 120, 0.1);
   color: #2f855a;
   border: 1px solid rgba(72, 187, 120, 0.2);
 }
 
 /* 버튼 그룹 */
-.find-password-container .button-group {
+.find-email-container .button-group {
   display: flex;
   gap: 12px;
 }
 
-.find-password-container .cancel-button,
-.find-password-container .submit-button {
+.find-email-container .cancel-button,
+.find-email-container .submit-button {
   flex: 1;
   padding: 12px 20px;
   border-radius: 12px;
@@ -177,160 +177,142 @@
   border: none;
 }
 
-.find-password-container .cancel-button {
+.find-email-container .cancel-button {
   background: rgba(113, 128, 150, 0.1);
   color: #4a5568;
   border: 1px solid rgba(113, 128, 150, 0.2);
 }
 
-.find-password-container .cancel-button:hover:not(:disabled) {
+.find-email-container .cancel-button:hover:not(:disabled) {
   background: rgba(113, 128, 150, 0.15);
 }
 
-.find-password-container .submit-button {
+.find-email-container .submit-button {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
 
-.find-password-container .submit-button:hover:not(:disabled) {
+.find-email-container .submit-button:hover:not(:disabled) {
   transform: translateY(-1px);
   box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
 
-.find-password-container .submit-button:disabled,
-.find-password-container .cancel-button:disabled {
+.find-email-container .submit-button:disabled,
+.find-email-container .cancel-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
 }
 
 /* 결과 섹션 */
-.find-password-container .result-section {
+.find-email-container .result-section {
   text-align: center;
 }
 
-.find-password-container .success-message {
+.find-email-container .success-message {
   margin-bottom: 24px;
 }
 
-.find-password-container .success-icon {
+.find-email-container .success-icon {
   font-size: 48px;
   display: block;
   margin-bottom: 12px;
 }
 
-.find-password-container .success-message h3 {
+.find-email-container .success-message h3 {
   font-size: 20px;
   font-weight: 600;
-  color: #7c3aed;
+  color: #059669;
   margin: 0;
 }
 
-.find-password-container .password-result {
-  background: #faf5ff;
-  border: 1px solid #ddd6fe;
+.find-email-container .email-result {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 24px;
 }
 
-.find-password-container .password-display {
+.find-email-container .email-display {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 8px;
 }
 
-.find-password-container .password-label {
+.find-email-container .email-label {
   font-size: 14px;
   color: #374151;
   font-weight: 500;
 }
 
-.find-password-container .password-container {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: white;
-  padding: 12px 16px;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-}
-
-.find-password-container .password-text {
-  flex: 1;
+.find-email-container .email-text {
   font-size: 18px;
   font-weight: 700;
-  color: #7c3aed;
+  color: #059669;
   font-family: "Monaco", "Menlo", monospace;
-  letter-spacing: 1px;
-}
-
-.find-password-container .copy-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-  padding: 4px;
-  border-radius: 4px;
-  transition: background 0.2s ease;
-}
-
-.find-password-container .copy-button:hover {
-  background: rgba(124, 58, 237, 0.1);
-}
-
-.find-password-container .password-note {
-  font-size: 13px;
-  color: #7c2d12;
-  margin: 0;
-  line-height: 1.4;
-  background: rgba(251, 146, 60, 0.1);
-  border: 1px solid rgba(251, 146, 60, 0.2);
-  border-radius: 6px;
+  background: white;
   padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #d1fae5;
+}
+
+/* 푸터 링크 */
+.find-email-container .footer-links {
+  padding-top: 20px;
+  margin-top: 20px;
+  text-align: center;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.find-email-container .link {
+  color: #667eea;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.find-email-container .link:hover {
+  color: #4f46e5;
+  text-decoration: underline;
+}
+
+.find-email-container .separator {
+  margin: 0 12px;
+  color: #a0aec0;
 }
 
 /* 반응형 */
 @media (max-width: 480px) {
-  .find-password-container {
+  .find-email-container {
     padding: 40px 16px 20px;
   }
 
-  .find-password-container .logo-section {
+  .find-email-container .logo-section {
     margin-top: 20px;
     margin-bottom: 40px;
   }
 
-  .find-password-container .logo-circle {
+  .find-email-container .logo-circle {
     width: 150px;
     height: 150px;
   }
 
-  .find-password-container .password-reset-modal {
+  .find-email-container .email-find-modal {
     max-width: 100%;
   }
 
-  .find-password-container .button-group {
+  .find-email-container .button-group {
     flex-direction: column;
   }
 
-  .find-password-container .app-title {
+  .find-email-container .app-title {
     font-size: 32px;
   }
 
-  .find-password-container .password-text {
+  .find-email-container .email-text {
     font-size: 16px;
-  }
-
-  .find-password-container .password-container {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-  }
-
-  .find-password-container .copy-button {
-    align-self: center;
   }
 }

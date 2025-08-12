@@ -2,12 +2,20 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   position: relative;
   overflow-x: hidden;
 }
 
 /* 메인 컨테이너 */
+.signup-main-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  overflow-y: auto;
+}
+
 .signup-container {
   flex: 1;
   display: flex;
@@ -21,6 +29,89 @@
 }
 
 /* 로고 섹션 */
+.signup-logo-section {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.signup-logo-container {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.signup-logo-image {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.signup-app-title {
+  font-size: 28px;
+  margin: 0 0 8px 0;
+  text-shadow: 0 2px 4px rgba(139, 92, 246, 0.1);
+  color: var(--text-color, #544783);
+}
+
+.signup-app-subtitle {
+  color: var(--text-color, #544783);
+  font-size: 14px;
+  margin: 0;
+}
+
+/* 메시지 */
+.signup-message {
+  width: 100%;
+  max-width: 400px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.signup-message-success {
+  background: rgba(16, 185, 129, 0.9);
+  color: white;
+}
+
+.signup-message-error {
+  background: rgba(239, 68, 68, 0.9);
+  color: white;
+}
+
+/* 로그인 섹션 */
+.signup-login-section {
+  text-align: center;
+  margin-top: 24px;
+  margin-bottom: 20px;
+  color: rgba(139, 92, 246, 0.8);
+  font-size: 14px;
+}
+
+.signup-login-link {
+  color: #8b5cf6;
+  font-weight: 600;
+  text-decoration: none;
+  margin-left: 8px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.signup-login-link:hover {
+  background: rgba(139, 92, 246, 0.1);
+}
+
+/* 기존 스타일 유지 */
 .logo-section {
   text-align: center;
   margin-bottom: 30px;
@@ -32,9 +123,6 @@
   border-radius: 50%;
   margin: 0 auto 20px;
   overflow: hidden;
-  /* box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); */
-  /* background: var(--color-primary-p-100); */
-  /* backdrop-filter: blur(10px); */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -42,7 +130,7 @@
 
 .logo-placeholder {
   font-size: 40px;
-  color: #3a3a74;
+  color: var(--text-color, #544783);
 }
 
 .logo-image {
@@ -323,7 +411,7 @@
   transform: none;
 }
 
-/* 로그인 섹션 */
+/* 로그인 섹션 (기존) */
 .login-section {
   text-align: center;
   color: #544783;
@@ -341,4 +429,11 @@
 .login-link:hover {
   color: #8672d0;
   text-decoration: underline;
+}
+.signup-login-section > span {
+  color: var(--text-color, #544783);
+}
+
+.signup-login-section > a {
+  color: var(--text-color, #544783);
 }

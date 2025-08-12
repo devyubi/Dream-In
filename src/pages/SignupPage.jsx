@@ -6,6 +6,7 @@ import { getErrorMessage } from "../utils/errorHandler";
 import SignupForm from "../components/auth/SignupForm";
 import Container from "../components/common/Container";
 import { useThemeContext } from "../contexts/ThemeContext";
+import "../css/signuppage.css"; // 스타일시트 임포트
 
 const SignupPage = () => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const SignupPage = () => {
   const [error, setError] = useState("");
 
   const { isDarkMode, setIsDarkMode } = useThemeContext();
+
   // 이미 로그인된 사용자는 홈으로 리다이렉트
   useEffect(() => {
     if (user) {
@@ -107,106 +109,31 @@ const SignupPage = () => {
   return (
     <Container>
       {/* 메인 컨테이너 */}
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          padding: "20px",
-          overflowY: "auto",
-        }}
-      >
+      <div className="signup-main-container">
         {/* 로고 섹션 */}
-        <div
-          style={{
-            textAlign: "center",
-            marginBottom: "32px",
-          }}
-        >
-          <div
-            style={{
-              width: "100px",
-              height: "100px",
-              margin: "0 auto 20px",
-              borderRadius: "50%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              overflow: "hidden",
-            }}
-          >
+        <div className="signup-logo-section">
+          <div className="signup-logo-container">
             <img
               src={
                 isDarkMode ? "/images/icon-dark.png" : "/images/icon-light.png"
               }
               alt="Dream-in Logo"
-              style={{
-                width: "70px",
-                height: "70px",
-                objectFit: "cover",
-                borderRadius: "50%",
-              }}
+              className="signup-logo-image"
             />
           </div>
-          <h1
-            style={{
-              fontSize: "28px",
-              margin: "0 0 8px 0",
-              textShadow: "0 2px 4px rgba(139, 92, 246, 0.1)",
-            }}
-          >
-            Dream-In
-          </h1>
-          <p
-            style={{
-              fontSize: "14px",
-              margin: "0",
-            }}
-          >
+          <h1 className="signup-app-title">Dream-In</h1>
+          <p className="signup-app-subtitle">
             꿈을 기록하고 나를 이해하는 여정
           </p>
         </div>
 
         {/* 메시지 표시 */}
         {message && (
-          <div
-            style={{
-              width: "100%",
-              maxWidth: "400px",
-              padding: "12px 16px",
-              borderRadius: "12px",
-              marginBottom: "16px",
-              fontSize: "14px",
-              fontWeight: "500",
-              textAlign: "center",
-              background: "rgba(16, 185, 129, 0.9)",
-              color: "white",
-              backdropFilter: "blur(10px)",
-            }}
-          >
-            {message}
-          </div>
+          <div className="signup-message signup-message-success">{message}</div>
         )}
 
         {error && (
-          <div
-            style={{
-              width: "100%",
-              maxWidth: "400px",
-              padding: "12px 16px",
-              borderRadius: "12px",
-              marginBottom: "16px",
-              fontSize: "14px",
-              fontWeight: "500",
-              textAlign: "center",
-              background: "rgba(239, 68, 68, 0.9)",
-              color: "white",
-              backdropFilter: "blur(10px)",
-            }}
-          >
-            {error}
-          </div>
+          <div className="signup-message signup-message-error">{error}</div>
         )}
 
         {/* 회원가입 폼 */}
@@ -217,34 +144,9 @@ const SignupPage = () => {
         />
 
         {/* 로그인 링크 */}
-        <div
-          style={{
-            textAlign: "center",
-            marginTop: "24px",
-            marginBottom: "20px",
-            color: "rgba(139, 92, 246, 0.8)",
-            fontSize: "14px",
-          }}
-        >
+        <div className="signup-login-section">
           <span>계정이 이미 있으신가요?</span>
-          <Link
-            to="/login"
-            style={{
-              color: "#8B5CF6",
-              fontWeight: "600",
-              textDecoration: "none",
-              marginLeft: "8px",
-              padding: "4px 8px",
-              borderRadius: "4px",
-              transition: "all 0.2s ease",
-            }}
-            onMouseEnter={e => {
-              e.target.style.background = "rgba(139, 92, 246, 0.1)";
-            }}
-            onMouseLeave={e => {
-              e.target.style.background = "transparent";
-            }}
-          >
+          <Link to="/login" className="signup-login-link">
             로그인
           </Link>
         </div>

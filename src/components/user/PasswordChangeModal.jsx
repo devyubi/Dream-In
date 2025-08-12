@@ -1,7 +1,7 @@
 // src/components/user/PasswordChangeModal.jsx
 import { useState, useEffect, useRef } from "react";
 import { usePasswordChange } from "../../hooks/usePasswordChange.js";
-import "./PasswordChangeModal.css";
+import "../../css/user/PasswordChangeModal.css";
 
 const PasswordChangeModal = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({

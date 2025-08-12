@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { useState } from "react";
 import { useForm } from "../../hooks/useForm";
 import { validateLoginForm } from "../../utils/validation";
-import styles from "./LoginForm.module.css";
+import styles from "../../css/user/LoginForm.module.css";
 import SocialLoginButtons from "./SocialLoginButtons";
 import PasswordResetModal from "./PasswordResetModal";
 import { Link } from "react-router-dom";
@@ -19,7 +19,7 @@ const LoginForm = ({
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] =
-    useState(false); // 누락된 state 추가
+    useState(false);
 
   const {
     values,
@@ -36,7 +36,7 @@ const LoginForm = ({
   const emailState = getFieldState("email");
   const passwordState = getFieldState("password");
 
-  // 비밀번호 찾기 모달 핸들러 (누락된 함수 추가)
+  // 비밀번호 찾기 모달 핸들러
   const openResetPasswordModal = () => {
     setIsResetPasswordModalOpen(true);
   };
@@ -166,36 +166,14 @@ const LoginForm = ({
       </form>
 
       {/* 이메일/비밀번호 찾기 링크 */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          marginTop: "10px",
-          gap: "8px",
-        }}
-      >
+      <div className={styles.loginLinksWrapper}>
         {/* 이메일 찾기 링크 */}
-        <Link
-          to="/find-email"
-          className={styles.linkButton}
-          style={{
-            cursor: "pointer",
-            textDecoration: "none",
-          }}
-        >
+        <Link to="/find-email" className={styles.linkButton}>
           이메일 찾기
         </Link>
-        <span>|</span>
+        <span className={styles.linkSeparator}>|</span>
         {/* 비밀번호 찾기 링크 */}
-        <Link
-          to="/find-password"
-          className={styles.linkButton}
-          style={{
-            cursor: "pointer",
-            textDecoration: "none",
-          }}
-        >
+        <Link to="/find-password" className={styles.linkButton}>
           비밀번호 찾기
         </Link>
       </div>
@@ -211,7 +189,7 @@ const LoginForm = ({
       <PasswordResetModal
         isOpen={isResetPasswordModalOpen}
         onClose={closeResetPasswordModal}
-        prefillEmail={values.email} // 입력된 이메일이 있다면 미리 채우기
+        prefillEmail={values.email}
       />
     </div>
   );

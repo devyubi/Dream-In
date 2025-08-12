@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { resetPasswordByInfo } from "../api/auth";
-import "./FindPasswordPage.css";
+import "../css/user/FindPasswordPage.css";
 import { useThemeContext } from "../contexts/ThemeContext";
 
 const FindPasswordPage = () => {
@@ -14,7 +14,7 @@ const FindPasswordPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const isDarkMode = useThemeContext();
+  const { isDarkMode } = useThemeContext();
 
   const handleInputChange = e => {
     const { name, value } = e.target;
@@ -145,17 +145,7 @@ const FindPasswordPage = () => {
             className="logo-image"
           />
         </div>
-        <h1
-          className="app-title"
-          style={{
-            color: isDarkMode ? "#fcf3fb" : "#3a3a74",
-            fontSize: "40px",
-            fontWeight: 600,
-            margin: 0,
-            textShadow: "0 2px 10px rgba(0, 0, 0, 0.2)",
-            transition: "color 0.3s ease",
-          }}
-        >
+        <h1 className={`app-title ${isDarkMode ? "dark-mode" : "light-mode"}`}>
           Dream-in
         </h1>
       </div>

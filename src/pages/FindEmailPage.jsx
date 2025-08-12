@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { findEmailByInfo } from "../api/auth";
-import "./FindEmailPage.css";
+import "../css/user/FindEmailPage.css";
 import { useThemeContext } from "../contexts/ThemeContext";
 
 const FindEmailPage = () => {
