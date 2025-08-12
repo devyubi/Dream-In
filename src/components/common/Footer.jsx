@@ -67,9 +67,9 @@ const FooterTopInfoSocialItem = styled.li`
   align-items: center;
   width: 33px;
   height: 33px;
-  border: 1px solid #acacac;
+  border: none;
   border-radius: 50%;
-  background-color: rgba(252, 243, 251, 0.3);
+  background-color: none;
   cursor: pointer;
   a {
     width: 30px;
