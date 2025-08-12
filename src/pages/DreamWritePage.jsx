@@ -6,7 +6,8 @@ import InputErrorMessage from "../components/common/InputErrorMessage";
 import PostButton from "../components/common/PostButton";
 import TextArea from "../components/common/TextArea";
 import Title from "../components/common/Title";
-import { DreamWrite } from "./DreamWritePage.styles";
+import { DreamWrite } from "../styles/DreamWritePage.styles";
+import { useThemeContext } from "../contexts/ThemeContext";
 
 // 전역(window) 자리
 function DreamWritePage() {
@@ -74,6 +75,8 @@ function DreamWritePage() {
     { id: "etc", text: "기타", icon: "/images/etc_icon.png" },
   ];
 
+  const { isDarkMode } = useThemeContext();
+
   return (
     <Container>
       <BackButton to="/" />
@@ -82,7 +85,7 @@ function DreamWritePage() {
         subtitle="어젯 밤 꾼 꿈을 아름다운 이야기로 남겨주세요."
       />
       <DreamWrite.DreamTitleWrap>
-        <DreamWrite.DreamTitle>꿈 제목</DreamWrite.DreamTitle>
+        <DreamWrite.DreamTitle dark={isDarkMode}>꿈 제목</DreamWrite.DreamTitle>
         <DreamWrite.DreamTitleText
           type="text"
           placeholder="어젯 밤 꿈의 제목을 작성해주세요."
@@ -93,19 +96,26 @@ function DreamWritePage() {
           }}
           maxLength={20}
           error={!!titleError}
+          dark={isDarkMode}
         />
         {/* 에러 메세지 */}
         {titleError && <InputErrorMessage message={titleError} />}
-        <DreamWrite.DreamTitleTextNum isMax={titleTextCount.length >= 20}>
+        <DreamWrite.DreamTitleTextNum
+          dark={isDarkMode}
+          isMax={titleTextCount.length >= 20}
+        >
           {titleTextCount.length}/20
         </DreamWrite.DreamTitleTextNum>
       </DreamWrite.DreamTitleWrap>
       <DreamWrite.DreamEmojiWrap>
-        <DreamWrite.DreamEmojiTitle>Dream-Emoji</DreamWrite.DreamEmojiTitle>
+        <DreamWrite.DreamEmojiTitle dark={isDarkMode}>
+          Dream-Emoji
+        </DreamWrite.DreamEmojiTitle>
         <DreamWrite.DreamEmojiBox error={!!emojiError}>
           {emojiList.map(emoji => (
             <DreamWrite.DreamEmojiList
               key={emoji.id}
+              dark={isDarkMode}
               onClick={() => {
                 setSelectEmoji(emoji.id);
                 if (emojiError) setEmojiError("");

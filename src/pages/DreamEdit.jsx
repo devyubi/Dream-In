@@ -2,7 +2,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import BackButton from "../components/common/BackButton";
 import Container from "../components/common/Container";
 import Title from "../components/common/Title";
-import { Detail } from "./Detail.styles";
+import { Detail } from "../styles/Detail.styles";
 import { useState } from "react";
 
 function DreamEdit() {

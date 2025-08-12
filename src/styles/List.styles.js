@@ -19,7 +19,7 @@ export const EmojiCategoryWrap = styled.ul`
 `;
 export const EmojiCategoryItem = styled.li`
   border: 1px solid #e7e7e7;
-  padding: 15px 30px;
+  padding: 13px 23px;
   width: auto;
   border-radius: 24px;
   cursor: pointer;
@@ -100,7 +100,7 @@ export const ListItem = styled.li`
     background: ${({ dark }) =>
       dark
         ? `linear-gradient(
-          to bottom,
+          to top,
           rgb(30, 27, 39),
           rgb(37, 37, 77),
           rgb(51, 51, 110),

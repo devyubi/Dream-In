@@ -8,7 +8,7 @@ import {
   Detail,
   DetailAiResultTitle,
   DetailAiResultWrap,
-} from "./Detail.styles";
+} from "../styles/Detail.styles";
 
 function DreamDetail() {
   const navigate = useNavigate();

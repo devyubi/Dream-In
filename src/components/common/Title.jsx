@@ -14,12 +14,12 @@ const TitleWrap = styled.div`
 const TitleH1 = styled.h1`
   margin: 0;
   /* color: #25254d; */
-  color: ${({ dark }) => (dark ? "#fcf3fb" : "#25254d")};
+  color: ${({ dark }) => (dark ? "#ddb7ef" : "#493d78")};
 `;
 const SubTitleH2 = styled.h2`
   margin: 0;
   /* color: #493d78; */
-  color: ${({ dark }) => (dark ? "#fcf3fb" : "#493d78")};
+  color: ${({ dark }) => (dark ? "#ddb7ef" : "#493d78")};
   font-size: 14px;
 `;
 

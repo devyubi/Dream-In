@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import BackButton from "../components/common/BackButton";
 import Container from "../components/common/Container";
 import Title from "../components/common/Title";
-import { List } from "./List.styles";
+import { List } from "../styles/List.styles";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useFavorites } from "../contexts/FavoriteContext";
 import Pagination from "../components/common/Pagination";
