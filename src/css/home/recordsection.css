@@ -34,9 +34,11 @@
   height: 150px;
   text-decoration: none;
   border-radius: 20px;
-  background: var(--color-primary-p-100, #fcf3fb);
+  background: var(--record-box-bg);
+  color: var(--record-box-text-color);
   transition: all 0.2s ease;
 }
+
 .hoverbtn {
   display: flex;
   flex-wrap: wrap;
@@ -78,4 +80,5 @@
   white-space: nowrap;
   display: block;
   margin: 10px;
+  color: inherit;
 }

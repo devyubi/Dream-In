@@ -1,9 +1,18 @@
+.swiper-slide {
+  font-family: "tj400", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: var(--text-color, #3a3a74);
+}
+
 .visual-slide {
   padding: 20px;
   width: 60%;
   margin: 0 auto;
   border-radius: 20px;
-  background: #fcf3fb;
+  background: var(--bg-color, #fcf3fb);
   display: flex;
   align-items: center;
   gap: 40px;
@@ -17,23 +26,6 @@
   align-items: center;
 }
 
-/* 네비게이션 */
-.prev,
-.next {
-  position: absolute;
-  top: 50%;
-  z-index: 99;
-  width: 40px;
-  height: 40px;
-  background-color: #fff;
-  cursor: pointer;
-}
-.prev {
-  left: 20px;
-}
-.next {
-  right: 20px;
-}
 
 /* 스와이퍼 페이지네이션 버튼 */
 .swiper-pagination {

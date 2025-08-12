@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import "../../css/sleep/sleeptabbar.css";
 
 function SleepTabBar({ activeTab, setActiveTab }) {
