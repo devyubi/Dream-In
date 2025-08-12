@@ -27,6 +27,7 @@ import Support from "./pages/Support";
 import TermsOfService from "./pages/TermsOfService";
 import FindEmailPage from "./pages/FindEmailPage";
 import ScrollUpButton from "./components/common/ScrollUpButton";
+import TwinkleStars from "./components/TwinkleStars";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
         <Header />
         <ScrollToTop />
         <FavoritesProvider>
+          <TwinkleStars />
           <Routes>
             <Route path="/" element={<HomePage />}></Route>
             <Route path="/login" element={<LoginPage />}></Route>

@@ -85,7 +85,7 @@ const madePerson = [
   {
     name: "박재현",
     alt: "1",
-    role: "꿈 기록, AI 연동 동",
+    role: "꿈, 감정일기 게시판, AI 연동 등",
     email: "dev.clarova@gmail.com",
     oneliner: "협업과 실행을 주도하는 리더",
   },
