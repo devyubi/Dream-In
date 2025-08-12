@@ -22,7 +22,7 @@ const StarWrapper = styled.div`
   pointer-events: none; /* 클릭 방해 방지 */
 `;
 
-const generateStars = (count = 20) => {
+const generateStars = (count = 80) => {
   const stars = [];
   for (let i = 0; i < count; i++) {
     const top = Math.random() * 100;
@@ -48,6 +48,6 @@ const generateStars = (count = 20) => {
   return stars;
 };
 
-export default function TwinkleStars({ count = 20 }) {
+export default function TwinkleStars({ count = 80 }) {
   return <StarWrapper>{generateStars(count)}</StarWrapper>;
 }
