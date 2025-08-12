@@ -1,57 +1,59 @@
-.sleep-record-container {
-  background: var(--color-primary-p-100, #fcf3fb);
+.sleep_record_container {
+  background: var(--record-box-bg);
   margin: 20px;
-  padding: 2rem;
+  padding: 32px;
   border-radius: 20px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.sleep-record-title {
+.sleep_record_title {
+  color: var(--header-title-color);
   display: flex;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 24px;
   font-weight: bold;
-  margin-bottom: 0.25rem;
+  margin-bottom: 4px;
 }
 
-.sleep-record-subtitle {
+.sleep_record_subtitle {
   display: flex;
   justify-content: center;
-  font-size: 0.9rem;
+  font-size: 14px;
   color: #666;
-  margin-bottom: 1.5rem;
+  margin-bottom: 24px;
+  color: var(--record-box-text-color);
 }
 
-.time-input-group {
+.time_input_group {
   display: flex;
   flex-wrap: wrap;
-  gap: 2rem;
+  gap: 32px;
   justify-content: space-between;
-  margin-bottom: 1.5rem;
+  margin-bottom: 24px;
 }
 
-.time-input {
+.time_input {
   display: flex;
   flex-direction: column;
   flex: 1;
 }
 
-.input-with-icon {
+.input_with_icon {
   position: relative;
 }
 
-.input-with-icon input[type="time"] {
+.input_with_icon input[type="time"] {
   width: 100%;
-  padding: 0.5rem 2.5rem 0.5rem 0.75rem;
+  padding: 8px 40px 8px 12px;
   border: 1px solid #ccc;
-  border-radius: 0.5rem;
-  font-size: 1rem;
+  border-radius: 8px;
+  font-size: 16px;
 }
 
-.clock-icon {
+/* .clock_icon {
   position: absolute;
-  right: 0.75rem;
+  right: 12px;
   top: 50%;
   transform: translateY(-50%);
   pointer-events: none;
-}
+} */

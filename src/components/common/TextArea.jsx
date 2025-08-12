@@ -11,7 +11,7 @@ const DetailsWrap = styled.div`
   height: 310px;
 `;
 const DetailsTitle = styled.h2`
-  color: ${({ dark }) => (dark ? "#ddb7ef" : "#493d78")};
+  color: var(--text-color);
 `;
 const DetailsText = styled.textarea`
   font-family: "tj400";

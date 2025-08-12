@@ -1,14 +1,15 @@
-.sleep-quality-rating {
+.sleep_quality_rating {
   margin-top: 32px;
 }
 
-.sleep-quality-label {
+.sleep_quality_label {
   margin: 25px;
   font-size: 20px;
   font-weight: bold;
+  color: var(--text-color);
 }
 
-.rating-boxes {
+.rating_boxes {
   margin: 25px;
   display: flex;
   justify-content: space-between;
@@ -16,7 +17,7 @@
   flex-wrap: wrap;
 }
 
-.rating-box {
+.rating_box {
   flex: 1;
   min-width: 80px;
   padding: 40px;
@@ -24,15 +25,15 @@
   text-align: center;
   cursor: pointer;
   transition: all 0.2s ease;
-  background: var(--color-primary-p-100, #fcf3fb);
+  background: var(--record-box-bg);
 }
 
-.rating-box:hover {
+.rating_box:hover {
   box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.15);
   background-color: #fad4e8;
 }
 
-.rating-box.active {
+.rating_box.active {
   border-color: gold;
   background-color: #fff8dc;
   box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
@@ -50,8 +51,8 @@
   color: gold;
 }
 
-.rating-label {
+.rating_label {
   font-size: 12px;
-  color: #555;
+  color: var(--text-subtle-color, #555);
   margin-bottom: 0px;
 }

@@ -1,12 +1,12 @@
-.sleep-entry-card {
-  background: var(--color-primary-p-100, #fcf3fb);
+.sleep_entry_card {
+  background: var(--record-box-bg);
   border-radius: 16px;
   padding: 16px 24px;
   margin-bottom: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
 }
 
-.sleep-entry-header {
+.sleep_entry_header {
   display: flex;
   gap: 10px;
   align-items: center;
@@ -15,29 +15,29 @@
   margin-bottom: 15px;
 }
 
-.sleep-entry-stars {
+.sleep_entry_stars {
   display: flex;
   color: gold;
   font-size: 15px;
 }
 
-.sleep-entry-info {
+.sleep_entry_info {
   display: flex;
   justify-content: space-between;
   font-size: 14px;
-  color: #333;
+  color: var(--text-color);
   margin-bottom: 12px;
 }
 
-.sleep-entry-info div {
+.sleep_entry_info div {
   text-align: center;
   flex: 1;
 }
-.sleep-entry-card div strong {
+.sleep_entry_card div strong {
   color: var(--color-secondary-s-100, #544783);
 }
 
-.sleep-entry-info div span {
+.sleep_entry_info div span {
   display: block;
   margin-top: 4px;
   font-weight: bold;
@@ -45,8 +45,8 @@
   color: var(--color-secondary-s-200, #493d78);
 }
 
-.sleep-entry-memo {
-  background-color: white;
+.sleep_entry_memo {
+  background-color: var(--record-box-hover-bg);
   border-radius: 10px;
   padding: 12px;
   font-size: 14px;
@@ -55,16 +55,27 @@
   flex-direction: column;
 }
 
-.sleep-memo-title {
+.sleep_memo_title {
   padding-bottom: 3px;
   display: flex;
   flex-direction: flex-start;
   color: var(--color-secondary-s-100, #544783);
 }
-.sleep-memo {
+.sleep_memo {
   display: flex;
   flex-direction: flex-start;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* 다크모드 일회용 변수 */
+:root {
+  --color-secondary-s-100: #544783; /* 밝은 보라, 라이트 모드 */
+  --color-secondary-s-200: #493d78;
+}
+
+[data-theme="dark"] {
+  --color-secondary-s-100: #d6cbff; /* 다크 모드에서 좀 더 연한 보라 */
+  --color-secondary-s-200: #bcacff;
 }
