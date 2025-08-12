@@ -14,7 +14,7 @@ function HomePage({ children, className, ...rest }) {
 
   return (
     <>
-      <TwinkleStars count={100} />
+      <TwinkleStars count={80} />
       <Container className="mainpage" {...rest}>
         {children}
         <div className="mainpage_wrap">
