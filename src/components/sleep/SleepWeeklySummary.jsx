@@ -25,7 +25,7 @@ function SleepWeeklySummary({ records = [] }) {
       let end = wakeHour * 60 + wakeMinute;
       if (end <= start) end += 24 * 60;
       return sum + (end - start);
-      // 마지막 0은 합계의 초기값 
+      // 마지막 0은 합계의 초기값
     }, 0) / (recentRecords.length || 1);
 
   const avgHours = Math.floor(averageSleepMinutes / 60);
@@ -34,25 +34,25 @@ function SleepWeeklySummary({ records = [] }) {
   const averageEfficiency = "85%"; // averageEfficiency : 수면 효율을 나타내는 변수
 
   return (
-    <div className="weekly-summary">
+    <div className="weekly_summary">
       {recentRecords.length === 0 ? (
         <p>최근 7일 간의 기록이 없습니다.</p>
       ) : (
-        <div className="summary-grid">
-          <div className="stat-card">
-            <div className="stat-value">
+        <div className="summary_grid">
+          <div className="stat_card">
+            <div className="stat_value">
               {avgHours}시간 {avgMins}분
             </div>
-            <div className="stat-label">평균 수면 시간</div>
+            <div className="stat_label">평균 수면 시간</div>
           </div>
-          <div className="stat-card">
+          <div className="stat_card">
             {/* averageRating.toFixed(1) : 평균 별점 값. 소수점 한 자리까지 반올림해서 문자열로 변환함 */}
-            <div className="stat-value">{averageRating.toFixed(1)} / 5</div>
-            <div className="stat-label">평균 수면 질</div>
+            <div className="stat_value">{averageRating.toFixed(1)} / 5</div>
+            <div className="stat_label">평균 수면 질</div>
           </div>
-          <div className="stat-card">
-            <div className="stat-value">{averageEfficiency}</div>
-            <div className="stat-label">평균 수면 효율</div>
+          <div className="stat_card">
+            <div className="stat_value">{averageEfficiency}</div>
+            <div className="stat_label">평균 수면 효율</div>
           </div>
         </div>
       )}

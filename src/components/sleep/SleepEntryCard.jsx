@@ -32,17 +32,17 @@ function SleepEntryCard({ entry }) {
   });
 
   return (
-    <div className="sleep-entry-card">
-      <div className="sleep-entry-header">
+    <div className="sleep_entry_card">
+      <div className="sleep_entry_header">
         <span>{formattedDate}</span>
-        <div className="sleep-entry-stars">
+        <div className="sleep_entry_stars">
           {Array.from({ length: rating }).map((_, i) => (
             <FaStar key={i} />
           ))}
         </div>
       </div>
 
-      <div className="sleep-entry-info">
+      <div className="sleep_entry_info">
         <div>
           <strong>취침</strong>
           <span>{bedTime}</span>
@@ -61,9 +61,9 @@ function SleepEntryCard({ entry }) {
         </div>
       </div>
 
-      <div className="sleep-entry-memo">
-        <div className="sleep-memo-title">메모</div>
-        <div className="sleep-memo">{text}</div>
+      <div className="sleep_entry_memo">
+        <div className="sleep_memo_title">메모</div>
+        <div className="sleep_memo">{text}</div>
       </div>
     </div>
   );
