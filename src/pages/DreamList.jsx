@@ -6,6 +6,7 @@ import Title from "../components/common/Title";
 import { List } from "./List.styles";
 import { useFavorites } from "../contexts/FavoriteContext";
 import Pagination from "../components/common/Pagination";
+import { useThemeContext } from "../contexts/ThemeContext";
 
 function DreamList() {
   const navigate = useNavigate();
@@ -149,16 +150,19 @@ function DreamList() {
     return acc;
   }, {});
 
+  const { isDarkMode } = useThemeContext();
+
   return (
     <Container>
       <Title title="꿈 이야기 목록" />
-      <List.EmojiCategoryWrap>
+      <List.EmojiCategoryWrap dark={isDarkMode}>
         <BackButton to="/" />
         {emojiCategories.map((categorylist, index) => (
           <List.EmojiCategoryItem
             key={index}
             onClick={() => setSelectedCategory(categorylist)}
             isActive={selectedCategory === categorylist}
+            dark={isDarkMode}
           >
             {categorylist} ({categoryCounts[categorylist] || 0})
           </List.EmojiCategoryItem>
@@ -172,6 +176,7 @@ function DreamList() {
 
             return (
               <List.ListItem
+                dark={isDarkMode}
                 key={dream.id}
                 onClick={() =>
                   navigate(`/dreamdetail/${dream.id}`, { state: dream })
@@ -182,7 +187,9 @@ function DreamList() {
                     <img src={dream.photo} alt="유저이미지" />
                   </List.ListItemUserPhoto>
                   <List.ListItemUserName>{dream.name}</List.ListItemUserName>
-                  <List.ListItemTime>{dream.time}</List.ListItemTime>
+                  <List.ListItemTime dark={isDarkMode}>
+                    {dream.time}
+                  </List.ListItemTime>
                   <List.ListItemFavorites
                     onClick={e => {
                       e.stopPropagation();
@@ -219,7 +226,14 @@ function DreamList() {
                     }
                   }}
                 >
-                  <img src="/images/delete_icon.png" alt="삭제" />
+                  <img
+                    src={
+                      isDarkMode
+                        ? "/images/delete_icon_dark.png"
+                        : "/images/delete_icon.png"
+                    }
+                    alt="삭제"
+                  />
                 </List.ListItemDelete>
               </List.ListItem>
             );

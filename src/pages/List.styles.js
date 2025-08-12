@@ -8,7 +8,11 @@ export const EmojiCategoryWrap = styled.ul`
   left: 50%;
   width: calc(100%);
   margin: 0 0px 30px 0px;
-  background-color: rgba(252, 243, 251, 0.4);
+  /* background-color: rgba(252, 243, 251, 0.4); */
+  background: ${({ dark }) =>
+    dark
+      ? "linear-gradient(to bottom, rgba(230, 179, 247, 0.3), rgba(211, 188, 232, 0.3), rgba(194, 193, 238, 0.3))"
+      : "rgba(252,243,251,0.4)"};
   gap: 10px;
   padding: 20px 0;
   border-radius: 16px;
@@ -22,12 +26,46 @@ export const EmojiCategoryItem = styled.li`
   white-space: nowrap;
   transform: translateY(-5px);
 
-  background-color: ${({ isActive }) => (isActive ? "#fad4e8" : "transparent")};
+  /* background-color: ${({ isActive }) =>
+    isActive ? "#fad4e8" : "transparent"}; */
+  background: ${({ isActive, dark }) => {
+    if (isActive) {
+      // 활성 상태일 때 배경
+      return dark
+        ? `linear-gradient(
+          to right,
+          rgb(30, 27, 39),
+          rgb(37, 37, 77),
+          rgb(51, 51, 110),
+          rgb(58, 58, 116),
+          rgb(73, 61, 120),
+          rgb(84, 71, 131)
+        )`
+        : "#fad4e8";
+    } else {
+      // 비활성 상태 배경
+      return dark
+        ? "linear-gradient(to bottom, rgba(230, 179, 247, 0.3), rgba(211, 188, 232, 0.3), rgba(194, 193, 238, 0.3))"
+        : "rgba(252,243,251,0.4)";
+    }
+  }};
   box-shadow: ${({ isActive }) =>
     isActive ? "6px 6px 8px rgba(0,0,0,0.15" : "none"};
 
   &:hover {
-    background-color: #fad4e8;
+    /* background-color: #fad4e8; */
+    background: ${({ dark }) =>
+      dark
+        ? `linear-gradient(
+          to right,
+          rgb(30, 27, 39),
+          rgb(37, 37, 77),
+          rgb(51, 51, 110),
+          rgb(58, 58, 116),
+          rgb(73, 61, 120),
+          rgb(84, 71, 131)
+        )`
+        : "#fad4e8"};
     box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.15);
   }
 `;
@@ -43,7 +81,11 @@ export const ListItem = styled.li`
   position: relative;
   display: flex;
   flex-direction: column;
-  background-color: rgba(252, 243, 251, 0.4);
+  /* background-color: rgba(252, 243, 251, 0.4); */
+  background: ${({ dark }) =>
+    dark
+      ? "linear-gradient(to bottom, rgba(230, 179, 247, 0.3), rgba(211, 188, 232, 0.3), rgba(194, 193, 238, 0.3))"
+      : "rgba(252,243,251,0.4)"};
   width: 100%;
   border-radius: 24px;
   padding: 20px;
@@ -54,7 +96,19 @@ export const ListItem = styled.li`
     transform 0.3s ease;
   cursor: pointer;
   &:hover {
-    background-color: #fad4e8;
+    /* background-color: #fad4e8; */
+    background: ${({ dark }) =>
+      dark
+        ? `linear-gradient(
+          to bottom,
+          rgb(30, 27, 39),
+          rgb(37, 37, 77),
+          rgb(51, 51, 110),
+          rgb(58, 58, 116),
+          rgb(73, 61, 120),
+          rgb(84, 71, 131)
+        )`
+        : "#fad4e8"};
     box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.15);
     transform: translateY(-2px);
   }
@@ -88,7 +142,8 @@ export const ListItemUserName = styled.p`
   font-weight: 600;
 `;
 export const ListItemTime = styled.span`
-  color: #8672d0;
+  /* color: #8672d0; */
+  color: ${({ dark }) => (dark ? "#fcf3fb" : "#493d78")};
 `;
 export const ListItemTitle = styled.h3`
   margin-left: 30px;

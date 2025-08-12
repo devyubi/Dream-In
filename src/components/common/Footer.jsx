@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import { Link, useNavigate } from "react-router-dom";
+import { useThemeContext } from "../../contexts/ThemeContext";
 
 const FooterWrap = styled.div`
   position: relative;
@@ -9,7 +10,10 @@ const FooterWrap = styled.div`
   flex-direction: column;
   margin: 0;
   padding-top: 10px;
-  background-color: rgba(236, 195, 230, 0.3);
+  /* background-color: rgba(236, 195, 230, 0.3); */
+  background-color: ${({ dark }) =>
+    dark ? "rgba(18, 18, 39, 0.5)" : "rgba(252, 243, 251, 0.3)"};
+  color: ${({ dark }) => (dark ? "#fcf3fb" : "#000")};
   border-top: 1px solid #c2c2c2;
 `;
 const FooterTopWrap = styled.div`
@@ -44,12 +48,14 @@ const FooterTopInfoTitle = styled.h2`
   align-items: center;
   justify-content: flex-start;
   font-size: 18px;
-  color: #25254d;
+  /* color: #25254d; */
+  color: ${({ dark }) => (dark ? "#fcf3fb" : "#25254d")};
   margin: 0;
 `;
 const FooterTopInfoDetail = styled.h3`
   font-size: 13px;
-  color: #493d78;
+  /* color: #493d78; */
+  color: ${({ dark }) => (dark ? "#fcf3fb" : "#493d78")};
   margin: 0;
   line-height: 20px;
 `;
@@ -94,11 +100,13 @@ const FooterTopContactList = styled.div`
 `;
 const FooterTopContactTitle = styled.h2`
   font-size: 15px;
-  color: #493d78;
+  /* color: #493d78; */
+  color: ${({ dark }) => (dark ? "#fcf3fb" : "#493d78")};
   margin: 20px 0 0 0;
 `;
 const FooterTopContactWrap = styled.address`
-  color: #493d78;
+  /* color: #493d78; */
+  color: ${({ dark }) => (dark ? "#fcf3fb" : "#493d78")};
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -106,23 +114,27 @@ const FooterTopContactWrap = styled.address`
 const FooterTopContactEmail = styled.a`
   font-size: 12px;
   font-weight: 500;
-  color: #493d78;
+  /* color: #493d78; */
+  color: ${({ dark }) => (dark ? "#fcf3fb" : "#493d78")};
   margin: 0;
 `;
 const FooterTopContactTel = styled.a`
   font-size: 12px;
   font-weight: 500;
-  color: #493d78;
+  /* color: #493d78; */
+  color: ${({ dark }) => (dark ? "#fcf3fb" : "#493d78")};
   margin: 0;
 `;
 const FooterTopContactAddr = styled.p`
   font-size: 12px;
   font-weight: 500;
-  color: #493d78;
+  /* color: #493d78; */
+  color: ${({ dark }) => (dark ? "#fcf3fb" : "#493d78")};
   margin: 0;
 `;
 const FooterBottomWrap = styled.div`
-  color: #493d78;
+  /* color: #493d78; */
+  color: ${({ dark }) => (dark ? "#fcf3fb" : "#493d78")};
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -160,11 +172,35 @@ const FooterBottomCopy = styled.p`
   align-items: center;
   margin: 0;
   font-size: 12px;
-  color: #8f8f8f;
+  /* color: #8f8f8f; */
+  color: ${({ dark }) => (dark ? "#fcf3fb" : "#8f8f8f")};
   padding: 10px;
   border-top: 1px solid #a8a8a8;
   width: 50%;
 `;
+
+const socialIcons = [
+  {
+    name: "insta",
+    alt: "인스타",
+    link: "https://www.instagram.com/",
+  },
+  {
+    name: "twitter",
+    alt: "X",
+    link: "https://x.com/",
+  },
+  {
+    name: "facebook",
+    alt: "페이스북",
+    link: "https://www.facebook.com/?locale=ko_KR",
+  },
+  {
+    name: "youtube",
+    alt: "유튜브",
+    link: "https://www.youtube.com/",
+  },
+];
 
 function Footer() {
   const navigate = useNavigate();
@@ -177,75 +213,60 @@ function Footer() {
     navigate("/termsofservice");
   };
 
+  const { isDarkMode } = useThemeContext();
+
   return (
-    <FooterWrap>
+    <FooterWrap dark={isDarkMode}>
       <FooterTopWrap>
         <FooterTopInfo>
           <FooterTopDreamIn>
             <FooterTopInfoLogo>
               <img src="/images/logo.png" alt="Dream-In" />
             </FooterTopInfoLogo>
-            <FooterTopInfoTitle>Dream-In</FooterTopInfoTitle>
+            <FooterTopInfoTitle dark={isDarkMode}>Dream-In</FooterTopInfoTitle>
           </FooterTopDreamIn>
-          <FooterTopInfoDetail>
+          <FooterTopInfoDetail dark={isDarkMode}>
             당신의 꿈을 기록하고 해석하는 특별한 공간입니다.
             <br /> AI 기술과 심리학의 만남으로 더 깊은 자아를 발견해보세요.
           </FooterTopInfoDetail>
           <FooterTopInfoSocialList>
-            <FooterTopInfoSocialItem>
-              <a
-                href="https://www.instagram.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <img src="/images/insta.png" alt="인스타" />
-              </a>
-            </FooterTopInfoSocialItem>
-            <FooterTopInfoSocialItem>
-              <a
-                href="https://x.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <img src="/images/twitter.png" alt="X" />
-              </a>
-            </FooterTopInfoSocialItem>
-            <FooterTopInfoSocialItem>
-              <a
-                href="https://www.facebook.com/?locale=ko_KR"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <img src="/images/facebook.png" alt="페이스북" />
-              </a>
-            </FooterTopInfoSocialItem>
-            <FooterTopInfoSocialItem>
-              <a
-                href="https://www.youtube.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <img src="/images/youtube.png" alt="유튜브" />
-              </a>
-            </FooterTopInfoSocialItem>
+            {socialIcons.map(({ name, alt, link }) => (
+              <FooterTopInfoSocialItem>
+                <a href={link} target="_blank" rel="noopener noreferrer">
+                  <img
+                    src={
+                      isDarkMode
+                        ? `/images/${name}_dark.png`
+                        : `/images/${name}.png`
+                    }
+                    alt={alt}
+                  />
+                </a>
+              </FooterTopInfoSocialItem>
+            ))}
           </FooterTopInfoSocialList>
         </FooterTopInfo>
         <FooterTopContactList>
-          <FooterTopContactTitle>고객센터 정보</FooterTopContactTitle>
+          <FooterTopContactTitle dark={isDarkMode}>
+            고객센터 정보
+          </FooterTopContactTitle>
           <FooterTopContactWrap>
-            <FooterTopContactEmail href="mailto:support@dream-in.co.kr">
+            <FooterTopContactEmail
+              dark={isDarkMode}
+              href="mailto:support@dream-in.co.kr"
+            >
               support@dream-in.co.kr
             </FooterTopContactEmail>
-            <FooterTopContactTel href="tel:12345678">
+            <FooterTopContactTel dark={isDarkMode} href="tel:12345678">
               1234-5678
             </FooterTopContactTel>
-            <FooterTopContactAddr>
+            <FooterTopContactAddr dark={isDarkMode}>
               대구광역시 중구 중앙로 그린컴터
             </FooterTopContactAddr>
           </FooterTopContactWrap>
         </FooterTopContactList>
       </FooterTopWrap>
-      <FooterBottomWrap>
+      <FooterBottomWrap dark={isDarkMode}>
         <FooterBottomLegal>
           <FooterBottomPrivacy onClick={handlePrivacyClick}>
             개인정보처리방침
@@ -258,7 +279,7 @@ function Footer() {
           (주)드림인 | 사업자등록번호: 123-45-67890 | 대표: 박송문
         </FooterBottomCompany>
       </FooterBottomWrap>
-      <FooterBottomCopy>
+      <FooterBottomCopy dark={isDarkMode}>
         2025 Dream-In Co. Ltd. All rights reserved. Made with 💖 in Daegu, Korea
       </FooterBottomCopy>
     </FooterWrap>

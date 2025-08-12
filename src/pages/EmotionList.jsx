@@ -6,6 +6,7 @@ import { List } from "./List.styles";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useFavorites } from "../contexts/FavoriteContext";
 import Pagination from "../components/common/Pagination";
+import { useThemeContext } from "../contexts/ThemeContext";
 
 function EmotionList() {
   const location = useLocation();
@@ -117,11 +118,13 @@ function EmotionList() {
   //   );
   // };
 
+  const { isDarkMode } = useThemeContext();
+
   return (
     <Container>
       <BackButton to="/" />
-      <Title title="감정일기 목록" />
-      <List.ListWrap>
+      <Title dark={isDarkMode} title="감정일기 목록" />
+      <List.ListWrap dark={isDarkMode}>
         {currentItems.map(emotion => {
           const isFavorite = favoriteEmotions?.some(f => f.id === emotion.id);
 
@@ -131,13 +134,16 @@ function EmotionList() {
               onClick={() =>
                 navigate(`/emotiondetail/${emotion.id}`, { state: emotion })
               }
+              dark={isDarkMode}
             >
               <List.ListItemUser>
                 <List.ListItemUserPhoto>
                   <img src={emotion.photo} alt="유저이미지" />
                 </List.ListItemUserPhoto>
                 <List.ListItemUserName>{emotion.name}</List.ListItemUserName>
-                <List.ListItemTime>{emotion.time}</List.ListItemTime>
+                <List.ListItemTime dark={isDarkMode}>
+                  {emotion.time}
+                </List.ListItemTime>
                 <List.ListItemFavorites
                   onClick={e => {
                     e.stopPropagation();
@@ -170,7 +176,14 @@ function EmotionList() {
                   }
                 }}
               >
-                <img src="/images/delete_icon.png" alt="삭제" />
+                <img
+                  src={
+                    isDarkMode
+                      ? "/images/delete_icon_dark.png"
+                      : "/images/delete_icon.png"
+                  }
+                  alt="삭제"
+                />
               </List.ListItemDelete>
             </List.ListItem>
           );

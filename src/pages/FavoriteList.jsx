@@ -7,6 +7,7 @@ import Title from "../components/common/Title";
 import { useFavorites } from "../contexts/FavoriteContext";
 import { List } from "./List.styles";
 import Pagination from "../components/common/Pagination";
+import { useThemeContext } from "../contexts/ThemeContext";
 
 function FavoriteList() {
   const [selectedCategory, setSelectedCategory] = useState("전체");
@@ -81,16 +82,19 @@ function FavoriteList() {
   const countDreams = favoriteDreams.length;
   const countEmotions = favoriteEmotions.length;
 
+  const { isDarkMode } = useThemeContext();
+
   return (
     <Container>
       <Title title="즐겨찾기 목록" />
-      <List.EmojiCategoryWrap>
+      <List.EmojiCategoryWrap dark={isDarkMode}>
         <StyledBackButton to="/" />
         {listCategories.map((category, index) => (
           <List.EmojiCategoryItem
             key={index}
             onClick={() => setSelectedCategory(category)}
             isActive={selectedCategory === category}
+            dark={isDarkMode}
           >
             {category}
             {category === "전체" && `(${countAll})`}
@@ -118,6 +122,7 @@ function FavoriteList() {
           currentItems.map(item => (
             <List.ListItem
               key={item.id}
+              dark={isDarkMode}
               onClick={() =>
                 navigate(
                   item.type === "dream"

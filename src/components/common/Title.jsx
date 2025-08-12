@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { useThemeContext } from "../../contexts/ThemeContext";
 
 const TitleWrap = styled.div`
   display: flex;
@@ -12,18 +13,23 @@ const TitleWrap = styled.div`
 `;
 const TitleH1 = styled.h1`
   margin: 0;
-  color: #25254d;
+  /* color: #25254d; */
+  color: ${({ dark }) => (dark ? "#fcf3fb" : "#25254d")};
 `;
 const SubTitleH2 = styled.h2`
   margin: 0;
-  color: #493d78;
+  /* color: #493d78; */
+  color: ${({ dark }) => (dark ? "#fcf3fb" : "#493d78")};
   font-size: 14px;
 `;
+
 function Title({ title, subtitle }) {
+  const { isDarkMode } = useThemeContext();
+
   return (
     <TitleWrap>
-      <TitleH1>{title}</TitleH1>
-      <SubTitleH2>{subtitle}</SubTitleH2>
+      <TitleH1 dark={isDarkMode}>{title}</TitleH1>
+      <SubTitleH2 dark={isDarkMode}>{subtitle}</SubTitleH2>
     </TitleWrap>
   );
 }
