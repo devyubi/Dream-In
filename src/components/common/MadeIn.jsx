@@ -1,13 +1,16 @@
 import styled from "@emotion/styled";
+import { useThemeContext } from "../../contexts/ThemeContext";
 
 const MadeInWrap = styled.div`
-  background-color: #fcf3fb;
+  /* background-color: #fcf3fb; */
+  background-color: ${({ dark }) => (dark ? "#1c1752" : "#fcf3fb")};
   padding: 20px;
   margin: 0;
   border-radius: 16px;
 `;
 const MadeInTitle = styled.h1`
-  color: #25254d;
+  /* color: #25254d; */
+  color: ${({ dark }) => (dark ? "#fcf3fb" : "#25254d")};
   padding-top: 20px;
   display: flex;
   justify-content: center;
@@ -18,7 +21,8 @@ const MadeInSubTitle = styled.h2`
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #493d78;
+  /* color: #493d78; */
+  color: ${({ dark }) => (dark ? "#fcf3fb" : "#493d78")};
   transform: translateX(-7px);
 `;
 const MadeInList = styled.ul`
@@ -54,17 +58,20 @@ const MadeInPersonPhoto = styled.div`
   }
 `;
 const MadeInPersonName = styled.h2`
-  color: #25254d;
+  /* color: #25254d; */
+  color: ${({ dark }) => (dark ? "#fcf3fb" : "#25254d")};
   margin: 0;
 `;
 const MadeInPersonRole = styled.p`
-  color: #7866c2;
+  /* color: #7866c2; */
+  color: ${({ dark }) => (dark ? "#d56ac8" : "#7866c2")};
   font-size: 13px;
   font-weight: 600;
   margin: 0;
 `;
 const MadeInPersonEmail = styled.p`
-  color: #493d78;
+  /* color: #493d78; */
+  color: ${({ dark }) => (dark ? "#fcf3fb" : "#493d78")};
   font-size: 13px;
   margin: 0;
 `;
@@ -73,48 +80,54 @@ const MadeInPersonOneLiner = styled.p`
   font-weight: 600;
   margin: 0;
 `;
+
+const madePerson = [
+  {
+    name: "박재현",
+    alt: "1",
+    role: "꿈 기록, AI 연동 동",
+    email: "dev.clarova@gmail.com",
+    oneliner: "협업과 실행을 주도하는 리더",
+  },
+  {
+    name: "송병근",
+    alt: "2",
+    role: "회원 인증, Database 연동 등",
+    email: "sbkcoding@gmail.com",
+    oneliner: "보이지 않는 흐름을 잇는 데이터 설계자",
+  },
+  {
+    name: "문유비",
+    alt: "3",
+    role: "메인페이지, 전체 기획 등",
+    email: "dev.munyubi@gmail.com",
+    oneliner: "시작과 끝을 설계하는 기획자",
+  },
+];
+
 function MadeIn() {
+  const { isDarkMode } = useThemeContext();
+
   return (
-    <MadeInWrap>
-      <MadeInTitle>
-        Dream-In의 꿈을 잇는 사람들
-        <img src="/images/clickarrow.png" alt="열기" />
-      </MadeInTitle>
-      <MadeInSubTitle>함께 꿈을 기록하는 세 개발자</MadeInSubTitle>
+    <MadeInWrap dark={isDarkMode}>
+      <MadeInTitle dark={isDarkMode}>Dream-In의 꿈을 잇는 사람들</MadeInTitle>
+      <MadeInSubTitle dark={isDarkMode}>
+        함께 꿈을 엮는 세 개발자
+      </MadeInSubTitle>
       <MadeInList>
-        <MadeInPerson>
-          <MadeInPersonPhoto>
-            <img src="images/photo1.png" alt="1" />
-          </MadeInPersonPhoto>
-          <MadeInPersonName>박재현</MadeInPersonName>
-          <MadeInPersonRole>꿈 기록, AI 연동 등</MadeInPersonRole>
-          <MadeInPersonEmail>dev.clarova@gmail.com</MadeInPersonEmail>
-          <MadeInPersonOneLiner>
-            협업과 실행을 주도하는 리더
-          </MadeInPersonOneLiner>
-        </MadeInPerson>
-        <MadeInPerson>
-          <MadeInPersonPhoto>
-            <img src="images/face.png" alt="2" />
-          </MadeInPersonPhoto>
-          <MadeInPersonName>송병근</MadeInPersonName>
-          <MadeInPersonRole>회원 인증, Database 연동 등</MadeInPersonRole>
-          <MadeInPersonEmail>sbkcoding@gmail.com</MadeInPersonEmail>
-          <MadeInPersonOneLiner>
-            보이지 않는 흐름을 잇는 데이터 설계자
-          </MadeInPersonOneLiner>
-        </MadeInPerson>
-        <MadeInPerson>
-          <MadeInPersonPhoto>
-            <img src="images/photo3.png" alt="3" />
-          </MadeInPersonPhoto>
-          <MadeInPersonName>문유비</MadeInPersonName>
-          <MadeInPersonRole>메인페이지, 전체 기획 등</MadeInPersonRole>
-          <MadeInPersonEmail>dev.munyubi@gmail.com</MadeInPersonEmail>
-          <MadeInPersonOneLiner>
-            시작과 끝을 설계하는 기획자
-          </MadeInPersonOneLiner>
-        </MadeInPerson>
+        {madePerson.map(({ name, alt, role, email, oneliner }) => (
+          <MadeInPerson>
+            <MadeInPersonPhoto>
+              <img src={`/images/${alt}.png`} alt={alt} />
+            </MadeInPersonPhoto>
+            <MadeInPersonName dark={isDarkMode}>{name}</MadeInPersonName>
+            <MadeInPersonRole dark={isDarkMode}>{role}</MadeInPersonRole>
+            <MadeInPersonEmail dark={isDarkMode}>{email}</MadeInPersonEmail>
+            <MadeInPersonOneLiner dark={isDarkMode}>
+              {oneliner}
+            </MadeInPersonOneLiner>
+          </MadeInPerson>
+        ))}
       </MadeInList>
     </MadeInWrap>
   );
