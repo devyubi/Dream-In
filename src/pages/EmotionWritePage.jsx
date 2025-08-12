@@ -9,6 +9,7 @@ import PostButton from "../components/common/PostButton";
 import TextArea from "../components/common/TextArea";
 import "../css/calendar.css";
 import "../css/emotionwritepage.css";
+import { useThemeContext } from "../contexts/ThemeContext";
 
 const Top = styled.div`
   display: flex;
@@ -21,11 +22,13 @@ const Top = styled.div`
 `;
 const Title = styled.h1`
   margin: 0;
-  color: #25254d;
+  /* color: #25254d; */
+  color: ${({ dark }) => (dark ? "#ddb7ef" : "#25254d")};
 `;
 const SubTitle = styled.h2`
   margin: 0;
-  color: #493d78;
+  /* color: #493d78; */
+  color: ${({ dark }) => (dark ? "#ddb7ef" : "#493d78")};
   font-size: 14px;
 `;
 const CalendarWrap = styled.div`
@@ -38,7 +41,8 @@ const Label = styled.label`
   display: block;
   font-size: 16px;
   margin-bottom: 10px;
-  color: #25254d;
+  /* color: #25254d; */
+  color: ${({ dark }) => (dark ? "#ddb7ef" : "#25254d")};
 `;
 
 // 백엔드에서 전달받은 자료
@@ -75,6 +79,8 @@ function EmotionDiaryPage() {
   const [error, setError] = useState("");
   const [allData, setAllData] = useState(emotionDiaryApi);
   const navigate = useNavigate();
+
+  const { isDarkMode } = useThemeContext();
 
   useEffect(() => {
     const selectedDate = date.toLocaleDateString("sv-SE");
@@ -126,8 +132,8 @@ function EmotionDiaryPage() {
     <Container>
       <BackButton to="/" />
       <Top>
-        <Title>감정일기</Title>
-        <SubTitle>오늘의 기분을 기록해 보세요</SubTitle>
+        <Title dark={isDarkMode}>감정일기</Title>
+        <SubTitle dark={isDarkMode}>오늘의 기분을 기록해 보세요</SubTitle>
       </Top>
 
       <CalendarWrap>
@@ -165,7 +171,7 @@ function EmotionDiaryPage() {
       </CalendarWrap>
 
       <DiarySection>
-        <Label>{date.toLocaleDateString()} 의 감정일기</Label>
+        <Label dark={isDarkMode}>{date.toLocaleDateString()} 의 감정일기</Label>
         <TextArea
           value={text}
           onChange={e => {

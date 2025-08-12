@@ -8,7 +8,7 @@ import {
   Detail,
   DetailAiResultTitle,
   DetailAiResultWrap,
-} from "./Detail.styles";
+} from "../styles/Detail.styles";
 
 function EmotionDetail() {
   const navigate = useNavigate();

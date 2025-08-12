@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import InputErrorMessage from "./InputErrorMessage";
+import { useThemeContext } from "../../contexts/ThemeContext";
 
 // TextArea 컴포넌트 emotion
 const DetailsWrap = styled.div`
@@ -9,7 +10,9 @@ const DetailsWrap = styled.div`
   padding-right: 25px;
   height: 310px;
 `;
-const DetailsTitle = styled.h2``;
+const DetailsTitle = styled.h2`
+  color: ${({ dark }) => (dark ? "#ddb7ef" : "#493d78")};
+`;
 const DetailsText = styled.textarea`
   font-family: "tj400";
   border: ${({ error }) => (error ? "2px" : "1px")} solid
@@ -25,6 +28,7 @@ const DetailsText = styled.textarea`
   width: 100%;
   height: 200px;
   resize: none;
+  color: ${({ dark }) => (dark ? "#ddb7ef" : "#493d78")};
 
   /* 스크롤바 */
   &::-webkit-scrollbar {
@@ -53,7 +57,7 @@ const DetailsTextNum = styled.span`
   right: 50px;
   font-family: "tj400";
   /* 입력 글자수가 최대 글자수가 되면 글자수에 경고 표시 */
-  color: ${({ isMax }) => (isMax ? "red" : "#493d78")};
+  color: ${({ isMax, dark }) => (isMax ? "red" : dark ? "#ddb7ef" : "#493d78")};
   font-weight: ${({ isMax }) => (isMax ? "700" : "400")};
 `;
 
@@ -66,17 +70,20 @@ export default function TextArea({
   placeholder = "어젯 밤 꿈에서 무슨 일이 일어났나요? 생생하게 기록해 보세요! 장소, 감정, 감각, 색상 등 기억나는 모든 것을 기록 해보세요!",
   error = false,
 }) {
+  const { isDarkMode } = useThemeContext();
+
   return (
     <DetailsWrap>
-      <DetailsTitle>{title}</DetailsTitle>
+      <DetailsTitle dark={isDarkMode}>{title}</DetailsTitle>
       <DetailsText
         placeholder={placeholder}
         value={value}
         onChange={onChange}
         maxLength={maxLength}
         error={error}
+        dark={isDarkMode}
       />
-      <DetailsTextNum isMax={value.length >= maxLength}>
+      <DetailsTextNum dark={isDarkMode} isMax={value.length >= maxLength}>
         {value.length}/{maxLength}
       </DetailsTextNum>
       {error && <InputErrorMessage message={error} />}

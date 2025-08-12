@@ -5,7 +5,7 @@ import BackButton, { StyledBackButton } from "../components/common/BackButton";
 import Container from "../components/common/Container";
 import Title from "../components/common/Title";
 import { useFavorites } from "../contexts/FavoriteContext";
-import { List } from "./List.styles";
+import { List } from "../styles/List.styles";
 import Pagination from "../components/common/Pagination";
 import { useThemeContext } from "../contexts/ThemeContext";
 
