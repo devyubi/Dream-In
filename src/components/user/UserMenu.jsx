@@ -1,7 +1,7 @@
 // src/components/user/UserMenu.jsx
 import { memo } from "react";
 import PropTypes from "prop-types";
-import "./UserMenu.module.css";
+import "../../css/user/UserMenu.module.css";
 
 const UserMenu = memo(({ items = [], disabled = false }) => {
   if (!items || items.length === 0) {

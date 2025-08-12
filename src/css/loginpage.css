@@ -1,23 +1,34 @@
+/* LoginPage 전용 스타일 */
 * {
   font-family: "tj400";
 }
 
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow-x: hidden;
+}
+
 /* 메인 컨테이너 */
-.login-container {
+.login-page-container {
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 20px;
+  flex: 1;
 }
 
 /* 로고 섹션 */
-.logo-section {
+.login-page-logo-section {
   text-align: center;
   margin-bottom: 40px;
 }
 
-.logo-circle {
+.login-page-logo-circle {
   width: 120px;
   height: 120px;
   margin: 0 auto 24px;
@@ -26,20 +37,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  /* box-shadow: 0 8px 32px rgba(84, 71, 131, 0.2); */
-  /* backdrop-filter: blur(10px); */
-  /* border: 2px solid rgba(255, 255, 255, 0.3); */
   overflow: hidden;
 }
 
-.logo-image {
+.login-page-logo-image {
   width: 80px;
   height: 80px;
   object-fit: cover;
   border-radius: 50%;
 }
 
-.app-title {
+.login-page-app-title {
   font-size: 32px;
   font-weight: bold;
   color: var(--text-color, #544783);
@@ -49,7 +57,7 @@
 }
 
 /* 메시지 */
-.message {
+.login-page-message {
   width: 100%;
   max-width: 400px;
   padding: 12px 16px;
@@ -61,26 +69,26 @@
   backdrop-filter: blur(10px);
 }
 
-.message.success {
+.login-page-message-success {
   background: rgba(16, 185, 129, 0.9);
   color: white;
 }
 
-.message.error {
+.login-page-message-error {
   background: rgba(239, 68, 68, 0.9);
   color: white;
 }
 
 /* 회원가입 섹션 */
-.signup-section {
+.login-page-signup-section {
   text-align: center;
   margin-top: 24px;
-  color: rgba(84, 71, 131, 0.8);
+  color: var(--text-color, #544783);
   font-size: 14px;
 }
 
-.signup-link {
-  color: #3a3a74;
+.login-page-signup-link {
+  color: var(--text-color, #544783);
   font-weight: 600;
   text-decoration: none;
   margin-left: 8px;
@@ -89,50 +97,34 @@
   transition: all 0.2s ease;
 }
 
-.signup-link:hover {
+.login-page-signup-link:hover {
   background: rgba(84, 71, 131, 0.1);
-  color: #8672d0;
+  color: var(--text-color, #544783);
 }
 
 /* 반응형 디자인 */
 @media (max-width: 480px) {
-  .login-container {
+  .login-page-container {
     padding: 16px;
   }
 
-  .logo-circle {
+  .login-page-logo-circle {
     width: 100px;
     height: 100px;
   }
 
-  .logo-image {
+  .login-page-logo-image {
     width: 60px;
     height: 60px;
   }
 
-  .app-title {
+  .login-page-app-title {
     font-size: 28px;
-  }
-
-  .background-decoration {
-    width: 50px;
-    height: 50px;
-    font-size: 20px;
-  }
-
-  .home-icon {
-    top: 30px;
-    left: 20px;
-  }
-
-  .moon-icon {
-    top: 30px;
-    right: 20px;
   }
 }
 
 @media (max-width: 360px) {
-  .login-container {
+  .login-page-container {
     padding: 12px;
   }
 }

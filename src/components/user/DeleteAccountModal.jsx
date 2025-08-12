@@ -1,7 +1,7 @@
 // src/components/user/DeleteAccountModal.jsx
 import React, { useState } from "react";
 import { deleteAccount } from "../../api/auth";
-import styles from "./DeleteAccountMadal.module.css";
+import styles from "../../css/user/DeleteAccountMadal.module.css";
 
 const DeleteAccountModal = ({ isOpen, onClose, user, onDeleteSuccess }) => {
   const [loading, setLoading] = useState(false);

@@ -117,26 +117,33 @@ const LoginPage = () => {
 
   return (
     <Container className="login-page">
-      <div className="login-container">
+      <div className="login-page-container">
         {/* 로고 섹션 */}
-        <div className="logo-section">
-          <div className="logo-circle">
+        <div className="login-page-logo-section">
+          <div className="login-page-logo-circle">
             <img
-              // src="/images/logo.png"
               src={
                 isDarkMode ? "/images/icon-dark.png" : "/images/icon-light.png"
               }
               alt="Dream-in Logo"
-              className="logo-image"
+              className="login-page-logo-image"
             />
           </div>
-          <h1 className="app-title">Dream-in</h1>
+          <h1 className="login-page-app-title">Dream-in</h1>
         </div>
 
         {/* 메시지 표시 */}
-        {message && <div className="message success">{message}</div>}
+        {message && (
+          <div className="login-page-message login-page-message-success">
+            {message}
+          </div>
+        )}
 
-        {error && <div className="message error">{error}</div>}
+        {error && (
+          <div className="login-page-message login-page-message-error">
+            {error}
+          </div>
+        )}
 
         {/* 로그인 폼 */}
         <LoginForm
@@ -149,9 +156,9 @@ const LoginPage = () => {
         />
 
         {/* 회원가입 링크 */}
-        <div className="signup-section">
+        <div className="login-page-signup-section">
           <span>아직 계정이 없으신가요?</span>
-          <Link to="/signup" className="signup-link">
+          <Link to="/signup" className="login-page-signup-link">
             회원가입
           </Link>
         </div>

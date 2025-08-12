@@ -1,6 +1,6 @@
 // src/components/auth/SocialLoginButtons.jsx
 import { signInWithGoogle, signInWithKakao } from "../../api/auth";
-import styles from "./SocialLoginButtons.module.css";
+import styles from "../../css/user/SocialLoginButtons.module.css";
 
 const SocialLoginButtons = ({ disabled = false, onError = null }) => {
   const handleGoogleLogin = async () => {
