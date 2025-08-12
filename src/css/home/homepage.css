@@ -218,19 +218,8 @@ section {
 .login_btn {
   cursor: pointer;
   border-radius: 15px;
-  background: var(
-    --background-dark-space,
-    linear-gradient(
-      180deg,
-      #1e1b27 0%,
-      #25254d 19.71%,
-      #33336e 40.87%,
-      #3a3a74 60.98%,
-      #493d78 80.96%,
-      #544783 100%
-    )
-  );
-  color: rgba(252, 243, 251, 1);
+  background: var(--login-btn-gradient);
+  color: var(--login-btn--text-color);
   display: flex;
   max-height: 120px;
   width: 210px;
@@ -238,10 +227,6 @@ section {
   justify-content: center;
   align-items: center;
   flex-shrink: 0;
-}
-
-[data-theme="dark"] .login_btn {
-  background-color: var(--bg-gradient, rgba(252, 243, 251, 1));
 }
 
 .sub_links {

@@ -13,8 +13,7 @@
   max-width: 200px;
   border-radius: 16px;
   padding: 25px 100px;
-  background-color: var(--color-primary-p-100, #fcf3fb);
-  color: #493d78;
+  background-color: var(--bg-color);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -31,6 +30,7 @@
   transform: translateY(-2px);
 }
 
+
 .mytotal img {
   padding-top: 10px;
   width: 28px;
@@ -40,4 +40,5 @@
 
 .mytotal span {
   white-space: nowrap;
+  /* color: var(--text-color, #3a3a74); */
 }

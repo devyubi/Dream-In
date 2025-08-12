@@ -9,19 +9,19 @@ export function RecordSection() {
 
   const recordItems = [
     {
-      icon: "/images/note_light.svg",
+      icon: `/images/note_${isDarkMode ? "dark" : "light"}.svg`,
       label: "꿈 기록하기",
       desc: "오늘 밤 꾼 꿈을 기록해보세요.",
       path: "/dreamwrite",
     },
     {
-      icon: "/images/moon_light.svg",
+      icon: `/images/moon_${isDarkMode ? "dark" : "light"}.svg`,
       label: "감정 일기",
       desc: "오늘의 감정을 기록해 보세요.",
       path: "/emotionwrite",
     },
     {
-      icon: "/images/smile_light.svg",
+      icon: `/images/smile_${isDarkMode ? "dark" : "light"}.svg`,
       label: "수면 기록",
       desc: "수면 패턴을 기록하고 관리해 보세요.",
       path: "/sleeprecord",

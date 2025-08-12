@@ -26,12 +26,6 @@ export function StatsSection() {
       "평균 수면 시간",
       "/sleeprecord",
     ],
-    [
-      `/images/ai_${isDarkMode ? "dark" : "light"}.svg`,
-      "4",
-      "주간 꿈 해몽",
-      "/aidreamsresult",
-    ],
   ];
 
   return (
