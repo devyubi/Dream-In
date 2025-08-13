@@ -1,10 +1,27 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 const FavoriteContext = createContext();
 
 export const FavoritesProvider = ({ children }) => {
-  const [favoriteDreams, setFavoriteDreams] = useState([]);
-  const [favoriteEmotions, setFavoriteEmotions] = useState([]);
+  // 로컬스토리지에서 초기값 불러오기
+  const [favoriteDreams, setFavoriteDreams] = useState(() => {
+    const stored = localStorage.getItem("favoriteDreams");
+    return stored ? JSON.parse(stored) : [];
+  });
+
+  const [favoriteEmotions, setFavoriteEmotions] = useState(() => {
+    const stored = localStorage.getItem("favoriteEmotions");
+    return stored ? JSON.parse(stored) : [];
+  });
+
+  // 로컬스토리지 동기화
+  useEffect(() => {
+    localStorage.setItem("favoriteDreams", JSON.stringify(favoriteDreams));
+  }, [favoriteDreams]);
+
+  useEffect(() => {
+    localStorage.setItem("favoriteEmotions", JSON.stringify(favoriteEmotions));
+  }, [favoriteEmotions]);
 
   const toggleDreamFavorite = item => {
     setFavoriteDreams(prev => {
@@ -12,22 +29,13 @@ export const FavoritesProvider = ({ children }) => {
       return exists ? prev.filter(d => d.id !== item.id) : [...prev, item];
     });
   };
+
   const toggleEmotionFavorite = item => {
     setFavoriteEmotions(prev => {
       const exists = prev.find(e => e.id === item.id);
       return exists ? prev.filter(e => e.id !== item.id) : [...prev, item];
     });
   };
-
-  // const toggleEmotionFavorite = emotion => {
-  //   setFavoriteEmotions(prev => {
-  //     if (prev.some(f => f.id === emotion.id)) {
-  //       return prev.filter(f => f.id !== emotion.id);
-  //     } else {
-  //       return [...prev, emotion];
-  //     }
-  //   });
-  // };
 
   return (
     <FavoriteContext.Provider
