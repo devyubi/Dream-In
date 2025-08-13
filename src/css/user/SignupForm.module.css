@@ -28,6 +28,7 @@
   position: relative;
   display: flex;
   align-items: center;
+  color: var(--text-color, #544783);
 }
 
 .inputWrapper input,
@@ -42,7 +43,6 @@
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
   outline: none;
-  color: var(--text-color, #544783);
 }
 
 .inputWrapper input:focus,
@@ -71,8 +71,9 @@
   cursor: not-allowed;
 }
 
+/* placeholder 색상 설정 */
 .inputWrapper input::placeholder {
-  color: #8f8f8f;
+  color: var(--placeholder-color, #8f8f8f);
   opacity: 0.8;
 }
 
@@ -319,6 +320,7 @@
     padding: 14px 18px;
     padding-right: 44px;
     font-size: 16px; /* iOS에서 줌 방지 */
+    color: var(--text-color, #544783);
   }
 
   .nicknameInputWrapper {

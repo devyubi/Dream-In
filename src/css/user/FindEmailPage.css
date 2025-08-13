@@ -56,6 +56,19 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
   animation: emailModalAppear 0.3s ease-out;
 }
+/* 기본 앱 타이틀 스타일 */
+.find-email-container .app-title {
+  font-size: 36px;
+  font-weight: 700;
+  margin: 0;
+  text-align: center;
+  letter-spacing: -0.5px;
+  transition: color 0.3s ease;
+}
+
+.find-email-container .app-title {
+  color: var(--text-color, #544783);
+}
 
 @keyframes emailModalAppear {
   from {
@@ -179,7 +192,7 @@
 
 .find-email-container .cancel-button {
   background: rgba(113, 128, 150, 0.1);
-  color: #4a5568;
+  color: var(--text-color, #544783);
   border: 1px solid rgba(113, 128, 150, 0.2);
 }
 

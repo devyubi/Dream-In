@@ -350,19 +350,3 @@ export const META = {
   OG_IMAGE: "/images/og-image.png",
   TWITTER_HANDLE: "@dreamin_app",
 };
-
-// 프리즈를 통한 불변성 보장
-Object.freeze(VALIDATION);
-Object.freeze(AUTH);
-Object.freeze(API);
-Object.freeze(UI);
-Object.freeze(STORAGE_KEYS);
-Object.freeze(MESSAGES);
-Object.freeze(ROUTES);
-Object.freeze(DATE_TIME);
-Object.freeze(ENV);
-Object.freeze(FEATURES);
-Object.freeze(PERFORMANCE);
-Object.freeze(REGEX);
-Object.freeze(DEFAULT_CONFIG);
-Object.freeze(META);

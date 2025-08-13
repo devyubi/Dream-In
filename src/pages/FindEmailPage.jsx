@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { findEmailByInfo } from "../api/auth";
-import "../css/user/FindEmailPage.css";
 import { useThemeContext } from "../contexts/ThemeContext";
+import "../css/user/FindEmailPage.css";
 
 const FindEmailPage = () => {
   const [formData, setFormData] = useState({
@@ -79,7 +79,9 @@ const FindEmailPage = () => {
             className="logo-image"
           />
         </div>
-        <h1 className="app-title">Dream-in</h1>
+        <h1 className={`app-title ${isDarkMode ? "dark-mode" : "light-mode"}`}>
+          Dream-in
+        </h1>
       </div>
 
       {/* 이메일 찾기 모달 */}

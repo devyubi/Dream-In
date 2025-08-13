@@ -6,10 +6,10 @@ import {
   checkNicknameDuplicate,
   validateEmail,
 } from "../../api/auth";
+import styles from "../../css/user/SignupForm.module.css";
 import { useForm } from "../../hooks/useForm";
 import { useImageUpload } from "../../hooks/useImageUpload";
 import { validateSignupForm } from "../../utils/validation";
-import styles from "../../css/user/SignupForm.module.css";
 
 const SignupForm = ({ onSubmit, onNicknameCheck, loading = false }) => {
   const [showPassword, setShowPassword] = useState(false);
