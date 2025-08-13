@@ -1,4 +1,4 @@
-import React from "react";
+// 추후 연동 예정
 
 function SleepContext() {
   return <div>SleepContext</div>;
