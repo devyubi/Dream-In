@@ -16,7 +16,7 @@ const LoginPage = () => {
   const [showResetModal, setShowResetModal] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const { isDarkMode, setIsDarkMode } = useThemeContext();
+  const { isDarkMode } = useThemeContext();
 
   // 이미 로그인된 사용자는 홈으로 리다이렉트
   useEffect(() => {

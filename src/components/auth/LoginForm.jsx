@@ -1,20 +1,20 @@
 // src/components/auth/LoginForm.jsx
 import PropTypes from "prop-types";
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import styles from "../../css/user/LoginForm.module.css";
 import { useForm } from "../../hooks/useForm";
 import { validateLoginForm } from "../../utils/validation";
-import styles from "../../css/user/LoginForm.module.css";
-import SocialLoginButtons from "./SocialLoginButtons";
 import PasswordResetModal from "./PasswordResetModal";
-import { Link } from "react-router-dom";
+import SocialLoginButtons from "./SocialLoginButtons";
 
 const LoginForm = ({
   onSubmit,
-  onPasswordReset,
+  // onPasswordReset,
   loading = false,
   showSocialLogin = true,
   showRememberMe = true,
-  showPasswordReset = true,
+  // showPasswordReset = true,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
@@ -23,7 +23,7 @@ const LoginForm = ({
 
   const {
     values,
-    errors,
+    // errors,
     handleChange,
     handleBlur,
     handleSubmit,
@@ -37,6 +37,7 @@ const LoginForm = ({
   const passwordState = getFieldState("password");
 
   // 비밀번호 찾기 모달 핸들러
+  // eslint-disable-next-line
   const openResetPasswordModal = () => {
     setIsResetPasswordModalOpen(true);
   };
