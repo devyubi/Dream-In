@@ -169,13 +169,6 @@ function DreamDetail() {
             삭제하기
           </Detail.DetailBttuon>
         </Detail.DetailButtonWrap>
-        {/* {(loading || aiResult) && (
-          <Detail.DetailAiResult
-            readOnly
-            value={loading ? "해몽 분석 중입니다..." : aiResult}
-          ></Detail.DetailAiResult>
-        )} */}
-
         <div ref={resultAi}>
           {loading && (
             <div>

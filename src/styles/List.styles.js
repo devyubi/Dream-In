@@ -8,7 +8,6 @@ export const EmojiCategoryWrap = styled.ul`
   left: 50%;
   width: calc(100%);
   margin: 0 0px 30px 0px;
-  /* background-color: rgba(252, 243, 251, 0.4); */
   background: ${({ dark }) =>
     dark
       ? "linear-gradient(to bottom, rgba(230, 179, 247, 0.3), rgba(211, 188, 232, 0.3), rgba(194, 193, 238, 0.3))"
@@ -25,9 +24,6 @@ export const EmojiCategoryItem = styled.li`
   cursor: pointer;
   white-space: nowrap;
   transform: translateY(-5px);
-
-  /* background-color: ${({ isActive }) =>
-    isActive ? "#fad4e8" : "transparent"}; */
   background: ${({ isActive, dark }) => {
     if (isActive) {
       // 활성 상태일 때 배경
@@ -53,7 +49,6 @@ export const EmojiCategoryItem = styled.li`
     isActive ? "6px 6px 8px rgba(0,0,0,0.15" : "none"};
 
   &:hover {
-    /* background-color: #fad4e8; */
     background: ${({ dark }) =>
       dark
         ? `linear-gradient(
@@ -81,7 +76,6 @@ export const ListItem = styled.li`
   position: relative;
   display: flex;
   flex-direction: column;
-  /* background-color: rgba(252, 243, 251, 0.4); */
   background: ${({ dark }) =>
     dark
       ? "linear-gradient(to bottom, rgba(230, 179, 247, 0.3), rgba(211, 188, 232, 0.3), rgba(194, 193, 238, 0.3))"
@@ -96,7 +90,6 @@ export const ListItem = styled.li`
     transform 0.3s ease;
   cursor: pointer;
   &:hover {
-    /* background-color: #fad4e8; */
     background: ${({ dark }) =>
       dark
         ? `linear-gradient(
@@ -142,7 +135,6 @@ export const ListItemUserName = styled.p`
   font-weight: 600;
 `;
 export const ListItemTime = styled.span`
-  /* color: #8672d0; */
   color: ${({ dark }) => (dark ? "#fcf3fb" : "#493d78")};
 `;
 export const ListItemTitle = styled.h3`

@@ -108,16 +108,6 @@ function EmotionList() {
     }
   }, [deleteId, navigate]);
 
-  // const toggleFavorite = id => {
-  //   setEmotionList(prevList =>
-  //     prevList.map(emotion =>
-  //       emotion.id === id
-  //         ? { ...emotion, isFavorite: !emotion.isFavorite }
-  //         : emotion,
-  //     ),
-  //   );
-  // };
-
   const { isDarkMode } = useThemeContext();
 
   return (
