@@ -11,14 +11,14 @@ import "../css/emotionwritepage.css";
 
 // 백엔드에서 전달받은 자료
 const emotionDiaryApi = [
-  { pk: 0, title: "우울", text: "굉장하게 우울함", day: "2025-08-04" },
-  { pk: 1, title: "기쁨", text: "굉장하게 기쁨. 선물받음!", day: "2025-07-17" },
-  { pk: 2, title: "보통", text: "", day: "2025-07-19" },
+  { pk: 0, title: "우울", text: "굉장하게 우울함", day: "2025-08-13" },
+  { pk: 1, title: "기쁨", text: "굉장하게 기쁨. 선물받음!", day: "2025-08-14" },
+  { pk: 2, title: "보통", text: "그냥 그저 그럼", day: "2025-08-10" },
   {
     pk: 3,
     title: "무서움",
     text: "천둥번개쳐서 엄청 무서웠음",
-    day: "2025-07-29",
+    day: "2025-08-11",
   },
 ];
 
