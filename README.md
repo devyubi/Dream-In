@@ -111,28 +111,64 @@
 
 #### 1. `DreamWritePage.jsx`
 
-- 꿈 작성 폼 UI 구성 (제목, 내용, 감정 선택(카테고리) 등 입력)
-- 감정 선택 시 이모티콘 선택 가능한 UI 구성
+- `useState`로 제목 글자수, 내용 글자수, 감정 선택을 각각 관리하여 입력할 때마다 실시간으로 값 업데이트
+- 게시하기 클릭 시 제목, 감정, 내용이 비어있음을 체크하고 비었을 시 각각의 에러 메세지 표시(`if문 사용`)
+- 게시하기 눌렀을 때 `navigate`를 사용하여 작성한 데이터를 상세페이지(DreamDetail)로 전달
 
 #### 2. `DreamDetail.jsx`
 
-- 꿈 작성된 내용 상세 보기 페이지
-- 이전 페이지(DreamWritePage)에서 작성한 내용 출력
-- router(navigate, useLocation)로 이전 작성 내용 전달
-- 해당 페이지 내 작성된 꿈 내용을 바탕으로 OpenAI API를 이용해 해몽 결과를 받아 페이지 내 해몽 결과 구역 생성 후 출력
-- `fetch()`와 `useState`로 OpenAI API에 요청
+- 작성된 꿈 내용 상세 보기 페이지
+- `router(navigate, useLocation)`로 이전 작성 내용 전달
+- `fetch()`와 `useState`로 OpenAI API에 작성된 꿈 내용을 바탕으로 요청하고 생성된 출력 창에 결과 출력
+- 요청 시 로딩 스피너 표시 및 스피너 위치로 스크롤 이동(`useRef`,`useEffect` 사용)
+- 수정 및 삭제 시 `useNavigate`를 이용한 이동, `useLocation`을 이용한 이전 페이지 데이터 받기
+- `navigate`와 `state`로 수정 데이터 전달 및 삭제 후 목록 제거 처리
 
-#### 3. `EmotionDetail.jsx`
+#### 3. `DreamList.jsx`
+
+- 꿈 목록 페이지
+- `useState`와 `Array.filter` 기능을 사용하여 꿈 작성 시 선택한 카테고리별로 필터링하여 출력 기능 제공
+- `navigate`, `useLocation`, `useState`, `map` 등을 이용하여 각 아이템별 상세 페이지 이동
+- 'Pagination.jsx'로 `useState`와 `map`, `props` 전달을 통해 각 페이지에 표시될 아이템 개수 설정 및 초과 시 다음 페이지로 넘김
+
+#### 4. `DreamEdit.jsx`
+
+- 꿈 수정 페이지
+- `useLocation`을 통해 이전 페이지의 내용을 전달 받고 `useState`로 수정할 제목과 내용을 초기값으로 설정
+- `value`와 `onChange`로 입력한 값이 상태에 바로 반영
+- 수정 완료 후 `navigate`로 상세페이지로 이동 및 수정된 데이터를 `state`에 담아 전달하고 `replace: true`로 기록 갱신
+
+#### 5. `EmotionDetail.jsx`
 
 - 감정일기 작성 내용 상세 보기 페이지
-- 이전 페이지(EmotionWritePage)에서 작성한 내용 출력
-- 해당 페이지 내 작성된 감정일기 내용을 바탕으로 OpenAI API를 이용해 감정분석 결과를 받아 페이지 내 감정분석 결과 구역 생성 후 출력
-- `fetch()`와 `useState`로 OpenAI API에 요청
+- `fetch()`와 `useState`로 OpenAI API에 작성된 감정일기 내용을 바탕으로 요청하고 감정 분석 결과를 생성된 출력 창에 결과 출력
+- 요청 시 로딩 스피너 표시 및 스피너 위치로 스크롤 이동(`useRef`,`useEffect` 사용)
+- 수정 및 삭제 시 `useNavigate`와 `state`를 이용한 이동 및 내용 전달, `useLocation`을 이용한 이전 페이지 데이터 받기
+- `navigate`와 `state`로 수정 데이터 전달 및 삭제 후 목록 제거 처리
 
-#### 3. `DreamList.jsx`, `EmotionList.jsx`
+#### 6. `EmotionList.jsx`
 
-- 꿈 작성 내용과 AI 응답을 Context로 관리
-- 꿈 작성 도중 페이지 이동해도 상태 유지 가능하게 구성
+-
+
+#### 7. `EmotionEdit.jsx`
+
+-
+
+#### 8. `favorite.jsx`
+
+-
+
+#### 9. `support.jsx`
+
+-
+
+#### 10. `Footer.jsx`
+
+-
+
+#### 11. `공용 컴포넌트 제작`
+
+-
 
 ---
 
@@ -198,16 +234,13 @@
 
 #### 5. 카테고리 분류 로직
 
-- 꿈 작성 시 카테고리 (예: 불안, 희망, 일상 등) 선택 가능하게 구성
-- select dropdown 또는 감정 기반 자동 분류 가능
-
 | 이름   | 주요 담당          | 작업 파일                                           | 설명                            |
 | ------ | ------------------ | --------------------------------------------------- | ------------------------------- |
 | 박재현 | 꿈 작성 + 해몽     | DreamWritePage, AIDreamResultPage, DreamContext 등  | 꿈 작성 폼 + AI 연동 처리       |
 | 문유비 | 꿈 목록 + 피드     | HomePage, DreamCard, 피드 구성, 공감 기능 등        | 꿈 리스트 출력, 정렬, 피드 구성 |
 | 송병근 | 인증 + 데이터 저장 | LoginPage, SignupPage, supabaseClient, dreams.js 등 | 로그인 처리, supabase 연결      |
 
-## 10. React(JSX) 기준 폴더 구조 (MVP 버전)
+## 11. React(JSX) 기준 폴더 구조 (MVP 버전)
 
 ```
 📁 src // 앱의 메인 소스 폴더 (전체 React 코드 들어감)

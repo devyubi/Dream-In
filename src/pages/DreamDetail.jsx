@@ -37,8 +37,6 @@ function DreamDetail() {
   }, [aiResult, loading]);
 
   const handleAiRequest = async e => {
-    // console.log("꿈 내용:", dream.detail);
-    // console.log("바튼");
     e.preventDefault(); // 새로고침 방지
 
     if (!dream?.detail) {
@@ -109,7 +107,6 @@ function DreamDetail() {
         "죄송합니다. 분석 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
       );
     } finally {
-      // setAiResult(false);
       setLoading(false);
     }
   };
