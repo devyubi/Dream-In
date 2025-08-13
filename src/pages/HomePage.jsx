@@ -4,10 +4,9 @@ import FavoriteSection from "../components/home/FavoriteSection";
 import RecordSection from "../components/home/RecordSection";
 import StatsSection from "../components/home/StatsSection";
 import QuoteSwiper from "../components/QuoteSwiper";
+import TwinkleStars from "../components/TwinkleStars";
 import { useAuth } from "../contexts/AuthContext";
 import "../css/home/homepage.css";
-import styled from "@emotion/styled";
-import TwinkleStars from "../components/TwinkleStars";
 
 function HomePage({ children, className, ...rest }) {
   const { isLoggedIn, user } = useAuth();
