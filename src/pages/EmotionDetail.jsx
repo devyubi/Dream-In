@@ -121,7 +121,7 @@ function EmotionDetail() {
             </Detail.DetailSubTitle>
           </Detail.DetailTitleWrap>
           <Detail.DetailAiAsk onClick={handleAiRequest} disabled={loading}>
-            AI 해몽 요청하기
+            AI 감정분석 요청
           </Detail.DetailAiAsk>
         </Detail.DetailTop>
         <Detail.DetailName
@@ -160,7 +160,7 @@ function EmotionDetail() {
           )}
           {!loading && aiResult && (
             <DetailAiResultWrap>
-              <DetailAiResultTitle>꿈 해몽 결과</DetailAiResultTitle>
+              <DetailAiResultTitle>감정분석 결과</DetailAiResultTitle>
               <Detail.DetailAiResult readonly value={aiResult} />
             </DetailAiResultWrap>
           )}
