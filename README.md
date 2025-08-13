@@ -189,27 +189,51 @@
 - readdy 및 피그마를 이용한 UI/UX 디자인 도출
 - 페이지 전환 동선 설계 및 화면 흐름 관리
 - 다른 팀원 요청 시 화면 구조 및 동선 설명 담당
+- 폴더 구조 및 아이콘 이름 정의
 
-#### 2. `HomePage.jsx`
-
-- 사용자별 피드 구성 (최근 작성한 꿈 리스트, 즐겨찾기 등)
-- 나의 통계, 기록하기 섹션, 명언 스와이퍼 표시
-- TwinkleStars 배경 적용 (별 반짝임 효과)
-- 로그인 상태에 따라 접근 권한 및 UI 변화 처리
-
-#### 3. `Header.jsx`
+#### 2. `Header.jsx` - 헤더
 
 - 상단 로고, 다크모드 전환, 로그인/로그아웃 버튼 구현
 - 다크모드 클릭 시 ThemeContext 전역 상태 변경, <body>에 data-theme 적용
 - 로그인 상태에 따라 버튼 아이콘/텍스트 변경 및 페이지 이동 처리
 
-#### 4. ThemeContext.jsx
+#### 3. `ThemeContext.jsx` - 테마
 
 - 전역 테마 상태 관리: isDarkMode와 setIsDarkMode 제공
 - ThemeProvider 사용 시 모든 자식 컴포넌트에서 테마 접근 가능
 - 다크모드 적용 시 <body> 속성 변경으로 CSS 테마 적용
 
-#### 5. EmotionWritePage.jsx
+#### 4. `HomePage.jsx` - 메인 홈페이지
+
+- 사용자별 피드 구성 (최근 작성한 꿈 리스트, 즐겨찾기 등)
+- 나의 통계, 기록하기 섹션, 명언 표시
+- 로그인 상태에 따라 접근 권한 및 UI 변화 처리
+- TwinkleStars 배경 적용 (별 반짝임 효과)
+
+#### 5. `StatsSection.jsx` - 나의 통계
+
+- 총 꿈 기록, 총 감정 기록, 평균 수면 시간 통계 카드 표시
+- 다크모드 대응 아이콘 사용
+- 로그인 상태에 따라 UI 흐림 처리 및 접근 제한
+- 각 카드 클릭 시 해당 페이지로 이동
+
+#### 6. `RecordSection.jsx` - 기록하기
+
+- 홈 화면에서 빠른 기록 기능 제공: 꿈 기록, 감정 일기, 수면 기록
+- 로그인 상태에 따라 접근 권한 제어 (비로그인 시 /login 이동)
+- 전체 카드 클릭 가능 영역
+- 쿼리 파라미터 방식을 적용해 URL에 ?tab=값을 추가하여 초기 탭 상태를 지정
+  예: /sleeprecord?tab=stats → 통계 화면부터 표시
+  useSearchParams()를 사용하여 tab 값을 읽고 activeTab 초기값으로 설정
+
+#### 7. `QuoteSwiper.jsx` - 스와이퍼
+
+- Swiper 라이브러리를 사용하여 설정한 시간마다 (설정값:4초) 자동 전환 
+- 무한 반복(loop) 으로 끝없이 순환되게끔 설정
+- 하단 페이지네이션 버튼 클릭 시 해당 명언으로 즉시 이동 가능
+- 사용자가 슬라이드를 조작해도 자동 재생 유지 (disableOnInteraction: false)
+
+#### 8. `EmotionWritePage.jsx` - 감정일기 작성페이지
 
 - react-calendar 기반 날짜 선택 후 감정일기 작성 가능
 - 로컬 모킹데이터 + 로컬스토리지 저장 기능 구현
@@ -217,35 +241,30 @@
 - 입력값 검증 후 저장, 작성 완료 시 목록 페이지(/emotionlist)로 이동
 - 최대 글자수 1000자, 날짜별 일기 표시, 📌 표시로 작성 여부 표시
 
-#### 6. SleepRecordPage.jsx
+#### 9. `SleepRecordPage.jsx` - 수면기록 작성 및 통계 히스토리 페이지 (2단 구현)
 
 - 수면 기록 및 수면 질 평가 페이지 구현
-- 탭 구조(SleepTabBar)와 애니메이션(SleepAnimatedSwitch) 적용
+- Framer Motion 라이브러리 사용
+- 상단 탭(SleepTabBar)로 수면 기록 / 수면 통계 전환
+- 탭 전환 시 Framer Motion을 이용한 부드러운 슬라이드 & 페이드 애니메이션 효과 적용(AnimatePresence, motion.div)
+- 기록 탭에서는 `취침/기상 시간` 입력 / 수면 질 평점(별점) 입력 / 저장 시 자동으로 통계 탭으로 전환
 - 수면 시작/종료 시간 입력, 수면 질 평점 입력 기능
 - useCallback으로 탭 전환 최적화
 
-#### 7. FavoriteSection.jsx
+#### 10. `FavoriteSection.jsx` - 즐겨찾기 꿈 컴포넌트
 
 - 즐겨찾기 꿈 리스트 표시, 최근 작성순 정렬
 - 로그인 상태에 따라 접근 제한 및 흐림 처리
 - 즐겨찾기 토글 기능 구현, 클릭 시 /favorites 페이지 이동
 - 로그인 시 사용자 프로필 정보 및 마이페이지/즐겨찾기 링크 표시
 
-#### 8. StatsSection.jsx
+#### 11. Nivo Chart 라이브러리 사용
+- Nivo Chart 라이브러리를 이용한 Pie Chart 구현
+- 모킹데이터 사용 / Nivo 라이브러리의 ResponsivePie 컴포넌트를 사용하여 7일 이내 수면 질 데이터를 시각화함
+- useMemo로 필터링된 데이터(chartData)를 ResponsivePie에 전달해 성능 최적화
+- 색상 매핑과 범례를 커스터마이징하여 수면 질 평점(별점)과 연계
 
-- 총 꿈 기록, 총 감정 기록, 평균 수면 시간 통계 카드 표시
-- 다크모드 대응 아이콘 사용
-- 로그인 상태에 따라 UI 흐림 처리 및 접근 제한
-- 각 카드 클릭 시 해당 페이지로 이동
-
-#### 9. RecordSection.jsx
-
-- 홈 화면에서 빠른 기록 기능 제공: 꿈 기록, 감정 일기, 수면 기록
-- 다크모드 대응 아이콘 사용
-- 로그인 상태에 따라 접근 권한 제어 (비로그인 시 /login 이동)
-- 전체 카드 클릭 가능 영역
-
-#### 10. TwinkleStars.jsx
+#### 12. TwinkleStars.jsx
 
 - Emotion keyframes 기반 별 반짝임 애니메이션 구현
 - 랜덤 위치, 크기, 속도, 애니메이션 딜레이 적용
