@@ -4,6 +4,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import { supabase } from "../api/supabaseClient";
@@ -20,6 +21,15 @@ export const useAuth = () => {
 
 // ---- 로컬 캐시 유틸 ----
 const PROFILE_CACHE_KEY = "profile_cache";
+const REDIRECT_GUARD_KEY = "auth_redirect_once";
+
+const redirectOnceToRoot = () => {
+  try {
+    if (sessionStorage.getItem(REDIRECT_GUARD_KEY) === "1") return;
+    sessionStorage.setItem(REDIRECT_GUARD_KEY, "1");
+  } catch {}
+  window.location.replace("/");
+};
 
 const loadProfileCache = () => {
   try {
@@ -28,7 +38,7 @@ const loadProfileCache = () => {
     const parsed = JSON.parse(raw);
     const isValid =
       parsed?.updated_at &&
-      Date.now() - new Date(parsed.updated_at).getTime() < 3600000;
+      Date.now() - new Date(parsed.updated_at).getTime() < 3600000; // 1h
     return isValid ? parsed : null;
   } catch (e) {
     localStorage.removeItem(PROFILE_CACHE_KEY);
@@ -43,17 +53,7 @@ const saveProfileCache = profile => {
     } else {
       localStorage.removeItem(PROFILE_CACHE_KEY);
     }
-  } catch (e) {}
-};
-
-const purgeLegacyStorage = () => {
-  try {
-    localStorage.removeItem("auth_session");
-    localStorage.removeItem("refresh_token");
-    localStorage.removeItem("user_data");
-    localStorage.removeItem("profile_data");
-    localStorage.removeItem("supabase.auth.token");
-  } catch (e) {}
+  } catch {}
 };
 
 const makeAvatarUrl = (path, updatedAt) => {
@@ -66,6 +66,16 @@ const makeAvatarUrl = (path, updatedAt) => {
     logError("makeAvatarUrl", e);
     return null;
   }
+};
+
+// 모든 탭에 “세션 무효화” 알림
+const broadcastAuthInvalidated = channelRef => {
+  try {
+    channelRef.current?.postMessage({
+      type: "AUTH_INVALIDATED",
+      at: Date.now(),
+    });
+  } catch {}
 };
 
 export const AuthProvider = ({ children }) => {
@@ -81,25 +91,49 @@ export const AuthProvider = ({ children }) => {
   const isAuthenticated = !!session && !!user;
   const isLoggedIn = isAuthenticated;
 
-  const checkAndHandleDeletedAccount = useCallback(async userId => {
-    if (!userId) return false;
-    try {
-      const { deleted } = await checkAccountDeleted(userId);
-      if (deleted) {
-        await supabase.auth.signOut();
-        setSession(null);
-        setUser(null);
-        setProfile(null);
-        setAvatarUrl(null);
-        localStorage.removeItem(PROFILE_CACHE_KEY);
-        localStorage.removeItem("supabase.auth.token");
-        throw new Error("탈퇴한 유저 이메일입니다.");
-      }
-      return false;
-    } catch (error) {
-      throw error;
+  // BroadcastChannel은 ref로 고정 (의존성 변동 방지)
+  const channelRef = useRef(null);
+  useEffect(() => {
+    if (typeof BroadcastChannel !== "undefined") {
+      channelRef.current = new BroadcastChannel("auth_channel");
+      return () => {
+        try {
+          channelRef.current?.close();
+        } catch {}
+        channelRef.current = null;
+      };
     }
   }, []);
+
+  const handleAuthInvalidation = useCallback(() => {
+    setSession(null);
+    setUser(null);
+    setProfile(null);
+    setAvatarUrl(null);
+    try {
+      localStorage.removeItem(PROFILE_CACHE_KEY);
+    } catch {}
+    broadcastAuthInvalidated(channelRef);
+    redirectOnceToRoot();
+  }, []);
+
+  const checkAndHandleDeletedAccount = useCallback(
+    async userId => {
+      if (!userId) return false;
+      try {
+        const { deleted } = await checkAccountDeleted(userId);
+        if (deleted) {
+          await supabase.auth.signOut();
+          handleAuthInvalidation();
+          throw new Error("탈퇴한 유저 이메일입니다.");
+        }
+        return false;
+      } catch (error) {
+        throw error;
+      }
+    },
+    [handleAuthInvalidation],
+  );
 
   const checkDeletedAccountByEmail = useCallback(async email => {
     try {
@@ -111,47 +145,110 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const fetchProfileOnce = useCallback(
-    async uid => {
+    async (uid, retries = 3) => {
       if (!uid) return null;
-      try {
-        await checkAndHandleDeletedAccount(uid);
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("auth_user_id", uid)
-          .eq("is_deleted", false)
-          .is("deleted_at", null)
-          .maybeSingle();
+      for (let i = 0; i < retries; i++) {
+        try {
+          await checkAndHandleDeletedAccount(uid);
+          const { data, error } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("auth_user_id", uid)
+            .eq("is_deleted", false)
+            .is("deleted_at", null)
+            .maybeSingle();
 
-        if (error) throw new Error(error.message);
-        if (data) {
-          setProfile(data);
-          saveProfileCache(data);
-          setAvatarUrl(makeAvatarUrl(data.profile_image_url, data.updated_at));
-          return data;
+          if (error) throw new Error(error.message);
+          if (data) {
+            setProfile(data);
+            saveProfileCache(data);
+            setAvatarUrl(
+              makeAvatarUrl(data.profile_image_url, data.updated_at),
+            );
+            return data;
+          }
+          return null;
+        } catch (e) {
+          logError("fetchProfileOnce", e, { uid, attempt: i + 1 });
+          if (e.message?.includes("429") && i < retries - 1) {
+            await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+            continue;
+          }
+          if (e.message?.includes("탈퇴한")) throw e;
+          return null;
         }
-        return null;
-      } catch (e) {
-        logError("fetchProfileOnce", e, { uid });
-        if (e.message.includes("탈퇴한")) throw e;
-        return null;
       }
     },
     [checkAndHandleDeletedAccount],
   );
 
+  // 아바타 URL 동기화
   useEffect(() => {
     const url = makeAvatarUrl(profile?.profile_image_url, profile?.updated_at);
     setAvatarUrl(url);
   }, [profile?.profile_image_url, profile?.updated_at]);
 
+  // BroadcastChannel & storage 이벤트 리스너
+  useEffect(() => {
+    const onAuthChannelMessage = e => {
+      const msg = e.data;
+      if (!msg || !msg.type) return;
+      if (msg.type === "SIGN_OUT") {
+        handleAuthInvalidation();
+      } else if (msg.type === "AUTH_INVALIDATED") {
+        redirectOnceToRoot();
+      } else if (msg.type === "SIGN_IN" && msg.userId) {
+        fetchProfileOnce(msg.userId);
+      }
+    };
+
+    const onStorage = e => {
+      if (!e) return;
+      const isAuthKey =
+        e.key === "supabase.auth.token" || (e.key && e.key.includes("auth"));
+      const isProfileKey = e.key === PROFILE_CACHE_KEY;
+
+      if ((isAuthKey || isProfileKey) && e.newValue == null) {
+        handleAuthInvalidation();
+      }
+    };
+
+    channelRef.current?.addEventListener("message", onAuthChannelMessage);
+    window.addEventListener("storage", onStorage);
+
+    return () => {
+      channelRef.current?.removeEventListener("message", onAuthChannelMessage);
+      window.removeEventListener("storage", onStorage);
+    };
+  }, [handleAuthInvalidation, fetchProfileOnce]);
+
+  // 포커스 시 세션 점검
+  useEffect(() => {
+    const checkSessionOnFocus = async () => {
+      try {
+        const { data, error } = await supabase.auth.getSession();
+        if (error || !data?.session) {
+          handleAuthInvalidation();
+          return;
+        }
+        setSession(data.session);
+        setUser(data.session.user);
+        await fetchProfileOnce(data.session.user.id);
+      } catch (e) {
+        logError("checkSessionOnFocus", e);
+        handleAuthInvalidation();
+      }
+    };
+    window.addEventListener("focus", checkSessionOnFocus);
+    return () => window.removeEventListener("focus", checkSessionOnFocus);
+  }, [fetchProfileOnce, handleAuthInvalidation]);
+
+  // 초기화
   useEffect(() => {
     let mounted = true;
 
     const initializeAuth = async () => {
       setLoading(true);
-      purgeLegacyStorage();
-
       try {
         const cached = loadProfileCache();
         if (cached) setProfile(cached);
@@ -169,7 +266,6 @@ export const AuthProvider = ({ children }) => {
           setUser(null);
           setProfile(null);
           setAvatarUrl(null);
-          localStorage.removeItem(PROFILE_CACHE_KEY);
         }
       } catch (e) {
         setError("초기화 중 오류가 발생했습니다.");
@@ -188,45 +284,67 @@ export const AuthProvider = ({ children }) => {
     };
   }, [fetchProfileOnce]);
 
+  // onAuthStateChange + 주기 점검
   useEffect(() => {
     if (!initialized) return;
 
-    const { data } = supabase.auth.onAuthStateChange(
-      async (event, newSession) => {
-        console.log("Auth state changed:", event, newSession);
-        if (event === "SIGNED_OUT") {
+    const checkSession = async () => {
+      try {
+        const { data, error } = await supabase.auth.getSession();
+        if (error) throw new Error(error.message);
+        if (data.session) {
+          setSession(data.session);
+          setUser(data.session.user);
+          await fetchProfileOnce(data.session.user.id);
+        } else {
           setSession(null);
           setUser(null);
           setProfile(null);
           setAvatarUrl(null);
-          localStorage.removeItem(PROFILE_CACHE_KEY);
-          localStorage.removeItem("supabase.auth.token");
-          setLoading(false);
-          return;
         }
+      } catch (e) {
+        logError("checkSession", e);
+      }
+    };
 
-        if (event === "SIGNED_IN" && newSession?.user?.id) {
-          try {
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, newSession) => {
+        try {
+          if (event === "SIGNED_OUT") {
+            handleAuthInvalidation();
+            return;
+          }
+          if (event === "SIGNED_IN" && newSession?.user?.id) {
             setSession(newSession);
             setUser(newSession.user);
             await fetchProfileOnce(newSession.user.id);
+            channelRef.current?.postMessage({
+              type: "SIGN_IN",
+              userId: newSession.user.id,
+            });
             setLoading(false);
-          } catch (error) {
-            setError(error.message);
+          } else if (event === "TOKEN_REFRESHED" && newSession) {
+            setSession(newSession);
+            setLoading(false);
+          } else {
             setLoading(false);
           }
-        } else if (event === "TOKEN_REFRESHED" && newSession) {
-          setSession(newSession);
-          setLoading(false);
-        } else {
+        } catch (err) {
+          setError(err.message);
           setLoading(false);
         }
       },
     );
 
-    return () => data.subscription.unsubscribe();
-  }, [initialized, fetchProfileOnce]);
+    const interval = setInterval(checkSession, 10000);
 
+    return () => {
+      authListener.subscription.unsubscribe();
+      clearInterval(interval);
+    };
+  }, [initialized, fetchProfileOnce, handleAuthInvalidation]);
+
+  // ==== 액션들 ====
   const signIn = useCallback(
     async (email, password) => {
       setAuthLoading(true);
@@ -248,9 +366,13 @@ export const AuthProvider = ({ children }) => {
         }
 
         await checkAndHandleDeletedAccount(data.user.id);
+        channelRef.current?.postMessage({
+          type: "SIGN_IN",
+          userId: data.user.id,
+        });
         return { success: true, session: data.session, user: data.user };
       } catch (e) {
-        const errorMessage = e.message.includes("탈퇴한")
+        const errorMessage = e.message?.includes("탈퇴한")
           ? e.message
           : "로그인에 실패했습니다.";
         setError(errorMessage);
@@ -267,24 +389,27 @@ export const AuthProvider = ({ children }) => {
     setAuthLoading(true);
     setError(null);
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw new Error(error.message);
-
-      setSession(null);
-      setUser(null);
-      setProfile(null);
-      setAvatarUrl(null);
-      localStorage.removeItem(PROFILE_CACHE_KEY);
-      localStorage.removeItem("supabase.auth.token");
+      for (let i = 0; i < 3; i++) {
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+          if (error.status === 429 && i < 2) {
+            await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+            continue;
+          }
+          throw new Error(error.message);
+        }
+        break;
+      }
+      handleAuthInvalidation();
       return { success: true };
     } catch (e) {
-      setError("로그아웃에 실패했습니다.");
+      setError("로그아웃에 실패했습니다: " + e.message);
       logError("signOut", e);
-      return { success: false, error: "로그아웃에 실패했습니다." };
+      return { success: false, error: "로그아웃에 실패했습니다: " + e.message };
     } finally {
       setAuthLoading(false);
     }
-  }, []);
+  }, [handleAuthInvalidation]);
 
   const signUp = useCallback(
     async userData => {
@@ -306,7 +431,7 @@ export const AuthProvider = ({ children }) => {
           setError(error.message);
           return {
             success: false,
-            error: error.message.includes("User already registered")
+            error: error.message?.includes("User already registered")
               ? "이미 가입된 이메일입니다."
               : error.message,
           };
@@ -348,6 +473,10 @@ export const AuthProvider = ({ children }) => {
           }
 
           await fetchProfileOnce(authUser.id);
+          channelRef.current?.postMessage({
+            type: "SIGN_IN",
+            userId: authUser.id,
+          });
         }
 
         return {
@@ -420,6 +549,7 @@ export const AuthProvider = ({ children }) => {
         }
 
         await fetchProfileOnce(user.id);
+        channelRef.current?.postMessage({ type: "SIGN_IN", userId: user.id });
         return { success: true };
       } catch (e) {
         setError("프로필 업데이트에 실패했습니다.");
@@ -494,8 +624,9 @@ export const AuthProvider = ({ children }) => {
     if (user?.id) {
       try {
         await fetchProfileOnce(user.id);
+        channelRef.current?.postMessage({ type: "SIGN_IN", userId: user.id });
       } catch (error) {
-        if (error.message.includes("탈퇴한")) {
+        if (error.message?.includes("탈퇴한")) {
           setError(error.message);
           return;
         }
