@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import { useThemeContext } from "../../contexts/ThemeContext";
 import { Link } from "react-router-dom";
 
-// 2. styled.button으로 스타일링된 버튼 만들기
+// styled.button으로 스타일링된 버튼 만들기
 // 라이트모드용 버튼
 const BackLight = styled(Link)`
   padding: 5px 20px;
