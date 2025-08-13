@@ -10,7 +10,6 @@ const FooterWrap = styled.div`
   flex-direction: column;
   margin: 0;
   padding-top: 10px;
-  /* background-color: rgba(236, 195, 230, 0.3); */
   background-color: ${({ dark }) =>
     dark ? "rgba(18, 18, 39, 0.5)" : "rgba(252, 243, 251, 0.3)"};
   color: ${({ dark }) => (dark ? "#fcf3fb" : "#000")};
@@ -48,13 +47,11 @@ const FooterTopInfoTitle = styled.h2`
   align-items: center;
   justify-content: flex-start;
   font-size: 18px;
-  /* color: #25254d; */
   color: ${({ dark }) => (dark ? "#fcf3fb" : "#25254d")};
   margin: 0;
 `;
 const FooterTopInfoDetail = styled.h3`
   font-size: 13px;
-  /* color: #493d78; */
   color: ${({ dark }) => (dark ? "#fcf3fb" : "#493d78")};
   margin: 0;
   line-height: 20px;
@@ -100,12 +97,10 @@ const FooterTopContactList = styled.div`
 `;
 const FooterTopContactTitle = styled.h2`
   font-size: 15px;
-  /* color: #493d78; */
   color: ${({ dark }) => (dark ? "#fcf3fb" : "#493d78")};
   margin: 20px 0 0 0;
 `;
 const FooterTopContactWrap = styled.address`
-  /* color: #493d78; */
   color: ${({ dark }) => (dark ? "#fcf3fb" : "#493d78")};
   display: flex;
   flex-direction: column;
@@ -114,26 +109,22 @@ const FooterTopContactWrap = styled.address`
 const FooterTopContactEmail = styled.a`
   font-size: 12px;
   font-weight: 500;
-  /* color: #493d78; */
   color: ${({ dark }) => (dark ? "#fcf3fb" : "#493d78")};
   margin: 0;
 `;
 const FooterTopContactTel = styled.a`
   font-size: 12px;
   font-weight: 500;
-  /* color: #493d78; */
   color: ${({ dark }) => (dark ? "#fcf3fb" : "#493d78")};
   margin: 0;
 `;
 const FooterTopContactAddr = styled.p`
   font-size: 12px;
   font-weight: 500;
-  /* color: #493d78; */
   color: ${({ dark }) => (dark ? "#fcf3fb" : "#493d78")};
   margin: 0;
 `;
 const FooterBottomWrap = styled.div`
-  /* color: #493d78; */
   color: ${({ dark }) => (dark ? "#fcf3fb" : "#493d78")};
   display: flex;
   justify-content: space-between;
@@ -172,7 +163,6 @@ const FooterBottomCopy = styled.p`
   align-items: center;
   margin: 0;
   font-size: 12px;
-  /* color: #8f8f8f; */
   color: ${({ dark }) => (dark ? "#fcf3fb" : "#8f8f8f")};
   padding: 10px;
   border-top: 1px solid #a8a8a8;

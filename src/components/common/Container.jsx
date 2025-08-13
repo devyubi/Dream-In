@@ -9,7 +9,6 @@ const ContainerDiv = styled.div`
   min-height: 100vh;
   margin: 0 20%;
   padding: 20px;
-  /* background-color: rgba(252, 243, 251, 0.3); */
   background-color: ${({ dark }) =>
     dark ? "rgba(54, 54, 110, 0.3)" : "rgba(252, 243, 251, 0.3)"};
   color: ${({ dark }) => (dark ? "#fff" : "#000")};

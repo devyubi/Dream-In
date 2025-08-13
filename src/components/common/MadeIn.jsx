@@ -2,14 +2,12 @@ import styled from "@emotion/styled";
 import { useThemeContext } from "../../contexts/ThemeContext";
 
 const MadeInWrap = styled.div`
-  /* background-color: #fcf3fb; */
   background-color: ${({ dark }) => (dark ? "#1c1752" : "#fcf3fb")};
   padding: 20px;
   margin: 0;
   border-radius: 16px;
 `;
 const MadeInTitle = styled.h1`
-  /* color: #25254d; */
   color: ${({ dark }) => (dark ? "#fcf3fb" : "#25254d")};
   padding-top: 20px;
   display: flex;
@@ -21,7 +19,6 @@ const MadeInSubTitle = styled.h2`
   display: flex;
   justify-content: center;
   align-items: center;
-  /* color: #493d78; */
   color: ${({ dark }) => (dark ? "#fcf3fb" : "#493d78")};
   transform: translateX(-7px);
 `;
@@ -58,19 +55,16 @@ const MadeInPersonPhoto = styled.div`
   }
 `;
 const MadeInPersonName = styled.h2`
-  /* color: #25254d; */
   color: ${({ dark }) => (dark ? "#fcf3fb" : "#25254d")};
   margin: 0;
 `;
 const MadeInPersonRole = styled.p`
-  /* color: #7866c2; */
   color: ${({ dark }) => (dark ? "#d56ac8" : "#7866c2")};
   font-size: 13px;
   font-weight: 600;
   margin: 0;
 `;
 const MadeInPersonEmail = styled.p`
-  /* color: #493d78; */
   color: ${({ dark }) => (dark ? "#fcf3fb" : "#493d78")};
   font-size: 13px;
   margin: 0;
