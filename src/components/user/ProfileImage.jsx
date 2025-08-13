@@ -1,6 +1,5 @@
 import { useRef, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
-import defaultProfileImage from "../../assets/images/unknown.svg";
 
 const ProfileImage = ({
   profile,
@@ -107,7 +106,7 @@ const ProfileImage = ({
           </>
         ) : (
           <img
-            src={defaultProfileImage}
+            src={"/images/unknown.svg"}
             alt="기본 프로필 이미지"
             onClick={triggerFileInput}
             className="profile-image"

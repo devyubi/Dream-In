@@ -101,7 +101,15 @@
 - Lighthouse / Web Vitals 테스트
 - 발표 자료 준비 (시연 영상, 소개 문서 등)
 
-## 9. 담당
+## 9. 카테고리 분류 로직
+
+| 이름   | 주요 담당                | 작업 파일                                                                                                          | 설명                            |
+| ------ | ------------------------ | ------------------------------------------------------------------------------------------------------------------ | ------------------------------- |
+| 박재현 | 꿈 작성 + 해몽           | DreamWritePage, AIDreamResultPage, DreamContext 등                                                                 | 꿈 작성 폼 + AI 연동 처리       |
+| 문유비 | 꿈 목록 + 피드           | HomePage, DreamCard, 피드 구성, 공감 기능 등                                                                       | 꿈 리스트 출력, 정렬, 피드 구성 |
+| 송병근 | 회원기능 + supabase 연동 | `LoginPage.jsx`, `SignupPage.jsx`, `AuthCallbackPage.jsx`, `AuthContext.jsx`, `useAuth.js`, `supabaseClient.js` 등 | 회원 인증 처리, supabase 연결   |
+
+## 10. 담당
 
 ### 박재현 (꿈, 감정일기 관련 페이지 구현 및 AI 연동)
 
@@ -168,46 +176,85 @@
 
 ---
 
-### 송병근 (인증, 데이터 저장 담당)
+### 송병근 (회원 기능 (Auth & User Management))
 
-> 주요 담당: 회원 인증, 감정 저장, DB 연결
+> 주요 담당: 회원 인증, 사용자 정보 관리, 프로필 기능, 계정 관리, Supabase 연동
 >
 > 세부 기능: 로그인·회원가입 처리, 꿈/감정 데이터 저장 및 불러오기, 꿈 카테고리 분류 로직 구현
 
-#### 1. `LoginPage.jsx`, `SignupPage.jsx`
+---
 
-- 이메일/비밀번호 기반 로그인 및 회원가입 처리
-- supabase 인증 API 사용
-- 로그인 상태 저장 (AuthContext 사용)
+#### 1. 인증 (Authentication)
 
-#### 2. `AuthContext.jsx`, `useAuth.js`
+**관련 파일:**  
+`LoginPage.jsx`, `SignupPage.jsx`, `AuthCallbackPage.jsx`, `AuthContext.jsx`, `useAuth.js`, `supabaseClient.js`
 
-- 로그인 상태 유지 관리
-- 로컬스토리지 연동 가능 (자동 로그인)
-- 로그인 후 사용자의 UID 기반 데이터 관리
+**주요 기능:**
 
-#### 3. `supabaseClient.js`
+- **이메일/비밀번호 로그인·회원가입**
+  - Supabase Auth API 사용
+  - 회원가입 시 `profiles` 테이블에 추가 정보 저장 (닉네임, 생년월일 등)
+- **OAuth 콜백 처리** (`AuthCallbackPage.jsx`)
+  - 소셜 로그인 이후 토큰 처리 및 세션 유지
+- **로그인 상태 관리** (`AuthContext.jsx`, `useAuth.js`)
+  - Context API + LocalStorage 기반 자동 로그인
+  - UID 기반 프로필 데이터 로드
+- **Supabase 인스턴스 초기화** (`supabaseClient.js`)
+  - URL, Public Key 환경 변수 관리
 
-- Supabase 인스턴스 설정
-- URL, Key 입력
+---
 
-#### 4. `dreams.js`, `emotions.js`
+#### 2. 계정 복구 (Account Recovery)
 
-- 꿈, 감정 데이터 supabase에 저장/조회 함수 구성
-- 예: insertDream, getDreamsByUserId, insertEmotion, getEmotionsByDate
+**관련 파일:**  
+`FindEmailPage.jsx`, `FindPasswordPage.jsx`
 
-#### 5. 카테고리 분류 로직
+**주요 기능:**
 
-- 꿈 작성 시 카테고리 (예: 불안, 희망, 일상 등) 선택 가능하게 구성
-- select dropdown 또는 감정 기반 자동 분류 가능
+- **이메일 찾기**
+  - 닉네임 + 생년월일로 `profiles` 검색 후 이메일 반환
+- **비밀번호 재설정**
+  - 이메일·닉네임·생년월일로 사용자 검증 후 임시 비밀번호 발급
+  - Supabase Auth API로 비밀번호 변경 처리
 
-| 이름   | 주요 담당          | 작업 파일                                           | 설명                            |
-| ------ | ------------------ | --------------------------------------------------- | ------------------------------- |
-| 박재현 | 꿈 작성 + 해몽     | DreamWritePage, AIDreamResultPage, DreamContext 등  | 꿈 작성 폼 + AI 연동 처리       |
-| 문유비 | 꿈 목록 + 피드     | HomePage, DreamCard, 피드 구성, 공감 기능 등        | 꿈 리스트 출력, 정렬, 피드 구성 |
-| 송병근 | 인증 + 데이터 저장 | LoginPage, SignupPage, supabaseClient, dreams.js 등 | 로그인 처리, supabase 연결      |
+---
 
-## 10. React(JSX) 기준 폴더 구조 (MVP 버전)
+#### 3. 프로필 관리 (Profile Management)
+
+**관련 파일:**  
+`Profile.jsx`, `ProfileImage.jsx`, `UserMenu.jsx`, `PasswordChangeModal.jsx`, `DeleteAccountModal.jsx`
+
+**주요 기능:**
+
+- **프로필 페이지 (`Profile.jsx`)**
+  - 사용자 정보 조회 및 수정
+- **프로필 이미지 관리 (`ProfileImage.jsx`)**
+  - 이미지 업로드/미리보기/오류 처리
+- **유저 메뉴 (`UserMenu.jsx`)**
+  - 프로필, 로그아웃, 계정 설정 접근
+- **비밀번호 변경 (`PasswordChangeModal.jsx`)**
+  - 기존 비밀번호 검증 후 새 비밀번호 저장
+- **회원 탈퇴 (`DeleteAccountModal.jsx`)**
+  - 계정 및 `profiles` 데이터 삭제 처리
+  - `boolean` 값으로 탈퇴한 유저 확인
+
+---
+
+#### 4. 데이터 흐름도
+
+```text
+[Login / Signup]
+↓ (Auth API)
+[Supabase Auth]
+↓ (UID)
+[Profiles Table]
+↓
+[AuthContext State]
+↓
+[Profile / User Menu / Recovery / Account Settings]
+```
+
+## 11. React(JSX) 기준 폴더 구조 (MVP 버전)
 
 ```
 📁 src // 앱의 메인 소스 폴더 (전체 React 코드 들어감)
