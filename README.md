@@ -103,11 +103,11 @@
 
 ## 9. 카테고리 분류 로직
 
-| 이름   | 주요 담당                                                                       | 작업 파일                                                                                                                                                  | 설명                                                                                                                           |
-| ------ | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| 박재현 | 꿈/감정일기(EmotionWrite 제외)/즐겨찾기 목록, AI 연동 등                        | DreamWritePage.jsx, DreamDetail.jsx, DreamEdit.jsx, EmotionList.jsx, EmotionDetail.jsx, EmotionEdit.jsx, DreamList.jsx, FavoriteList.jsx, 공용 컴포넌트 등 | 꿈/감정일기 관련 페이지(EmotionWrite 제외), AI API 연동 및 출력, 즐겨찾기 목록 로컬스토리지 연동 등                            |
-| 문유비 | 디자인 및 전체 흐름 기획, 헤더, 메인 페이지, 감정일기 작성란 및 수면기록 페이지 | 등                                                                                                                                                         | 꿈 리스트 출력, 정렬, 피드 구성<br>나의 통계, 테마 전환 (다크/라이트), 백그라운드 테마 적용,<br>스와이퍼, 별 반짝임 애니메이션 |
-| 송병근 | 회원기능 + supabase 연동                                                        | `LoginPage.jsx`, `SignupPage.jsx`, `AuthCallbackPage.jsx`, `AuthContext.jsx`, `useAuth.js`, `supabaseClient.js` 등                                         | 회원 인증 처리, supabase 연결                                                                                                  |
+| 이름   | 주요 담당                                                                       | 작업 파일                                                                                                                                                                           | 설명                                                                                                                           |
+| ------ | ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| 박재현 | 꿈/감정일기(EmotionWrite 제외)/즐겨찾기 목록, AI 연동 등                        | DreamWritePage.jsx, DreamDetail.jsx, DreamEdit.jsx, EmotionList.jsx, EmotionDetail.jsx, EmotionEdit.jsx, DreamList.jsx, FavoriteList.jsx, 공용 컴포넌트 등                          | 꿈/감정일기 관련 페이지(EmotionWrite 제외), AI API 연동 및 출력, 즐겨찾기 목록 로컬스토리지 연동 등                            |
+| 문유비 | 디자인 및 전체 흐름 기획, 헤더, 메인 페이지, 감정일기 작성란 및 수면기록 페이지 | 전체 흐름 기획 관리, `Header.jsx`, `ThemeContext.jsx`,`HomePage.jsx`, `QuoteSwiper.jsx`, `EmotionWritePage.jsx`, `SleepRecordPage.jsx`, `FavoriteSection.jsx`, `TwinkleStars.jsx`등 | 꿈 리스트 출력, 정렬, 피드 구성<br>나의 통계, 테마 전환 (다크/라이트), 백그라운드 테마 적용,<br>스와이퍼, 별 반짝임 애니메이션 |
+| 송병근 | 회원기능 + supabase 연동                                                        | `LoginPage.jsx`, `SignupPage.jsx`, `AuthCallbackPage.jsx`, `AuthContext.jsx`, `useAuth.js`, `supabaseClient.js` 등                                                                  | 회원 인증 처리, supabase 연결                                                                                                  |
 
 ## 10. 담당
 
@@ -316,7 +316,7 @@ EmotionList.jsx
 
 #### 7. `QuoteSwiper.jsx` - 스와이퍼
 
-- Swiper 라이브러리를 사용하여 설정한 시간마다 (설정값:4초) 자동 전환 
+- Swiper 라이브러리를 사용하여 설정한 시간마다 (설정값:4초) 자동 전환
 - 무한 반복(loop) 으로 끝없이 순환되게끔 설정
 - 하단 페이지네이션 버튼 클릭 시 해당 명언으로 즉시 이동 가능
 - 사용자가 슬라이드를 조작해도 자동 재생 유지 (disableOnInteraction: false)
@@ -347,6 +347,7 @@ EmotionList.jsx
 - 로그인 시 사용자 프로필 정보 및 마이페이지/즐겨찾기 링크 표시
 
 #### 11. Nivo Chart 라이브러리 사용
+
 - Nivo Chart 라이브러리를 이용한 Pie Chart 구현
 - 모킹데이터 사용 / Nivo 라이브러리의 ResponsivePie 컴포넌트를 사용하여 7일 이내 수면 질 데이터를 시각화함
 - useMemo로 필터링된 데이터(chartData)를 ResponsivePie에 전달해 성능 최적화
