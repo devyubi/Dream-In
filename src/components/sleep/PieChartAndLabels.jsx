@@ -9,16 +9,19 @@ function PieChartAndLabels({ records }) {
   // 차트가 7일 내의 것만 반영되도록 (일주일 이내의 데이터만 반영)
   const recentRecords = useMemo(() => {
     const now = new Date();
-    const sevenDaysAgo = new Date();
+    now.setHours(0, 0, 0, 0);
+
+    const sevenDaysAgo = new Date(now);
     sevenDaysAgo.setDate(now.getDate() - 6);
 
     return records.filter(r => {
       const recordDate = new Date(r.day);
+      recordDate.setHours(0, 0, 0, 0);
       return recordDate >= sevenDaysAgo && recordDate <= now;
     });
   }, [records]);
 
-  // useMemo로 최적화 
+  // useMemo로 최적화
   const chartData = useMemo(() => {
     return LABELS.map((label, idx) => {
       const value = recentRecords.filter(r => r.rating === idx + 1).length;

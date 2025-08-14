@@ -24,7 +24,7 @@ export function StatsSection() {
       `/images/clock_${isDarkMode ? "dark" : "light"}.svg`,
       "7시간 12분",
       "평균 수면 시간",
-      "/sleeprecord",
+      "/sleeprecord?tab=stats",
     ],
   ];
 
@@ -34,7 +34,9 @@ export function StatsSection() {
         <div className="my_state">
           <div className={`login_content ${!isLoggedIn ? "blurred" : ""}`}>
             {!isLoggedIn && (
-              <div className="state_blur_overlay">로그인 시 이용 가능합니다</div>
+              <div className="state_blur_overlay">
+                로그인 시 이용 가능합니다
+              </div>
             )}
 
             <div className="total">

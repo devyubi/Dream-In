@@ -73,11 +73,11 @@
 }
 
 .pie-chart-wrapper g {
-  fill: var(--text-color);
+  fill: var(--text-color) !important;
 }
-/* .pie-chart-wrapper text {
-  fill: var(--text-color);
-} */
+.pie-chart-wrapper g text {
+  fill: var(--text-color) !important;
+}
 
 /* 원 색상 */
 .color-circle {
