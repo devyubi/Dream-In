@@ -111,36 +111,43 @@ export const createSocialUserProfile = async user => {
 
 export const uploadProfileImage = async (file, userId) => {
   try {
-    const fileExt = file.name.split(".").pop();
-    const fileName = `${userId}.${fileExt}`;
-    const filePath = `profiles/${fileName}`;
+    const ext = file.name.split(".").pop()?.toLowerCase();
+    const allowed = ["jpg", "jpeg", "png", "webp", "gif"];
+    if (!ext || !allowed.includes(ext)) {
+      return { success: false, error: "지원하지 않는 파일 형식입니다." };
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      return { success: false, error: "파일 크기는 5MB 이하여야 합니다." };
+    }
 
-    // eslint-disable-next-line
-    const { data, error } = await supabase.storage
+    const timestamp = Date.now();
+    const fileName = `${timestamp}.${ext}`;
+    const filePath = `${userId}/${fileName}`;
+
+    const { data: uploadData, error: uploadError } = await supabase.storage
       .from("profile-images")
       .upload(filePath, file, {
         cacheControl: "3600",
         upsert: true,
       });
 
-    if (error) {
-      throw error;
+    if (uploadError) {
+      return { success: false, error: uploadError.message };
     }
 
-    const {
-      data: { publicUrl },
-    } = supabase.storage.from("profile-images").getPublicUrl(filePath);
+    // ✅ DB에는 path만 저장할 것!
+    // 미리보기는 signed URL로 제공(버킷이 private이어도 동작)
+    const { data: signed, error: signedErr } = await supabase.storage
+      .from("profile-images")
+      .createSignedUrl(filePath, 60 * 60);
 
     return {
       success: true,
-      url: publicUrl,
-      path: filePath,
+      path: uploadData.path,
+      previewUrl: signed?.signedUrl || null,
     };
   } catch (error) {
-    return {
-      success: false,
-      error: error.message,
-    };
+    return { success: false, error: error.message };
   }
 };
 
@@ -385,37 +392,21 @@ export const checkDeletedEmail = async email => {
 
 // 이메일 사용 가능 여부 종합 체크 함수
 export const checkEmailAvailability = async email => {
-  try {
-    const { isDeleted, isExisting } = await checkDeletedEmail(email);
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (isDeleted) {
-      return {
-        available: false,
-        reason: "deleted",
-        message: "탈퇴한 유저 이메일입니다.",
-      };
-    }
-
-    if (isExisting) {
-      return {
-        available: false,
-        reason: "existing",
-        message: "이미 가입된 이메일입니다.",
-      };
-    }
-
-    return {
-      available: true,
-      reason: "available",
-      message: "사용 가능한 이메일입니다.",
-    };
-  } catch (error) {
+  if (!emailRegex.test(email)) {
     return {
       available: false,
-      reason: "error",
-      message: "이메일 확인 중 오류가 발생했습니다.",
+      reason: "invalid",
+      message: "올바른 이메일 형식이 아닙니다.",
     };
   }
+
+  return {
+    available: true,
+    reason: "format_valid",
+    message: "이메일 형식이 올바릅니다.",
+  };
 };
 
 // 회원탈퇴 함수 (소프트 삭제 - 이메일/닉네임 보존)
@@ -476,29 +467,10 @@ export const deleteAccount = async userId => {
 // 삭제된 계정 체크 함수
 export const checkAccountDeleted = async userId => {
   try {
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("is_deleted, deleted_at")
-      .eq("auth_user_id", userId)
-      .single();
-
-    if (error && error.code === "PGRST116") {
-      // 프로필이 없는 경우
-      return { deleted: true, reason: "profile_not_found" };
-    }
-
-    if (error) {
-      throw error;
-    }
-
-    // 삭제된 계정인지 확인
-    if (data?.is_deleted || data?.deleted_at) {
-      return { deleted: true, reason: "soft_deleted" };
-    }
-
     return { deleted: false };
   } catch (error) {
-    throw error;
+    console.error("Check deleted account error:", error);
+    return { deleted: false };
   }
 };
 
