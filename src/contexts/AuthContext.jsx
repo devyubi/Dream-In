@@ -100,15 +100,26 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // 이메일로 삭제된 계정 체크 (개선된 버전)
-  const checkDeletedAccountByEmail = useCallback(async email => {
-    try {
-      const result = await checkEmailAvailability(email);
-      return { deleted: result.reason === "deleted" };
-    } catch (error) {
-      // 에러 발생 시 삭제되지 않은 것으로 간주하여 로그인 시도 허용
-      return { deleted: false };
+  const checkDeletedAccountByEmail = async email => {
+    if (!email) return { deleted: false, exists: false };
+
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("is_deleted, deleted_at")
+      .eq("email", email)
+      .maybeSingle();
+
+    if (error && error.code !== "PGRST116") {
+      // 다른 에러면 안전하게 통과(로그만)
+      logError("checkDeletedAccountByEmail", error, { email });
+      return { deleted: false, exists: false };
     }
-  }, []);
+
+    if (!data) return { deleted: false, exists: false };
+
+    const deleted = !!data.is_deleted || !!data.deleted_at;
+    return { deleted, exists: true };
+  };
 
   // 프로필 가져오기 (에러 처리 개선)
   const fetchProfileOnce = useCallback(
