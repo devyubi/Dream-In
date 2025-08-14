@@ -1,11 +1,16 @@
+// SleepRecordPage.jsx
 import { useCallback, useState } from "react";
+import { useSearchParams } from "react-router-dom"; // 추가
 import BackButton from "../components/common/BackButton";
 import Container from "../components/common/Container";
 import SleepTabBar from "../components/sleep/SleepTabBar";
 import SleepAnimatedSwitch from "../components/sleep/SleepAnimatedSwitch";
 
 function SleepRecordPage() {
-  const [activeTab, setActiveTab] = useState("record");
+  const [searchParams] = useSearchParams();
+  const initialTab = searchParams.get("tab") || "record"; // URL에서 tab 값 읽기
+  const [activeTab, setActiveTab] = useState(initialTab);
+
   const [rating, setRating] = useState(0);
   const [bedTime, setBedTime] = useState("");
   const [wakeTime, setWakeTime] = useState("");
