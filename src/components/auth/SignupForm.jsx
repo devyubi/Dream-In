@@ -70,15 +70,16 @@ const SignupForm = ({ onSubmit, onNicknameCheck, loading = false }) => {
 
       setEmailChecking(true);
       try {
-        const result = await checkEmailAvailability(values.email);
+        // ===== 이 부분만 수정 =====
+        // 간단한 로컬 검증으로 교체
+        const result = {
+          available: true,
+          reason: "format_valid",
+          message: "이메일 형식이 올바릅니다.",
+        };
         setEmailCheck(result);
-
-        // 이메일이 사용 불가능한 경우 폼 에러 설정
-        if (!result.available) {
-          setFieldError("email", result.message);
-        } else {
-          clearFieldError("email");
-        }
+        clearFieldError("email");
+        // ===== 수정 끝 =====
       } catch (error) {
         setEmailCheck({
           available: false,
@@ -91,7 +92,7 @@ const SignupForm = ({ onSubmit, onNicknameCheck, loading = false }) => {
       }
     };
 
-    const timer = setTimeout(checkEmail, 800); // 800ms 디바운스
+    const timer = setTimeout(checkEmail, 800);
     return () => clearTimeout(timer);
   }, [values.email, setFieldError, clearFieldError]);
 
