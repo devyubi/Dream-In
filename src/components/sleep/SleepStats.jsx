@@ -6,7 +6,7 @@ import SleepWeeklySummary from "./SleepWeeklySummary";
 
 const mockData = [
   {
-    day: "2025-08-09",
+    day: "2025-08-06",
     rating: 5,
     text: "푹 잤고 좋은 꿈을 꿨어요!",
     bedTime: "23:00",
@@ -28,14 +28,14 @@ const mockData = [
   },
   {
     day: "2025-08-12",
-    rating: 5,
-    text: "푹 잤고 좋은 꿈을 꿨어요!",
+    rating: 3,
+    text: "그저 그래요",
     bedTime: "23:00",
     wakeTime: "07:30",
   },
   {
-    day: "2025-08-13",
-    rating: 3,
+    day: "2025-08-08",
+    rating: 1,
     text: "자다가 두 번 깼어요.",
     bedTime: "00:00",
     wakeTime: "08:00",
@@ -49,14 +49,14 @@ const mockData = [
   },
   {
     day: "2025-08-13",
-    rating: 2,
+    rating: 1,
     text: "너무 더워서 자주 깼어요.",
     bedTime: "01:00",
     wakeTime: "07:00",
   },
   {
     day: "2025-08-14",
-    rating: 1,
+    rating: 2,
     text: "악몽을 꿨음 ㅠㅠ",
     bedTime: "00:30",
     wakeTime: "06:00",
