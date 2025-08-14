@@ -69,12 +69,14 @@ function FavoriteList() {
       const isFavorited = favoriteDreams.some(d => d.id === item.id);
       if (isFavorited && !window.confirm(confirmMsg)) return;
       toggleDreamFavorite(item);
-      if (isFavorited) alert("즐겨찾기에서 삭제되었습니다.");
+      if (isFavorited)
+        setTimeout(() => alert("즐겨찾기에서 삭제되었습니다."), 0);
     } else if (item.type === "emotion") {
       const isFavorited = favoriteEmotions.some(e => e.id === item.id);
       if (isFavorited && !window.confirm(confirmMsg)) return;
       toggleEmotionFavorite(item);
-      if (isFavorited) alert("즐겨찾기에서 삭제되었습니다.");
+      if (isFavorited)
+        setTimeout(() => alert("즐겨찾기에서 삭제되었습니다."), 0);
     }
   };
 
@@ -121,7 +123,7 @@ function FavoriteList() {
         ) : (
           currentItems.map(item => (
             <List.ListItem
-              key={item.id}
+              key={`${item.type}-${item.id}`}
               dark={isDarkMode}
               onClick={() =>
                 navigate(
